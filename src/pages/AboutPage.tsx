@@ -33,8 +33,8 @@ const content = {
           id: "tech-implementation",
           title: "Technical implementation",
           paragraphs: [
-            "Svitlogics is a full-stack application. The front-end is built with React, TypeScript, and Vite for a fast and type-safe user experience.",
-            "To ensure high availability, the back-end utilizes a <strong>high-availability cascade of seven Google AI models</strong>, including the Gemini and Gemma families. If a primary model is at capacity, the system automatically falls back to an alternative. This infrastructure is managed by a custom API service built on Netlify Functions to ensure the tool remains operational and reliable. The project was developed within Bolt.new, a platform for managing multi-service applications."
+            "Svitlogics is a modern front-end application built with React, TypeScript, and Vite for a fast and type-safe user experience. The 'Pure Minimalist-Brutalist' design is implemented with a precisely configured Tailwind CSS system.",
+            "To ensure high availability, the core logic resides on the client-side. The application utilizes a <strong>client-side high-availability cascade of seven Google AI models</strong>, including the Gemini and Gemma families. If a primary model is at capacity, the system intelligently and automatically falls back to an alternative. This complex logic ensures the tool remains operational and reliable. The project was developed within Bolt.new, a platform for managing multi-service applications."
           ]
         }
       ]
