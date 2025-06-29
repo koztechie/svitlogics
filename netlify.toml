@@ -1,0 +1,31 @@
+# Netlify Configuration File
+
+# --- Build Settings ---
+# These settings tell Netlify how to build your site.
+[build]
+  command = "npm run build"  # The command to build the site
+  publish = "dist"           # The directory to deploy
+
+# --- Headers ---
+# This section defines custom headers for all pages.
+[[headers]]
+  for = "/*" # Apply these headers to all paths
+
+  [headers.values]
+    # Content-Security-Policy (CSP)
+    # This is a strict policy to mitigate XSS attacks.
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com; frame-src 'none'; object-src 'none';"
+
+    # Other security headers (best practices)
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
+# --- Redirects ---
+[[redirects]]
+  from = "https://svitlogics.netlify.app/*"
+  to = "https://svitlogics.com/:splat"
+  status = 301
+  force = true
