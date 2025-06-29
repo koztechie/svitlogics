@@ -19,8 +19,8 @@ const faqData: FaqItemData[] = [
   },
   {
     question: "What technology powers the analysis?",
-    answer: <p>The analysis is powered by a back-end service built on Netlify Functions. It utilizes a high-availability cascade of seven Google AI models from the Gemini and Gemma families. This multi-model system ensures operational reliability by automatically rerouting requests if a primary model is at capacity.</p>,
-    plainTextAnswer: "The analysis is powered by a back-end service on Netlify Functions, utilizing a high-availability cascade of seven Google AI models (Gemini and Gemma families) to ensure operational reliability."
+    answer: <p>The analysis is powered by a sophisticated client-side architecture. It utilizes a <strong>high-availability cascade of seven different Google AI models</strong> (from the Gemini and Gemma families). This multi-model system, running in the user's browser, ensures operational reliability by automatically rerouting requests if a primary model is at capacity.</p>,
+    plainTextAnswer: "The analysis is powered by a client-side architecture that utilizes a high-availability cascade of seven Google AI models (Gemini and Gemma families) to ensure operational reliability."
   },
   {
     question: "Why does Svitlogics use a 'brutalist' design?",
