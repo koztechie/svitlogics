@@ -12,6 +12,13 @@ interface ChangelogEntryData {
 // Фінальні дані чейнджлогу
 const changelogData: ChangelogEntryData[] = [
   {
+    version: "v0.1.1 (Beta) - Post-Hackathon Polish",
+    date: "July 27, 2025",
+    changes: [
+      '<strong>IMPROVED:</strong> Replaced the placeholder favicon and logo with the final Svitlogics branding for a consistent visual identity.'
+    ]
+  },
+  {
     version: "v0.1.0 (Beta) - Hackathon release candidate",
     date: "June 29, 2025",
     changes: [

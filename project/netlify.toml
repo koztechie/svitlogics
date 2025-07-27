@@ -14,7 +14,7 @@
   [headers.values]
     # Content-Security-Policy (CSP)
     # This is a strict policy to mitigate XSS attacks.
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com; frame-src 'none'; object-src 'none';"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com https://www.google-analytics.com; frame-src 'none'; object-src 'none';"
 
     # Other security headers (best practices)
     X-Frame-Options = "DENY"
@@ -29,3 +29,7 @@
   to = "https://svitlogics.com/:splat"
   status = 301
   force = true
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

@@ -11,6 +11,9 @@ import { analyzeTextWithSvitlogicsAI, SvitlogicsAnalysisResponse, SvitlogicsErro
 import { MODELS_CASCADE } from '../config/modelsConfig';
 import { SYSTEM_PROMPT_TOKEN_COUNT, OUTPUT_BUFFER_TOKENS, CHARS_PER_TOKEN } from '../config/promptConfig';
 
+import SYSTEM_PROMPT_EN from '../config/gemma_system_prompt_en.txt?raw'; 
+import SYSTEM_PROMPT_UK from '../config/gemma_system_prompt_uk.txt?raw';
+
 // Початковий стан для результатів аналізу
 const initialResultsState: Omit<AnalysisResultsProps, 'isAnalyzing'> = {
   categories: [
@@ -91,12 +94,33 @@ const Home: React.FC = () => {
     setIsAnalyzing(true);
 
     try {
-      setIsAnalyzing(true); // Показуємо лоадер
-      // В цій публічній версії основний функціонал аналізу вимкнено, оскільки пропрієтарні системні промпти видалено.
-      setApiError("Error: Core analysis functionality is disabled in this public demonstration version.");
+      const systemPrompt = analysisLanguage === 'uk' ? SYSTEM_PROMPT_UK : SYSTEM_PROMPT_EN;
+      
+      const result: SvitlogicsAnalysisResponse | SvitlogicsErrorResponse | null = await analyzeTextWithSvitlogicsAI(systemPrompt, inputText, analysisLanguage);
+      
+      if (result && !('error' in result) && Array.isArray(result.analysis_results)) {
+        const updatedCategories = initialResultsState.categories.map(initialCategory => {
+          const resultCategory = result.analysis_results.find(
+            resCat => resCat.category_name === initialCategory.name || resCat.category_name.startsWith(initialCategory.name)
+          );
+          return resultCategory ? {
+            name: initialCategory.name,
+            percentage: resultCategory.percentage_score,
+            explanation: resultCategory.justification,
+          } : initialCategory;
+        });
+
+        setAnalysisData({
+          categories: updatedCategories,
+          overallSummary: result.overall_summary || '',
+        });
+      } else {
+        throw new Error((result as SvitlogicsErrorResponse)?.error || "Analysis failed due to an unexpected response from the API.");
+      }
+
     } catch (e: any) {
       console.error("Error in handleAnalyze:", e);
-      setApiError(`Error: ${e.message}`);
+      setApiError(`Error: ${e.message}` || "An unexpected error occurred during the process.");
     } finally {
       setIsAnalyzing(false);
     }
