@@ -40,12 +40,13 @@ const Header: React.FC = () => {
     <header className="relative bg-white border-b border-black">
       <div className="max-w-container mx-auto px-4 flex justify-between items-center py-3">
         {/* Logo */}
-        <Link to="/" aria-label="Svitlogics Homepage">
-          <img 
-            src="/svitlogics-logo-s-only.svg" 
-            alt="Svitlogics Logo" 
-            className="h-8 w-auto" // Встановлюємо висоту 32px
-          />
+        <Link to="/" className="flex items-baseline" aria-label="Svitlogics Homepage">
+          <div className="font-mono font-bold text-[36px] text-blue-accent leading-none">
+            SVITLOGICS
+          </div>
+          <span className="font-mono font-medium text-ui-label text-text-secondary ml-2 normal-case">
+            beta
+          </span>
         </Link>
 
         {/* Desktop Navigation & Controls */}

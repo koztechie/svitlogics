@@ -1,3 +1,5 @@
+// Test deploy from local setup - a small change to trigger CI/CD
+
 import React, { useState, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';

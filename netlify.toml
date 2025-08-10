@@ -29,7 +29,3 @@
   to = "https://svitlogics.com/:splat"
   status = 301
   force = true
-
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
