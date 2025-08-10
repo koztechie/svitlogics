@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 // import { useTranslation } from 'react-i18next';
 
-// Фінальний контент
+// Фінальний контент з виправленою технічною деталлю
 const content = {
   seoTitle: "Pricing and Limits | Svitlogics",
   seoDescription: "Svitlogics is currently a free service. Learn about character limits and the system architecture designed to manage Google AI API usage.",
@@ -25,7 +25,8 @@ const content = {
       title: "API usage and system limits",
       paragraphs: [
         "Svitlogics utilizes the free usage tier provided by Google for its AI models. This tier has global rate limits (requests per minute) that are shared among all users of the application.",
-        "The system's back-end manages these limits by automatically rerouting requests through a cascade of models. During periods of high traffic, this may result in a brief processing delay."
+        // --- ЗМІНЕНО ТУТ ---
+        "The application's client-side architecture manages these limits by automatically rerouting requests through a cascade of models. During periods of high traffic, this may result in a brief processing delay."
       ]
     },
     {

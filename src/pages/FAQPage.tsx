@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 // import { useTranslation } from 'react-i18next';
 
@@ -10,7 +9,7 @@ interface FaqItemData {
   plainTextAnswer: string; // Окреме поле для чистого тексту для JSON-LD
 }
 
-// Фінальні дані для FAQ
+// Фінальні дані для FAQ (без змін, оскільки вони коректні)
 const faqData: FaqItemData[] = [
   {
     question: "What is the primary difference between Svitlogics and other analysis tools?",

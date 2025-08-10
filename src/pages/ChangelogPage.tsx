@@ -9,10 +9,23 @@ interface ChangelogEntryData {
   changes: string[]; // Тепер це просто масив рядків
 }
 
-// Фінальні дані чейнджлогу
+// Фінальні дані чейнджлогу з новою версією v0.2.0
 const changelogData: ChangelogEntryData[] = [
+  // --- НОВА ВЕРСІЯ ---
   {
-    version: "v0.1.0 (Beta) - Hackathon release candidate",
+    version: "v0.2.0 (Beta)",
+    date: "August 11, 2025",
+    changes: [
+      '<strong>IMPROVED:</strong> Migrated the entire development workflow from a cloud-based IDE to a professional local environment (VS Code, Git) for enhanced stability, performance, and independence.',
+      '<strong>ADDED:</strong> Established a new CI/CD (Continuous Integration/Continuous Deployment) pipeline via GitHub and Netlify for automated, reliable deployments.',
+      '<strong>ADDED:</strong> Integrated new AI-assisted coding tools directly into the local development environment to accelerate development.',
+      '<strong>REMOVED:</strong> Removed all dependencies and references to the Bolt.new platform, ensuring full project autonomy.',
+      '<strong>REFACTORED:</strong> Updated all public-facing informational pages to align with the project\'s independent status.'
+    ]
+  },
+  // --- ПОПЕРЕДНІ ВЕРСІЇ ---
+  {
+    version: "v0.1.0 (Public Beta)",
     date: "June 29, 2025",
     changes: [
       '<strong>ADDED:</strong> Configured and launched the custom domain `svitlogics.com`.',
@@ -55,8 +68,7 @@ const changelogData: ChangelogEntryData[] = [
     version: "v0.0.5 (Alpha)",
     date: "June 17, 2025",
     changes: [
-      '<strong>ADDED:</strong> Deployed the application to Netlify with a continuous integration and delivery (CI/CD) pipeline.',
-      '<strong>ADDED:</strong> Integrated the \'Built with Bolt.new\' badge into the user interface.'
+      '<strong>ADDED:</strong> Deployed the application to Netlify with a continuous integration and delivery (CI/CD) pipeline.'
     ]
   },
   {

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+// import { useTranslation } from 'react-i18next';
 
-// Фінальний контент з урахуванням Google Analytics
+// Фінальний контент з урахуванням Google Analytics (без змін, оскільки він коректний)
 const content = {
   seoTitle: "Privacy Policy | Svitlogics",
   seoDescription: "Understand how Svitlogics handles data. This policy details information usage, third-party services like Google Analytics, and our commitment to user privacy.",

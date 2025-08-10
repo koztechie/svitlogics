@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 // import { useTranslation } from 'react-i18next';
 
-// Фінальний контент
+// Фінальний контент (без змін, оскільки він коректний)
 const content = {
   seoTitle: "Terms of Use | Svitlogics",
   seoDescription: "Review the terms and conditions for using the Svitlogics web application. This page outlines user responsibilities and the service's limitations.",

@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { ArrowRight } from 'lucide-react';
 // import { useTranslation } from 'react-i18next';
 
-// Фінальний контент
+// Фінальний контент з покращеним формулюванням
 const content = {
   seoTitle: "Contact | Svitlogics",
   seoDescription: "Contact Eugene Kozlovsky for general inquiries, technical support, or to discuss research and professional use of the Svitlogics AI text analysis tool.",
@@ -23,11 +23,14 @@ const content = {
     {
       id: "collaboration",
       title: "Research and professional use",
-      listTitle: "Researchers, journalists, fact-checkers, and academic institutions can use the email address above to inquire about:",
+      paragraphs: [
+        "Svitlogics is available for collaboration with journalists, academic institutions, fact-checking organizations, and researchers.",
+        "Please use the contact email above for inquiries regarding:"
+      ],
       list: [
-        "Project collaboration",
-        "Custom feature requirements",
-        "Extended analysis capabilities"
+        "Project partnerships and data analysis",
+        "Integration possibilities or API access",
+        "Custom feature requirements for professional use cases"
       ]
     }
   ]
@@ -60,9 +63,11 @@ const ContactSection: React.FC<{ section: typeof content.sections[0] }> = ({ sec
 
       {section.footer && <p>{section.footer}</p>}
 
-      {section.listTitle && <p className="pt-2">{section.listTitle}</p>}
+      {/* Оскільки 'listTitle' було видалено з даних, видаляємо і його відображення тут */}
+      {/* {section.listTitle && <p className="pt-2">{section.listTitle}</p>} <-- ВИДАЛЕНО ЦЕЙ РЯДОК */}
+
       {section.list && (
-        <ul className="list-disc ml-6 space-y-2">
+        <ul className="list-disc ml-6 space-y-2 pt-2">
           {section.list.map((item, itemIndex) => (
             <li key={itemIndex}>{item}</li>
           ))}

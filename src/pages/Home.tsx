@@ -1,7 +1,6 @@
 // Test deploy from local setup - a small change to trigger CI/CD
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 // import { useTranslation } from 'react-i18next';
 
@@ -163,9 +162,9 @@ const Home: React.FC = () => {
       </Helmet>
       
       <div className="space-y-12 lg:space-y-16">
-        {/* 1. Top section (H1, intro paragraph, Bolt.new badge) */}
+        {/* 1. Top section (H1, intro paragraph) */}
         <section className="flex flex-col lg:flex-row lg:justify-between lg:items-start lg:gap-x-8">
-          <div className="lg:w-10/12">
+          <div className="lg:w-full"> {/* Змінено ширину на повну */}
             <h1 className="font-mono font-bold text-h1-mobile normal-case md:uppercase lg:text-h1-desktop text-black mb-4 text-left">
               {content.mainHeading}
             </h1>
@@ -173,17 +172,7 @@ const Home: React.FC = () => {
               {content.introParagraph}
             </p>
           </div>
-          <div className="self-center mt-8 lg:mt-0 lg:self-start lg:ml-auto flex-shrink-0">
-            <a href="https://bolt.new/" target="_blank" rel="noopener noreferrer" className="transition-opacity duration-100 hover:opacity-80" aria-label="Powered by Bolt.new" title="Powered by Bolt.new">
-              <img 
-                src="/black_circle_360x360.png" 
-                alt="Powered by Bolt.new" 
-                className="w-20 h-20 lg:w-[115px] lg:h-[115px]"
-                width="360"
-                height="360"
-              />
-            </a>
-          </div>
+          {/* --- ВИДАЛЕНО БЛОК З БЕЙДЖЕМ --- */}
         </section>
         
         {/* 2. Analyzer section (LanguageSelector, TextInput) */}
