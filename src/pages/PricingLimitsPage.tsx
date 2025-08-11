@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 // import { useTranslation } from 'react-i18next';
 
-// Фінальний контент з виправленою технічною деталлю
+// --- ОНОВЛЕНИЙ КОНТЕНТ ---
 const content = {
   seoTitle: "Pricing and Limits | Svitlogics",
   seoDescription: "Svitlogics is currently a free service. Learn about character limits and the system architecture designed to manage Google AI API usage.",
@@ -17,16 +17,16 @@ const content = {
     {
       title: "Input character limits",
       paragraphs: [
-        "To ensure system stability and manage costs, Svitlogics enforces a character limit for each analysis. This limit is determined by the token capacity of the underlying AI models.",
+        "To ensure system stability and manage API costs, Svitlogics enforces a character limit for each analysis. This limit is determined by the token capacity of the underlying AI models.",
         "The current maximum character limit for the selected language is always displayed on the main page below the text input field."
       ]
     },
     {
       title: "API usage and system limits",
       paragraphs: [
-        "Svitlogics utilizes the free usage tier provided by Google for its AI models. This tier has global rate limits (requests per minute) that are shared among all users of the application.",
-        // --- ЗМІНЕНО ТУТ ---
-        "The application's client-side architecture manages these limits by automatically rerouting requests through a cascade of models. During periods of high traffic, this may result in a brief processing delay."
+        "The Svitlogics back-end service includes several mechanisms to ensure stability and fair use:",
+        "<strong>Rate Limiting:</strong> To prevent automated abuse, the system limits the number of requests that can be made from a single IP address (currently 20 requests per hour).",
+        "<strong>High-Availability Cascade:</strong> The service relies on a cascade of premium Google Gemini 2.5 models. If a primary model is experiencing high traffic or is at its capacity, requests are automatically rerouted to an alternative model. This may result in a brief processing delay during peak hours."
       ]
     },
     {
@@ -53,7 +53,7 @@ const InfoSection: React.FC<{ section: (typeof content.sections)[0] }> = ({ sect
     </h2>
     <div className="space-y-4 font-mono font-normal text-body-main leading-body text-black">
       {section.paragraphs?.map((p, pIndex) => (
-        <p key={pIndex}>{p}</p>
+        <p key={pIndex} dangerouslySetInnerHTML={{ __html: p }} />
       ))}
       {section.listTitle && <p className="pt-2">{section.listTitle}</p>}
       {section.list && (

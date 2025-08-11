@@ -8,6 +8,7 @@ interface HowToStep {
   plainText: string;
 }
 
+// --- ОНОВЛЕНИЙ КОНТЕНТ ---
 const stepsData: HowToStep[] = [
   {
     title: "1. Provide text",
@@ -21,14 +22,14 @@ const stepsData: HowToStep[] = [
   },
   {
     title: "3. Initiate analysis",
-    content: <p>Click the ANALYZE button. The request is sent from your browser directly to the AI provider. <strong>Your input text is not stored on Svitlogics' servers.</strong></p>,
-    plainText: "Click the ANALYZE button. The request is sent from your browser to the AI provider. Your input text is not stored on Svitlogics' servers."
+    content: <p>Click the ANALYZE button. The request is sent to the <strong>secure Svitlogics API gateway.</strong> Your input text is never stored.</p>,
+    plainText: "Click the ANALYZE button. The request is sent to the secure Svitlogics API gateway. Your input text is never stored."
   },
   {
     title: "4. AI processing",
     content: (
       <>
-        <p>The application utilizes a high-availability cascade of seven Google AI models, including the Gemini and Gemma families. This system, running in your browser, ensures reliability: if a primary model is at capacity, the request automatically falls back to an alternative.</p>
+        <p>The Svitlogics back-end service utilizes a high-availability cascade of <strong>premium Google Gemini 2.5 models.</strong> This system ensures reliability: if a primary model is at capacity, the request automatically falls back to an alternative.</p>
         <p>The selected model is guided by a detailed, custom-calibrated system prompt. The prompt instructs the AI to assess the text against five core criteria, functioning as an analyst, not a "truth detector":</p>
         <ul className="list-disc ml-6 mt-4 space-y-2">
           <li>Manipulative Content</li>
@@ -39,7 +40,7 @@ const stepsData: HowToStep[] = [
         </ul>
       </>
     ),
-    plainText: "The application utilizes a cascade of Google AI models. A custom prompt guides the AI to assess text against five criteria: Manipulative Content, Propagandistic Content, Disinformation, Unbiased Presentation, and Emotional Tone."
+    plainText: "The Svitlogics back-end utilizes a cascade of premium Google Gemini 2.5 models. A custom prompt guides the AI to assess text against five criteria: Manipulative Content, Propagandistic Content, Disinformation, Unbiased Presentation, and Emotional Tone."
   },
   {
     title: "5. Review the structured report",
@@ -68,13 +69,13 @@ const StepSection: React.FC<{ step: HowToStep }> = ({ step }) => (
 const HowItWorksPage: React.FC = () => {
   const pageTitle = "HOW IT WORKS";
   const introParagraph = "The Svitlogics analysis workflow is a direct, six-step process. This document outlines each step from text input to receiving the structured report.";
-  const seoDescription = "A step-by-step guide on how Svitlogics uses a cascade of Google's AI models (Gemini & Gemma) to analyze text for manipulation, propaganda, and bias.";
+  const seoDescription = "A step-by-step guide on how Svitlogics uses a cascade of premium Google's Gemini 2.5 models to analyze text for manipulation, propaganda, and bias.";
 
   const howToJsonLd = {
     "@context": "https://schema.org",
     "@type": "HowTo",
     "name": "How Svitlogics AI Text Analysis Works",
-    "description": "A step-by-step guide on how to use Svitlogics to analyze text for manipulation and disinformation.",
+    "description": "A step-by-step guide on how to use Svitlogics to analyze text for manipulation and disinformation using Google Gemini 2.5 AI.",
     "step": stepsData.map(step => ({
       "@type": "HowToStep",
       "name": step.title,

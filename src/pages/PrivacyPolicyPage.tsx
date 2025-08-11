@@ -2,12 +2,12 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 // import { useTranslation } from 'react-i18next';
 
-// Фінальний контент з урахуванням Google Analytics (без змін, оскільки він коректний)
+// Фінальний контент з урахуванням Google Analytics
 const content = {
   seoTitle: "Privacy Policy | Svitlogics",
   seoDescription: "Understand how Svitlogics handles data. This policy details information usage, third-party services like Google Analytics, and our commitment to user privacy.",
   pageTitle: "PRIVACY POLICY",
-  lastUpdated: "Last Updated: June 30, 2025",
+  lastUpdated: "June 30, 2025",
   sections: [
     {
       title: "1. Overview",
@@ -21,9 +21,9 @@ const content = {
       title: "3. Third-Party Data Processing",
       text: "To provide its functionality, the Service relies on third-party services:",
       list: [
-        "<strong>Google AI Platform:</strong> Submitted text is sent to Google's servers for analysis. According to Google's API policies, this data may be used to improve their services. <strong>Do not submit sensitive or personal information.</strong>",
+        "<strong>Google AI Platform:</strong> Submitted text is sent <strong>from our secure server-side function</strong> to Google's servers for analysis. The request from your browser goes only to our server, not directly to Google. According to Google's API policies, this data may be used to improve their services. <strong>Do not submit sensitive or personal information.</strong>",
         "<strong>Google Analytics & Tag Manager:</strong> To understand how visitors interact with the Service and to improve it, I use Google Analytics. This service places cookies on your device to collect standard internet log information and visitor behavior data in an anonymous form.",
-        "<strong>Netlify:</strong> The application is hosted on Netlify. Netlify may collect access logs, including IP addresses, for security and operational purposes."
+        "<strong>Netlify:</strong> The application and its back-end functions are hosted on Netlify. Netlify may collect access logs, including IP addresses, for security and operational purposes."
       ]
     },
     {
@@ -55,7 +55,7 @@ const PolicySection: React.FC<{ section: any }> = ({ section }) => (
       {section.text && <p dangerouslySetInnerHTML={{ __html: section.text }} />}
       {section.list && (
         <ul className="space-y-2 list-disc ml-6">
-          {section.list.map((item: string) => (
+          {section.list.map((item: string) => ( // ВИПРАВЛЕНО СИНТАКСИС ТУТ
             <li key={item.substring(0, 20)} dangerouslySetInnerHTML={{ __html: item }} />
           ))}
         </ul>
@@ -64,7 +64,7 @@ const PolicySection: React.FC<{ section: any }> = ({ section }) => (
   </section>
 );
 
-const PrivacyPolicyPage: React.FC = () => {
+const PrivacyPolicyPage: React.FC = () => { // ВИПРАВЛЕНО СИНТАКСИС ТУТ
   return (
     <>
       <Helmet>
@@ -82,7 +82,7 @@ const PrivacyPolicyPage: React.FC = () => {
           {content.pageTitle}
         </h1>
         <p className="font-mono text-ui-label text-text-secondary mb-16">
-          {content.lastUpdated}
+          Last Updated: {content.lastUpdated}
         </p>
         
         <div className="max-w-3xl space-y-12">

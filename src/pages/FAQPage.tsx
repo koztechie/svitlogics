@@ -9,7 +9,7 @@ interface FaqItemData {
   plainTextAnswer: string; // Окреме поле для чистого тексту для JSON-LD
 }
 
-// Фінальні дані для FAQ (без змін, оскільки вони коректні)
+// --- ОНОВЛЕНИЙ КОНТЕНТ ---
 const faqData: FaqItemData[] = [
   {
     question: "What is the primary difference between Svitlogics and other analysis tools?",
@@ -18,8 +18,8 @@ const faqData: FaqItemData[] = [
   },
   {
     question: "What technology powers the analysis?",
-    answer: <p>The analysis is powered by a sophisticated client-side architecture. It utilizes a <strong>high-availability cascade of seven different Google AI models</strong> (from the Gemini and Gemma families). This multi-model system, running in the user's browser, ensures operational reliability by automatically rerouting requests if a primary model is at capacity.</p>,
-    plainTextAnswer: "The analysis is powered by a client-side architecture that utilizes a high-availability cascade of seven Google AI models (Gemini and Gemma families) to ensure operational reliability."
+    answer: <p>The analysis is powered by a <strong>secure server-side API gateway</strong> running on Netlify Functions. It utilizes a high-availability cascade of <strong>premium Google Gemini 2.5 models</strong> to ensure operational reliability. The core logic and API keys are stored securely on the server, never exposed to the user's browser.</p>,
+    plainTextAnswer: "The analysis is powered by a secure server-side API gateway using a cascade of premium Google Gemini 2.5 models. Core logic and API keys are stored securely on the server."
   },
   {
     question: "Why does Svitlogics use a 'brutalist' design?",
@@ -33,8 +33,8 @@ const faqData: FaqItemData[] = [
   },
   {
     question: "What are the text input limits?",
-    answer: <p>To ensure system stability and manage costs, there is a character limit for each analysis. This limit is based on the token capacity of the underlying AI models and is always displayed on the main page near the input field.</p>,
-    plainTextAnswer: "To ensure system stability, there is a character limit for each analysis based on the token capacity of the AI models. The current limit is displayed on the main page."
+    answer: <p>To ensure system stability and fair usage for all users, there is a character limit for each analysis. This limit is determined by the back-end service and is always displayed on the main page near the input field.</p>,
+    plainTextAnswer: "To ensure system stability and fair usage, there is a character limit for each analysis. The current limit is displayed on the main page."
   },
   {
     question: "What languages does Svitlogics support?",
@@ -43,8 +43,8 @@ const faqData: FaqItemData[] = [
   },
   {
     question: "Is my submitted text stored?",
-    answer: <p>No. <strong>Svitlogics does not store the content you analyze.</strong> All processing is stateless, and the text is discarded after the analysis is complete.</p>,
-    plainTextAnswer: "No. Svitlogics does not store the content you analyze. All processing is stateless."
+    answer: <p>No. <strong>Svitlogics does not store the content you analyze.</strong> All processing is stateless. The text you submit is sent to our secure back-end, forwarded to the Google AI API for analysis, and then discarded. It is never written to a database.</p>,
+    plainTextAnswer: "No. Svitlogics does not store the content you analyze. All processing is stateless and your text is never written to a database."
   },
   {
     question: "Who developed Svitlogics?",

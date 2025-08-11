@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 // import { useTranslation } from 'react-i18next';
 
-// Фінальний контент, очищений від згадок про Bolt.new та хакатон
+// --- ОНОВЛЕНИЙ КОНТЕНТ ---
 const content = {
   seoTitle: "About Svitlogics | Mission, Methodology, and Design",
   seoDescription: "Discover the philosophy behind Svitlogics. Learn how this AI text analysis tool was built to combat disinformation and empower critical thinking.",
@@ -33,8 +33,8 @@ const content = {
           id: "tech-implementation",
           title: "Technical implementation",
           paragraphs: [
-            "Svitlogics is a modern web application built with a focus on performance and user experience, utilizing React, TypeScript, and Vite. The 'Pure Minimalist-Brutalist' design is implemented with a precisely configured Tailwind CSS system.",
-            "To ensure high availability and user privacy, the core analysis logic resides on the client-side. The application utilizes a <strong>high-availability cascade of Google AI models</strong> (from the Gemini and Gemma families). If a primary model is at capacity, the system intelligently and automatically falls back to an alternative, ensuring the tool remains operational and reliable without storing user data on our servers."
+            "Svitlogics is a modern web application built with a client-server architecture. The front-end, which you interact with, is built using React, TypeScript, and Vite for a fast and responsive experience.",
+            "The core analysis logic resides in a <strong>secure serverless back-end running on Netlify Functions.</strong> This service utilizes a high-availability cascade of <strong>premium Google Gemini 2.5 models</strong>. This architecture ensures that all complex processing and sensitive API key interactions are handled securely on the server, never exposing them to the user's browser, and guaranteeing both performance and privacy."
           ]
         }
       ]
