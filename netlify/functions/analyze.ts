@@ -8,8 +8,8 @@ const ipCache = new NodeCache({ stdTTL: 3600 });
 
 // --- ІМПОРТИ, ПЕРЕНЕСЕНІ З КЛІЄНТА ---
 // Ми імпортуємо ваші реальні конфігурації
-import { MODELS_CASCADE, ModelConfig } from '../../src/config/modelsConfig';
-import { SYSTEM_PROMPT_TOKEN_COUNT, OUTPUT_BUFFER_TOKENS, CHARS_PER_TOKEN } from '../../src/config/promptConfig';
+import { MODELS_CASCADE, ModelConfig } from './config/modelsConfig';
+import { SYSTEM_PROMPT_TOKEN_COUNT, OUTPUT_BUFFER_TOKENS, CHARS_PER_TOKEN } from './config/promptConfig';
 
 // --- ІНТЕРФЕЙСИ ТИПІВ, ПЕРЕНЕСЕНІ З КЛІЄНТА ---
 interface AnalysisResult {
