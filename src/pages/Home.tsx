@@ -1,21 +1,20 @@
-// Test deploy from local setup - a small change to trigger CI/CD
-
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react'; // ВИДАЛЕНО 'useMemo'
 import { Helmet } from 'react-helmet-async';
-// import { useTranslation } from 'react-i18next';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 import AnalysisResults, { AnalysisResultsProps } from '../components/AnalysisResults';
 import TextInput from '../components/TextInput';
 import LanguageSelector, { AnalysisLanguage } from '../components/LanguageSelector';
-import { analyzeTextWithSvitlogicsAI, SvitlogicsAnalysisResponse, SvitlogicsErrorResponse } from '../services/gemmaApiService';
+// ВИДАЛЕНО НЕПОТРІБНІ ТИПИ З ІМПОРТУ
+import { analyzeText } from '../services/aiApiService';
 
-import { MODELS_CASCADE } from '../config/modelsConfig';
-import { SYSTEM_PROMPT_TOKEN_COUNT, OUTPUT_BUFFER_TOKENS, CHARS_PER_TOKEN } from '../config/promptConfig';
+// Видалено імпорти, які тепер не потрібні на клієнті
+// import { MODELS_CASCADE } from '../config/modelsConfig';
+// import { SYSTEM_PROMPT_TOKEN_COUNT, OUTPUT_BUFFER_TOKENS, CHARS_PER_TOKEN } from '../config/promptConfig';
 
-import SYSTEM_PROMPT_EN from '../config/gemma_system_prompt_en.txt?raw'; 
+import SYSTEM_PROMPT_EN from '../config/gemma_system_prompt_en.txt?raw';
 import SYSTEM_PROMPT_UK from '../config/gemma_system_prompt_uk.txt?raw';
 
-// Початковий стан для результатів аналізу
 const initialResultsState: Omit<AnalysisResultsProps, 'isAnalyzing'> = {
   categories: [
     { name: 'Manipulative Content', percentage: null, explanation: null },
@@ -27,16 +26,9 @@ const initialResultsState: Omit<AnalysisResultsProps, 'isAnalyzing'> = {
   overallSummary: '',
 };
 
-// Визначаємо найнижчий TPM з каскаду для безпечних лімітів
-const weakestModelTpm = Math.min(...MODELS_CASCADE.map(m => m.tpm));
+const SAFE_CHARACTER_LIMIT = 15000;
 
-/**
- * The main page of the Svitlogics application.
- * It orchestrates the text input, language selection, analysis process, and results display.
- */
 const Home: React.FC = () => {
-  // const { t } = useTranslation();
-
   const content = {
     seoTitle: "Svitlogics | AI Text Analyzer for Bias & Disinformation",
     seoDescription: "Analyze text for manipulation, propaganda, and bias with Svitlogics. An AI tool to empower critical thinking in English & Ukrainian. By Eugene Kozlovsky.",
@@ -65,14 +57,9 @@ const Home: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisData, setAnalysisData] = useState(initialResultsState);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
 
-  const maxChars = useMemo(() => {
-    const systemPromptTokens = SYSTEM_PROMPT_TOKEN_COUNT[analysisLanguage];
-    const tokenToCharRatio = CHARS_PER_TOKEN[analysisLanguage];
-    const availableTokens = weakestModelTpm - systemPromptTokens - OUTPUT_BUFFER_TOKENS;
-    const calculatedChars = availableTokens * tokenToCharRatio;
-    return Math.floor(calculatedChars / 1000) * 1000;
-  }, [analysisLanguage]);
+  const maxChars = SAFE_CHARACTER_LIMIT;
 
   const resetAnalysisDisplay = useCallback(() => {
     setAnalysisData(initialResultsState);
@@ -83,12 +70,16 @@ const Home: React.FC = () => {
     setApiError(null);
     resetAnalysisDisplay();
 
+    if (!turnstileToken) {
+      setApiError("Error: Please complete the CAPTCHA verification before analyzing.");
+      return;
+    }
     if (!inputText) {
       setApiError("Error: Input text is required for analysis.");
       return;
     }
     if (inputText.length > maxChars) {
-      setApiError(`Error: Text exceeds the maximum length of ${maxChars} characters for the selected language.`);
+      setApiError(`Error: Text exceeds the maximum length of ${maxChars} characters.`);
       return;
     }
 
@@ -97,9 +88,13 @@ const Home: React.FC = () => {
     try {
       const systemPrompt = analysisLanguage === 'uk' ? SYSTEM_PROMPT_UK : SYSTEM_PROMPT_EN;
       
-      const result: SvitlogicsAnalysisResponse | SvitlogicsErrorResponse | null = await analyzeTextWithSvitlogicsAI(systemPrompt, inputText, analysisLanguage);
+      const result = await analyzeText(inputText, analysisLanguage, systemPrompt, turnstileToken);
       
-      if (result && !('error' in result) && Array.isArray(result.analysis_results)) {
+      if ('error' in result) {
+        throw new Error(result.error);
+      }
+      
+      if (Array.isArray(result.analysis_results)) {
         const updatedCategories = initialResultsState.categories.map(initialCategory => {
           const resultCategory = result.analysis_results.find(
             resCat => resCat.category_name === initialCategory.name || resCat.category_name.startsWith(initialCategory.name)
@@ -116,7 +111,7 @@ const Home: React.FC = () => {
           overallSummary: result.overall_summary || '',
         });
       } else {
-        throw new Error((result as SvitlogicsErrorResponse)?.error || "Analysis failed due to an unexpected response from the API.");
+        throw new Error("Analysis failed due to an unexpected response from the server.");
       }
 
     } catch (e: any) {
@@ -125,9 +120,8 @@ const Home: React.FC = () => {
     } finally {
       setIsAnalyzing(false);
     }
-  }, [text, analysisLanguage, maxChars, resetAnalysisDisplay]);
+  }, [text, analysisLanguage, maxChars, resetAnalysisDisplay, turnstileToken]);
 
-  // JSON-LD structured data for this page
   const softwareAppJsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -162,9 +156,8 @@ const Home: React.FC = () => {
       </Helmet>
       
       <div className="space-y-12 lg:space-y-16">
-        {/* 1. Top section (H1, intro paragraph) */}
         <section className="flex flex-col lg:flex-row lg:justify-between lg:items-start lg:gap-x-8">
-          <div className="lg:w-full"> {/* Змінено ширину на повну */}
+          <div className="lg:w-full">
             <h1 className="font-mono font-bold text-h1-mobile normal-case md:uppercase lg:text-h1-desktop text-black mb-4 text-left">
               {content.mainHeading}
             </h1>
@@ -172,10 +165,8 @@ const Home: React.FC = () => {
               {content.introParagraph}
             </p>
           </div>
-          {/* --- ВИДАЛЕНО БЛОК З БЕЙДЖЕМ --- */}
         </section>
         
-        {/* 2. Analyzer section (LanguageSelector, TextInput) */}
         <section className="space-y-8">
           <LanguageSelector 
             selectedLanguage={analysisLanguage}
@@ -185,16 +176,25 @@ const Home: React.FC = () => {
               setApiError(null);
             }}
           />
+          
+          <div className="flex justify-center">
+            <Turnstile
+              siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+              onSuccess={(token) => setTurnstileToken(token)}
+              onError={() => setApiError("Error: CAPTCHA challenge failed. Please refresh the page.")}
+            />
+          </div>
+          
           <TextInput 
             text={text}
             setText={setText}
             onAnalyze={handleAnalyze}
             isAnalyzing={isAnalyzing}
             maxLength={maxChars}
+            isTurnstileVerified={!!turnstileToken}
           />
         </section>
         
-        {/* 3. Results & Errors section (AnalysisResults) */}
         <section aria-live="polite" aria-atomic="true">
           {apiError && (
             <div className="p-4 border-2 border-status-error bg-white text-status-error font-mono mb-8 rounded-none">
@@ -209,7 +209,6 @@ const Home: React.FC = () => {
           />
         </section>
 
-        {/* 4. The methodology & mission section */}
         <section className="max-w-3xl mx-auto">
           <h2 className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-6 normal-case text-center">
             {content.newSection.title}
