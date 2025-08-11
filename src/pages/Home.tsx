@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react'; // ВИДАЛЕНО 'useMemo'
 import { Helmet } from 'react-helmet-async';
-import { Turnstile } from '@marsidev/react-turnstile';
 
 import AnalysisResults, { AnalysisResultsProps } from '../components/AnalysisResults';
 import TextInput from '../components/TextInput';
@@ -57,7 +56,6 @@ const Home: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisData, setAnalysisData] = useState(initialResultsState);
   const [apiError, setApiError] = useState<string | null>(null);
-  const [turnstileToken, setTurnstileToken] = useState<string>("");
 
   const maxChars = SAFE_CHARACTER_LIMIT;
 
@@ -70,10 +68,6 @@ const Home: React.FC = () => {
     setApiError(null);
     resetAnalysisDisplay();
 
-    if (!turnstileToken) {
-      setApiError("Error: Please complete the CAPTCHA verification before analyzing.");
-      return;
-    }
     if (!inputText) {
       setApiError("Error: Input text is required for analysis.");
       return;
@@ -88,7 +82,7 @@ const Home: React.FC = () => {
     try {
       const systemPrompt = analysisLanguage === 'uk' ? SYSTEM_PROMPT_UK : SYSTEM_PROMPT_EN;
       
-      const result = await analyzeText(inputText, analysisLanguage, systemPrompt, turnstileToken);
+      const result = await analyzeText(inputText, analysisLanguage, systemPrompt);
       
       if ('error' in result) {
         throw new Error(result.error);
@@ -120,7 +114,7 @@ const Home: React.FC = () => {
     } finally {
       setIsAnalyzing(false);
     }
-  }, [text, analysisLanguage, maxChars, resetAnalysisDisplay, turnstileToken]);
+  }, [text, analysisLanguage, maxChars, resetAnalysisDisplay]);
 
   const softwareAppJsonLd = {
     "@context": "https://schema.org",
@@ -177,21 +171,12 @@ const Home: React.FC = () => {
             }}
           />
           
-          <div className="flex justify-center">
-            <Turnstile
-              siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-              onSuccess={(token) => setTurnstileToken(token)}
-              onError={() => setApiError("Error: CAPTCHA challenge failed. Please refresh the page.")}
-            />
-          </div>
-          
           <TextInput 
             text={text}
             setText={setText}
             onAnalyze={handleAnalyze}
             isAnalyzing={isAnalyzing}
             maxLength={maxChars}
-            isTurnstileVerified={!!turnstileToken}
           />
         </section>
         

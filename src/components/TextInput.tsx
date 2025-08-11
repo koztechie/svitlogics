@@ -8,7 +8,6 @@ interface TextInputProps {
   onAnalyze: () => void;
   isAnalyzing: boolean;
   maxLength: number;
-  isTurnstileVerified: boolean;
 }
 
 /**
@@ -16,7 +15,7 @@ interface TextInputProps {
  * It includes a textarea, action buttons (Copy, Clear, Analyze), and real-time metrics,
  * all styled according to the "Pure Minimalist-Brutalist" design system.
  */
-const TextInput: React.FC<TextInputProps> = ({ text, setText, onAnalyze, isAnalyzing, maxLength, isTurnstileVerified }) => {
+const TextInput: React.FC<TextInputProps> = ({ text, setText, onAnalyze, isAnalyzing, maxLength }) => {
   // const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
 
@@ -122,7 +121,7 @@ const TextInput: React.FC<TextInputProps> = ({ text, setText, onAnalyze, isAnaly
           <button
             type="button" 
             onClick={onAnalyze} 
-            disabled={!text.trim() || isAnalyzing || !isTurnstileVerified || isLimitExceeded}
+            disabled={!text.trim() || isAnalyzing || isLimitExceeded}
             className="px-4 py-2 font-mono font-medium text-ui-label uppercase border-1 rounded-none order-1 sm:order-2 
                        transition-colors duration-100 
                        bg-blue-accent text-white border-blue-accent 

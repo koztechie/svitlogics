@@ -34,24 +34,14 @@ export interface SvitlogicsErrorResponse {
 export async function analyzeText(
   text: string,
   language: 'en' | 'uk',
-  systemPrompt: string,
-  turnstileToken: string
+  systemPrompt: string
 ): Promise<SvitlogicsAnalysisResponse | SvitlogicsErrorResponse> {
-  
   const API_ENDPOINT = '/.netlify/functions/analyze';
-
   try {
     const httpResponse = await fetch(API_ENDPOINT, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text,
-        language,
-        systemPrompt,
-        turnstileToken,
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, language, systemPrompt }), // Надсилаємо без токена
     });
 
     const responseData: SvitlogicsAnalysisResponse | SvitlogicsErrorResponse = await httpResponse.json();

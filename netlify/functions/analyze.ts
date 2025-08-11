@@ -1,11 +1,7 @@
 // netlify/functions/analyze.ts
-
 import { Handler } from '@netlify/functions';
 import NodeCache from 'node-cache';
-
-// --- КОНФІГУРАЦІЯ ТЕПЕР ЖИВЕ ТУТ ---
-
-const ipCache = new NodeCache({ stdTTL: 3600 }); // Кеш для Rate Limiting, TTL = 1 година
+const ipCache = new NodeCache({ stdTTL: 3600 });
 
 // Конфігурація моделей, раніше була в modelsConfig.ts
 interface ModelConfig {
@@ -437,81 +433,29 @@ async function analyzeTextWithSvitlogicsAI(
 // --- ГОЛОВНИЙ ОБРОБНИК NETLIFY ---
 export const handler: Handler = async (event) => {
   if (event.httpMethod !== 'POST' || !event.body) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request: No body or wrong method.' }) };
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request' }) };
   }
-
-  const getBody = () => {
-    if (typeof event.body === 'string') {
-      try { return JSON.parse(event.body); } catch (e) { return null; }
-    }
-    return event.body;
-  };
-
-  const body = getBody();
+  const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
   if (!body) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request body: Not a valid JSON.' }) };
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request body' }) };
   }
-  
   const clientIp = event.headers['x-nf-client-connection-ip'];
-
-  // --- CLOUDFLARE TURNSTILE VERIFICATION ---
-  const { turnstileToken } = body;
-  if (!turnstileToken) {
-    return { statusCode: 403, body: JSON.stringify({ error: "CAPTCHA token is missing." }) };
-  }
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) {
-    console.error("FATAL: TURNSTILE_SECRET_KEY is not set on the server.");
-    return { statusCode: 500, body: JSON.stringify({ error: "Server configuration error." }) };
-  }
   
-  const formData = new URLSearchParams();
-  formData.append('secret', secret);
-  formData.append('response', turnstileToken);
-  if (clientIp) { formData.append('remoteip', clientIp); }
-
-try {
-    const turnstileResult = await fetch('https://challenges.cloudflare.com/turnstile/v2/siteverify', {
-      method: 'POST',
-      body: formData,
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
-
-    // --- ДІАГНОСТИКА ---
-    const responseText = await turnstileResult.text(); // Читаємо відповідь як текст
-    console.log("Cloudflare raw response:", responseText); // Виводимо її в лог
-    
-    const outcome = JSON.parse(responseText) as TurnstileResponse; // Парсимо текст
-    // --- КІНЕЦЬ ДІАГНОСТИКИ ---
-
-    if (!outcome.success) {
-      console.warn('Turnstile verification failed:', outcome['error-codes']);
-      return { statusCode: 403, body: JSON.stringify({ error: "CAPTCHA verification failed." }) };
-    }
-    console.log("Turnstile verification successful.");
-  } catch (e) {
-    console.error("Error verifying Turnstile token:", e);
-    return { statusCode: 500, body: JSON.stringify({ error: "Could not verify CAPTCHA." }) };
-  }
-  
-  // --- IP-BASED RATE LIMITING ---
+  // IP-BASED RATE LIMITING (ТЕПЕР ЦЕ ВАШ ГОЛОВНИЙ ЗАХИСТ)
   if (clientIp) {
     const requestCount = (ipCache.get<number>(clientIp) || 0) + 1;
     if (requestCount > 20) {
-      return { statusCode: 429, body: JSON.stringify({ error: "Too many requests. Please try again later." }) };
+      return { statusCode: 429, body: JSON.stringify({ error: "Too many requests" }) };
     }
     ipCache.set(clientIp, requestCount);
-    console.log(`[Rate Limiter] IP: ${clientIp} has made ${requestCount} requests.`);
   }
 
-  // --- CORE LOGIC ---
   try {
-    const { text, language } = body;
+    const { text, language } = body; // Більше немає turnstileToken
     const apiKey = process.env.GOOGLE_AI_KEY;
-    
-    if (!apiKey) { throw new Error("Server configuration error: GOOGLE_AI_KEY is not set."); }
+    if (!apiKey) { throw new Error("Server config error"); }
     if (!text || !language) { return { statusCode: 400, body: JSON.stringify({ error: 'Missing text or language' }) }; }
-
+    
     const systemPrompt = language === 'uk' ? SYSTEM_PROMPT_UK : SYSTEM_PROMPT_EN;
     const result = await analyzeTextWithSvitlogicsAI(systemPrompt, text, language, apiKey);
 
@@ -521,10 +465,9 @@ try {
       body: JSON.stringify(result),
     };
   } catch (error: any) {
-    console.error("Error in handler's core logic:", error);
     return {
       statusCode: 503,
-      body: JSON.stringify({ error: error.message || "All AI providers are currently unavailable." }),
+      body: JSON.stringify({ error: error.message || "AI providers unavailable" }),
     };
   }
 };
