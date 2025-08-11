@@ -9,32 +9,20 @@ interface ChangelogEntryData {
   changes: string[]; // Тепер це просто масив рядків
 }
 
-// Фінальні дані чейнджлогу з новою версією v0.2.0
+// Фінальні дані чейнджлогу, сфокусовані на продукті
 const changelogData: ChangelogEntryData[] = [
-  // --- НОВА ВЕРСІЯ ---
+  // --- НОВА ВЕРСІЯ, СФОКУСОВАНА НА КОРИСТУВАЧІ ---
   {
-    version: "v0.2.1 (Beta)",
-    date: "August 11, 2025",
+    version: "v0.3.0 (Beta)",
+    date: "August 12, 2025",
     changes: [
-      '<strong>REFACTORED:</strong> Migrated all AI analysis logic from the client-side to a secure, serverless API gateway (`Netlify Functions`).',
-      '<strong>SECURITY:</strong> API key is now securely stored as a server-side environment variable, making it inaccessible from the user\'s browser.',
-      '<strong>SECURITY:</strong> Implemented IP-based rate limiting to protect the service from automated abuse and DDoS attacks (20 requests/hour per IP).',
-      '<strong>SECURITY:</strong> Integrated Cloudflare Turnstile CAPTCHA to effectively block automated bots from accessing the AI analysis endpoint.',
-      '<strong>IMPROVED:</strong> Overall application security and robustness have been significantly enhanced, moving from a client-only proof-of-concept to a production-ready architecture.'
+      '<strong>IMPROVED:</strong> Upgraded the core AI engine to a new cascade of premium Google Gemini 2.5 models, significantly enhancing the accuracy and depth of text analysis.',
+      '<strong>SECURITY:</strong> Migrated all AI processing to a secure server-side API gateway. This architecture protects the core logic of the service and ensures user API keys are never exposed in the browser.',
+      '<strong>SECURITY:</strong> Implemented IP-based rate limiting to protect the service from automated abuse and ensure fair access for all users.',
+      '<strong>IMPROVED:</strong> Enhanced overall application stability and performance by moving complex computations from the user\'s browser to the server.'
     ]
   },
-  {
-    version: "v0.2.0 (Beta)",
-    date: "August 11, 2025",
-    changes: [
-      '<strong>IMPROVED:</strong> Migrated the entire development workflow from a cloud-based IDE to a professional local environment (VS Code, Git) for enhanced stability, performance, and independence.',
-      '<strong>ADDED:</strong> Established a new CI/CD (Continuous Integration/Continuous Deployment) pipeline via GitHub and Netlify for automated, reliable deployments.',
-      '<strong>ADDED:</strong> Integrated new AI-assisted coding tools directly into the local development environment to accelerate development.',
-      '<strong>REMOVED:</strong> Removed all dependencies and references to the Bolt.new platform, ensuring full project autonomy.',
-      '<strong>REFACTORED:</strong> Updated all public-facing informational pages to align with the project\'s independent status.'
-    ]
-  },
-  // --- ПОПЕРЕДНІ ВЕРСІЇ ---
+  // --- ПОПЕРЕДНІ ВЕРСІЇ ЗАЛИШАЮТЬСЯ ЯК ІСТОРІЯ ---
   {
     version: "v0.1.0 (Public Beta)",
     date: "June 29, 2025",
@@ -44,6 +32,7 @@ const changelogData: ChangelogEntryData[] = [
       '<strong>IMPROVED:</strong> Completed UI adjustments and bug fixes based on multi-device and cross-browser testing.'
     ]
   },
+  // ... (решта чейнджлогу без змін)
   {
     version: "v0.0.9 (Alpha)",
     date: "June 28, 2025",
