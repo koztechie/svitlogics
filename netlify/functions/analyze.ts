@@ -15,12 +15,11 @@ interface ModelConfig {
   type: 'gemini' | 'gemma';
 }
 const allModels: ModelConfig[] = [
-  // Пріоритет 1: Найшвидша та найпотужніша модель
-  { name: 'gemini-1.5-flash-latest', displayName: 'Gemini 1.5 Flash', tpm: 1000000, rpm: 15, priority: 1, enabled: true, maxOutputTokens: 8192, type: 'gemini' },
-  // Пріоритет 2: Більш потужна, але повільніша модель як резерв
-  { name: 'gemini-1.5-pro-latest', displayName: 'Gemini 1.5 Pro', tpm: 250000, rpm: 2, priority: 2, enabled: true, maxOutputTokens: 8192, type: 'gemini' },
-  // Пріоритет 3: Gemma як глибокий резерв
-  { name: 'gemma-7b-it', displayName: 'Gemma 7B', tpm: 30000, rpm: 50, priority: 3, enabled: true, maxOutputTokens: 8192, type: 'gemma' },
+  { name: 'gemini-2.5-pro', displayName: 'Gemini 2.5 Pro', tpm: 250000, rpm: 5, priority: 1, enabled: true, maxOutputTokens: 65535, type: 'gemini' },
+  { name: 'gemini-2.5-flash', displayName: 'Gemini 2.5 Flash', tpm: 250000, rpm: 10, priority: 2, enabled: true, maxOutputTokens: 65535, type: 'gemini' },
+  { name: 'gemini-2.5-flash-lite', displayName: 'Gemini 2.5 Flash-Lite', tpm: 250000, rpm: 15, priority: 3, enabled: true, maxOutputTokens: 65535, type: 'gemini' },
+  { name: 'gemini-2.0-flash', displayName: 'Gemini 2.0 Flash', tpm: 1000000, rpm: 15, priority: 4, enabled: true, maxOutputTokens: 65535, type: 'gemini' },
+  { name: 'gemini-2.0-flash-lite', displayName: 'Gemini 2.0 Flash-Lite', tpm: 1000000, rpm: 30, priority: 5, enabled: true, maxOutputTokens: 65535, type: 'gemini' },
 ];
 const MODELS_CASCADE: ModelConfig[] = allModels.filter(model => model.enabled).sort((a, b) => a.priority - b.priority);
 
