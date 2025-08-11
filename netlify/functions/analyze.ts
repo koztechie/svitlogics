@@ -470,17 +470,20 @@ export const handler: Handler = async (event) => {
   formData.append('response', turnstileToken);
   if (clientIp) { formData.append('remoteip', clientIp); }
 
-  try {
+try {
     const turnstileResult = await fetch('https://challenges.cloudflare.com/turnstile/v2/siteverify', {
       method: 'POST',
       body: formData,
-      // --- ВИПРАВЛЕННЯ ТУТ ---
-      // Явно вказуємо, що надсилаємо дані форми.
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
-    const outcome = await turnstileResult.json() as TurnstileResponse;
+
+    // --- ДІАГНОСТИКА ---
+    const responseText = await turnstileResult.text(); // Читаємо відповідь як текст
+    console.log("Cloudflare raw response:", responseText); // Виводимо її в лог
+    
+    const outcome = JSON.parse(responseText) as TurnstileResponse; // Парсимо текст
+    // --- КІНЕЦЬ ДІАГНОСТИКИ ---
+
     if (!outcome.success) {
       console.warn('Turnstile verification failed:', outcome['error-codes']);
       return { statusCode: 403, body: JSON.stringify({ error: "CAPTCHA verification failed." }) };
