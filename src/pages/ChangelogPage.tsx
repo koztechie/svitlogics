@@ -13,6 +13,17 @@ interface ChangelogEntryData {
 const changelogData: ChangelogEntryData[] = [
   // --- НОВА ВЕРСІЯ ---
   {
+    version: "v0.2.1 (Beta)",
+    date: "August 11, 2025",
+    changes: [
+      '<strong>REFACTORED:</strong> Migrated all AI analysis logic from the client-side to a secure, serverless API gateway (`Netlify Functions`).',
+      '<strong>SECURITY:</strong> API key is now securely stored as a server-side environment variable, making it inaccessible from the user\'s browser.',
+      '<strong>SECURITY:</strong> Implemented IP-based rate limiting to protect the service from automated abuse and DDoS attacks (20 requests/hour per IP).',
+      '<strong>SECURITY:</strong> Integrated Cloudflare Turnstile CAPTCHA to effectively block automated bots from accessing the AI analysis endpoint.',
+      '<strong>IMPROVED:</strong> Overall application security and robustness have been significantly enhanced, moving from a client-only proof-of-concept to a production-ready architecture.'
+    ]
+  },
+  {
     version: "v0.2.0 (Beta)",
     date: "August 11, 2025",
     changes: [
