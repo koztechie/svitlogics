@@ -439,17 +439,22 @@ export const handler: Handler = async (event) => {
   if (event.httpMethod !== 'POST' || !event.body) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request: No body or wrong method.' }) };
   }
+
   const getBody = () => {
     if (typeof event.body === 'string') {
       try { return JSON.parse(event.body); } catch (e) { return null; }
     }
     return event.body;
   };
+
   const body = getBody();
   if (!body) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request body: Not a valid JSON.' }) };
   }
+  
   const clientIp = event.headers['x-nf-client-connection-ip'];
+
+  // --- CLOUDFLARE TURNSTILE VERIFICATION ---
   const { turnstileToken } = body;
   if (!turnstileToken) {
     return { statusCode: 403, body: JSON.stringify({ error: "CAPTCHA token is missing." }) };
@@ -459,14 +464,21 @@ export const handler: Handler = async (event) => {
     console.error("FATAL: TURNSTILE_SECRET_KEY is not set on the server.");
     return { statusCode: 500, body: JSON.stringify({ error: "Server configuration error." }) };
   }
+  
   const formData = new URLSearchParams();
   formData.append('secret', secret);
   formData.append('response', turnstileToken);
   if (clientIp) { formData.append('remoteip', clientIp); }
+
   try {
     const turnstileResult = await fetch('https://challenges.cloudflare.com/turnstile/v2/siteverify', {
       method: 'POST',
       body: formData,
+      // --- ВИПРАВЛЕННЯ ТУТ ---
+      // Явно вказуємо, що надсилаємо дані форми.
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     });
     const outcome = await turnstileResult.json() as TurnstileResponse;
     if (!outcome.success) {
@@ -478,6 +490,8 @@ export const handler: Handler = async (event) => {
     console.error("Error verifying Turnstile token:", e);
     return { statusCode: 500, body: JSON.stringify({ error: "Could not verify CAPTCHA." }) };
   }
+  
+  // --- IP-BASED RATE LIMITING ---
   if (clientIp) {
     const requestCount = (ipCache.get<number>(clientIp) || 0) + 1;
     if (requestCount > 20) {
@@ -486,13 +500,18 @@ export const handler: Handler = async (event) => {
     ipCache.set(clientIp, requestCount);
     console.log(`[Rate Limiter] IP: ${clientIp} has made ${requestCount} requests.`);
   }
+
+  // --- CORE LOGIC ---
   try {
     const { text, language } = body;
     const apiKey = process.env.GOOGLE_AI_KEY;
+    
     if (!apiKey) { throw new Error("Server configuration error: GOOGLE_AI_KEY is not set."); }
     if (!text || !language) { return { statusCode: 400, body: JSON.stringify({ error: 'Missing text or language' }) }; }
+
     const systemPrompt = language === 'uk' ? SYSTEM_PROMPT_UK : SYSTEM_PROMPT_EN;
     const result = await analyzeTextWithSvitlogicsAI(systemPrompt, text, language, apiKey);
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
