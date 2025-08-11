@@ -60,7 +60,7 @@ async function analyzeTextWithSvitlogicsAI(
     if (!apiKey) {
         throw new Error("FATAL: GOOGLE_AI_KEY environment variable is not set on the server.");
     }
-    const API_ENDPOINT = `https://generativelace.googleapis.com/v1beta/models/${currentModel.name}:generateContent?key=${apiKey}`;
+    const API_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel.name}:generateContent?key=${apiKey}`;
     console.log(`Attempting analysis with model [${modelIndex + 1}/${MODELS_CASCADE.length}]: ${currentModel.displayName}`);
     const systemPromptTokens = SYSTEM_PROMPT_TOKEN_COUNT[languageCode];
     const tokenToCharRatio = CHARS_PER_TOKEN[languageCode];
