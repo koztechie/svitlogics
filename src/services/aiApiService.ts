@@ -20,7 +20,6 @@ export interface SvitlogicsErrorResponse {
   error: string;
 }
 
-
 // --- НОВА ФУНКЦІЯ-КЛІЄНТ ---
 
 /**
@@ -33,27 +32,29 @@ export interface SvitlogicsErrorResponse {
  */
 export async function analyzeText(
   text: string,
-  language: 'en' | 'uk',
+  language: "en" | "uk",
   systemPrompt: string
 ): Promise<SvitlogicsAnalysisResponse | SvitlogicsErrorResponse> {
-  const API_ENDPOINT = '/.netlify/functions/analyze';
+  const API_ENDPOINT = "/.netlify/functions/analyze";
   try {
     const httpResponse = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, language, systemPrompt }), // Надсилаємо без токена
     });
 
-    const responseData: SvitlogicsAnalysisResponse | SvitlogicsErrorResponse = await httpResponse.json();
+    const responseData: SvitlogicsAnalysisResponse | SvitlogicsErrorResponse =
+      await httpResponse.json();
 
     if (!httpResponse.ok) {
       // Якщо сервер повернув помилку (напр., 429, 500), ми її "прокидаємо" далі
-      const errorMessage = (responseData as SvitlogicsErrorResponse).error || `Request failed with status ${httpResponse.status}`;
+      const errorMessage =
+        (responseData as SvitlogicsErrorResponse).error ||
+        `Request failed with status ${httpResponse.status}`;
       throw new Error(errorMessage);
     }
 
     return responseData;
-
   } catch (error: any) {
     console.error("Critical error in aiApiService:", error);
     // Повертаємо помилку у стандартизованому форматі

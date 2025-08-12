@@ -1,6 +1,6 @@
-import React from 'react';
-import Header from './Header';
-import Footer from './Footer';
+import React from "react";
+import Header from "./Header";
+import Footer from "./Footer";
 
 // Define the interface for the component's props
 interface LayoutProps {
@@ -23,7 +23,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     // - Text color and font family are inherited from the styles applied to `body` in `src/index.css`.
     <div className="flex flex-col min-h-screen bg-white">
       <Header />
-      
+
       {/* Main content area */}
       {/* - `flex-grow`: Allows this element to expand and push the footer down. */}
       {/* - `w-full`: Ensures it takes the full width before centering the container inside. */}
@@ -36,11 +36,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           - `py-16`: Provides a 64px vertical padding (top and bottom) to create the defined "Section spacing"
              between the header/footer and the page content, ensuring ample raw space.
         */}
-        <div className="container-main py-16">
-          {children}
-        </div>
+        <div className="container-main py-16">{children}</div>
       </main>
-      
+
       <Footer />
     </div>
   );

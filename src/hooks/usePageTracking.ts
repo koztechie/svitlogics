@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import TagManager from 'react-gtm-module';
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import TagManager from "react-gtm-module";
 
 const GTM_ID = import.meta.env.VITE_GTM_ID;
 
@@ -17,7 +17,7 @@ export function usePageTracking(): void {
       // This creates a dataLayer event that can be used to trigger tags in GTM
       TagManager.dataLayer({
         dataLayer: {
-          event: 'pageview',
+          event: "pageview",
           page: location.pathname + location.search,
         },
       });

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 // import { useTranslation } from 'react-i18next';
 
 // Дані для навігаційних посилань, винесені для чистоти та легкого управління
@@ -29,21 +29,25 @@ const Footer: React.FC = () => {
           <ul className="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-3">
             {navLinks.map((link) => (
               <li key={link.to}>
-                <Link 
-                  to={link.to} 
+                <Link
+                  to={link.to}
                   className="font-mono font-medium text-ui-label uppercase text-blue-accent no-underline hover:underline focus-visible:underline"
                 >
-                  {/* t(`footer.nav.${link.label.toLowerCase()}`) || */ link.label}
+                  {
+                    /* t(`footer.nav.${link.label.toLowerCase()}`) || */ link.label
+                  }
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
-        
+
         {/* Нижня секція футера з копірайтом та версією */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-y-2 pt-8 border-t border-black">
           <p className="font-mono text-ui-label text-black text-center sm:text-left uppercase">
-            {/* t('footer.copyright', { year: currentYear }) || */ copyrightText}
+            {
+              /* t('footer.copyright', { year: currentYear }) || */ copyrightText
+            }
           </p>
           <p className="font-mono text-ui-label text-text-secondary text-center sm:text-right uppercase">
             {/* t('footer.version') || */ versionText}

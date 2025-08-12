@@ -1,28 +1,32 @@
-import React, { useState, useCallback } from 'react'; // ВИДАЛЕНО 'useMemo'
-import { Helmet } from 'react-helmet-async';
+import React, { useState, useCallback } from "react"; // ВИДАЛЕНО 'useMemo'
+import { Helmet } from "react-helmet-async";
 
-import AnalysisResults, { AnalysisResultsProps } from '../components/AnalysisResults';
-import TextInput from '../components/TextInput';
-import LanguageSelector, { AnalysisLanguage } from '../components/LanguageSelector';
+import AnalysisResults, {
+  AnalysisResultsProps,
+} from "../components/AnalysisResults";
+import TextInput from "../components/TextInput";
+import LanguageSelector, {
+  AnalysisLanguage,
+} from "../components/LanguageSelector";
 // ВИДАЛЕНО НЕПОТРІБНІ ТИПИ З ІМПОРТУ
-import { analyzeText } from '../services/aiApiService';
+import { analyzeText } from "../services/aiApiService";
 
 // Видалено імпорти, які тепер не потрібні на клієнті
 // import { MODELS_CASCADE } from '../config/modelsConfig';
 // import { SYSTEM_PROMPT_TOKEN_COUNT, OUTPUT_BUFFER_TOKENS, CHARS_PER_TOKEN } from '../config/promptConfig';
 
-import SYSTEM_PROMPT_EN from '../config/gemma_system_prompt_en.txt?raw';
-import SYSTEM_PROMPT_UK from '../config/gemma_system_prompt_uk.txt?raw';
+import SYSTEM_PROMPT_EN from "../config/gemma_system_prompt_en.txt?raw";
+import SYSTEM_PROMPT_UK from "../config/gemma_system_prompt_uk.txt?raw";
 
-const initialResultsState: Omit<AnalysisResultsProps, 'isAnalyzing'> = {
+const initialResultsState: Omit<AnalysisResultsProps, "isAnalyzing"> = {
   categories: [
-    { name: 'Manipulative Content', percentage: null, explanation: null },
-    { name: 'Propagandistic Content', percentage: null, explanation: null },
-    { name: 'Disinformation', percentage: null, explanation: null },
-    { name: 'Unbiased Presentation', percentage: null, explanation: null },
-    { name: 'Emotional Tone', percentage: null, explanation: null },
+    { name: "Manipulative Content", percentage: null, explanation: null },
+    { name: "Propagandistic Content", percentage: null, explanation: null },
+    { name: "Disinformation", percentage: null, explanation: null },
+    { name: "Unbiased Presentation", percentage: null, explanation: null },
+    { name: "Emotional Tone", percentage: null, explanation: null },
   ],
-  overallSummary: '',
+  overallSummary: "",
 };
 
 const SAFE_CHARACTER_LIMIT = 15000;
@@ -30,29 +34,33 @@ const SAFE_CHARACTER_LIMIT = 15000;
 const Home: React.FC = () => {
   const content = {
     seoTitle: "Svitlogics | AI Text Analyzer for Bias & Disinformation",
-    seoDescription: "Analyze text for manipulation, propaganda, and bias with Svitlogics. An AI tool to empower critical thinking in English & Ukrainian. By Eugene Kozlovsky.",
+    seoDescription:
+      "Analyze text for manipulation, propaganda, and bias with Svitlogics. An AI tool to empower critical thinking in English & Ukrainian. By Eugene Kozlovsky.",
     mainHeading: "DISINFORMATION & MANIPULATION ANALYSIS",
-    introParagraph: "An independent AI tool that analyzes text for propaganda, bias, and manipulation. Svitlogics provides structured insights to aid your critical thinking.",
+    introParagraph:
+      "An independent AI tool that analyzes text for propaganda, bias, and manipulation. Svitlogics provides structured insights to aid your critical thinking.",
     newSection: {
       title: "Methodology and mission",
       paragraphs: [
         "My mission with Svitlogics is straightforward: to provide an accessible, transparent tool for identifying manipulative techniques. I developed it as a solo project from Kyiv, Ukraine, driven by the need to counter pervasive information warfare. The core principle is that understanding <em>how</em> manipulation works is the first step toward resisting it.",
         "The analysis is performed by a high-availability cascade of Google AI models, including the Gemini and Gemma families. This system ensures reliability by automatically falling back to an alternative model if a primary one is at capacity. Each model is guided by a detailed, custom-calibrated system prompt, which instructs the AI to assess the text against five core criteria.",
-        "The analysis focuses on these five areas:"
+        "The analysis focuses on these five areas:",
       ],
       criteria: [
         "<strong>Manipulative Content:</strong> Identifies logical fallacies, emotional appeals, and psychological tactics.",
         "<strong>Propagandistic Content:</strong> Detects elements of systematic, one-sided ideological campaigns.",
         "<strong>Disinformation:</strong> Assesses for verifiably false information presented with intent to deceive.",
         "<strong>Unbiased Presentation (Impartiality):</strong> Evaluates the text's commitment to fairness, objectivity, and balance.",
-        "<strong>Emotional Tone:</strong> Analyzes the underlying sentiment and its intensity."
+        "<strong>Emotional Tone:</strong> Analyzes the underlying sentiment and its intensity.",
       ],
-      finalParagraph: "It is important to understand that <strong>no AI analysis is 100% infallible</strong>. Svitlogics is not designed to deliver a final \"truth\" verdict. Its purpose is to provide structured data and justifications, empowering you to form your own, more informed conclusions."
-    }
+      finalParagraph:
+        'It is important to understand that <strong>no AI analysis is 100% infallible</strong>. Svitlogics is not designed to deliver a final "truth" verdict. Its purpose is to provide structured data and justifications, empowering you to form your own, more informed conclusions.',
+    },
   };
-  
-  const [text, setText] = useState<string>('');
-  const [analysisLanguage, setAnalysisLanguage] = useState<AnalysisLanguage>('en');
+
+  const [text, setText] = useState<string>("");
+  const [analysisLanguage, setAnalysisLanguage] =
+    useState<AnalysisLanguage>("en");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisData, setAnalysisData] = useState(initialResultsState);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -73,44 +81,61 @@ const Home: React.FC = () => {
       return;
     }
     if (inputText.length > maxChars) {
-      setApiError(`Error: Text exceeds the maximum length of ${maxChars} characters.`);
+      setApiError(
+        `Error: Text exceeds the maximum length of ${maxChars} characters.`
+      );
       return;
     }
 
     setIsAnalyzing(true);
 
     try {
-      const systemPrompt = analysisLanguage === 'uk' ? SYSTEM_PROMPT_UK : SYSTEM_PROMPT_EN;
-      
-      const result = await analyzeText(inputText, analysisLanguage, systemPrompt);
-      
-      if ('error' in result) {
+      const systemPrompt =
+        analysisLanguage === "uk" ? SYSTEM_PROMPT_UK : SYSTEM_PROMPT_EN;
+
+      const result = await analyzeText(
+        inputText,
+        analysisLanguage,
+        systemPrompt
+      );
+
+      if ("error" in result) {
         throw new Error(result.error);
       }
-      
+
       if (Array.isArray(result.analysis_results)) {
-        const updatedCategories = initialResultsState.categories.map(initialCategory => {
-          const resultCategory = result.analysis_results.find(
-            resCat => resCat.category_name === initialCategory.name || resCat.category_name.startsWith(initialCategory.name)
-          );
-          return resultCategory ? {
-            name: initialCategory.name,
-            percentage: resultCategory.percentage_score,
-            explanation: resultCategory.justification,
-          } : initialCategory;
-        });
+        const updatedCategories = initialResultsState.categories.map(
+          (initialCategory) => {
+            const resultCategory = result.analysis_results.find(
+              (resCat) =>
+                resCat.category_name === initialCategory.name ||
+                resCat.category_name.startsWith(initialCategory.name)
+            );
+            return resultCategory
+              ? {
+                  name: initialCategory.name,
+                  percentage: resultCategory.percentage_score,
+                  explanation: resultCategory.justification,
+                }
+              : initialCategory;
+          }
+        );
 
         setAnalysisData({
           categories: updatedCategories,
-          overallSummary: result.overall_summary || '',
+          overallSummary: result.overall_summary || "",
         });
       } else {
-        throw new Error("Analysis failed due to an unexpected response from the server.");
+        throw new Error(
+          "Analysis failed due to an unexpected response from the server."
+        );
       }
-
     } catch (e: any) {
       console.error("Error in handleAnalyze:", e);
-      setApiError(`Error: ${e.message}` || "An unexpected error occurred during the process.");
+      setApiError(
+        `Error: ${e.message}` ||
+          "An unexpected error occurred during the process."
+      );
     } finally {
       setIsAnalyzing(false);
     }
@@ -119,19 +144,19 @@ const Home: React.FC = () => {
   const softwareAppJsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "Svitlogics",
-    "applicationCategory": "ProductivityApplication",
-    "operatingSystem": "WebPlatform",
-    "description": content.seoDescription,
-    "offers": {
+    name: "Svitlogics",
+    applicationCategory: "ProductivityApplication",
+    operatingSystem: "WebPlatform",
+    description: content.seoDescription,
+    offers: {
       "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
+      price: "0",
+      priceCurrency: "USD",
     },
-    "author": {
+    author: {
       "@type": "Person",
-      "name": "Eugene Kozlovsky"
-    }
+      name: "Eugene Kozlovsky",
+    },
   };
 
   return (
@@ -148,7 +173,7 @@ const Home: React.FC = () => {
           {JSON.stringify(softwareAppJsonLd)}
         </script>
       </Helmet>
-      
+
       <div className="space-y-12 lg:space-y-16">
         <section className="flex flex-col lg:flex-row lg:justify-between lg:items-start lg:gap-x-8">
           <div className="lg:w-full">
@@ -160,9 +185,9 @@ const Home: React.FC = () => {
             </p>
           </div>
         </section>
-        
+
         <section className="space-y-8">
-          <LanguageSelector 
+          <LanguageSelector
             selectedLanguage={analysisLanguage}
             onLanguageChange={(lang) => {
               setAnalysisLanguage(lang);
@@ -170,8 +195,8 @@ const Home: React.FC = () => {
               setApiError(null);
             }}
           />
-          
-          <TextInput 
+
+          <TextInput
             text={text}
             setText={setText}
             onAnalyze={handleAnalyze}
@@ -179,17 +204,22 @@ const Home: React.FC = () => {
             maxLength={maxChars}
           />
         </section>
-        
+
         <section aria-live="polite" aria-atomic="true">
           {apiError && (
             <div className="p-4 border-2 border-status-error bg-white text-status-error font-mono mb-8 rounded-none">
-              <strong className="font-mono font-medium text-ui-label uppercase">Error:</strong> 
-              <span className="font-mono font-normal text-body-main"> {apiError.replace("Error: ", "")}</span>
+              <strong className="font-mono font-medium text-ui-label uppercase">
+                Error:
+              </strong>
+              <span className="font-mono font-normal text-body-main">
+                {" "}
+                {apiError.replace("Error: ", "")}
+              </span>
             </div>
           )}
-          <AnalysisResults 
+          <AnalysisResults
             categories={analysisData.categories}
-            isAnalyzing={isAnalyzing} 
+            isAnalyzing={isAnalyzing}
             overallSummary={analysisData.overallSummary}
           />
         </section>
@@ -200,14 +230,30 @@ const Home: React.FC = () => {
           </h2>
           <div className="space-y-4 font-mono font-normal text-body-main leading-body text-black">
             {content.newSection.paragraphs.map((p, index) => (
-              <p key={index} dangerouslySetInnerHTML={{ __html: p.replace(/<em>(.*?)<\/em>/g, '<em class="font-mono not-italic font-medium">$1</em>') }} />
+              <p
+                key={index}
+                dangerouslySetInnerHTML={{
+                  __html: p.replace(
+                    /<em>(.*?)<\/em>/g,
+                    '<em class="font-mono not-italic font-medium">$1</em>'
+                  ),
+                }}
+              />
             ))}
             <ul className="list-disc ml-6 space-y-2 pt-2">
-              {content.newSection.criteria.map(criterion => (
-                <li key={criterion} dangerouslySetInnerHTML={{ __html: criterion }} />
+              {content.newSection.criteria.map((criterion) => (
+                <li
+                  key={criterion}
+                  dangerouslySetInnerHTML={{ __html: criterion }}
+                />
               ))}
             </ul>
-            <p className="pt-4" dangerouslySetInnerHTML={{ __html: content.newSection.finalParagraph }} />
+            <p
+              className="pt-4"
+              dangerouslySetInnerHTML={{
+                __html: content.newSection.finalParagraph,
+              }}
+            />
           </div>
         </section>
       </div>
