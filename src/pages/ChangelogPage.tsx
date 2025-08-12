@@ -9,9 +9,22 @@ interface ChangelogEntryData {
   changes: string[]; // Тепер це просто масив рядків
 }
 
-// Фінальні дані чейнджлогу, сфокусовані на продукті
+// Фінальні дані чейнджлогу з новою версією v0.3.2
 const changelogData: ChangelogEntryData[] = [
   // --- НОВА ВЕРСІЯ ---
+  {
+    version: "v0.3.2 (Beta)",
+    date: "August 13, 2025",
+    changes: [
+      "<strong>IMPROVED:</strong> The application now remembers the last selected language using `localStorage`, improving convenience for returning users.",
+      "<strong>IMPROVED:</strong> The 'Clear' button in the text input area now clears both the input field and the analysis results, providing a complete reset of the interface.",
+      "<strong>ADDED:</strong> A 'Copy' button has been added to the analysis results card, allowing users to easily copy the full report to their clipboard.",
+      "<strong>IMPROVED:</strong> The character counter now turns red when the input limit is exceeded, providing clear visual feedback to the user.",
+      "<strong>ADDED:</strong> The site footer has been updated to include clickable icons for GitHub and email, improving accessibility and contact options.",
+      '<strong>SECURITY:</strong> Added `autoComplete="off"` to the text input field to prevent browsers from suggesting previously analyzed (and potentially sensitive) text.',
+    ],
+  },
+  // --- ПОПЕРЕДНІ ВЕРСІЇ ---
   {
     version: "v0.3.1 (Beta)",
     date: "August 12, 2025",
@@ -21,7 +34,6 @@ const changelogData: ChangelogEntryData[] = [
       "<strong>IMPROVED:</strong> Updated Open Graph meta tags to include a custom social media banner (`og:image`), ensuring proper branding when sharing links.",
     ],
   },
-  // --- ПОПЕРЕДНІ ВЕРСІЇ ---
   {
     version: "v0.3.0 (Beta)",
     date: "August 12, 2025",
@@ -41,7 +53,6 @@ const changelogData: ChangelogEntryData[] = [
       "<strong>IMPROVED:</strong> Completed UI adjustments and bug fixes based on multi-device and cross-browser testing.",
     ],
   },
-  // ... (решта чейнджлогу без змін)
   {
     version: "v0.0.9 (Alpha)",
     date: "June 28, 2025",

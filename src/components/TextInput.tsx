@@ -6,6 +6,7 @@ interface TextInputProps {
   text: string;
   setText: (text: string) => void;
   onAnalyze: () => void;
+  onClear: () => void;
   isAnalyzing: boolean;
   maxLength: number;
 }
@@ -19,13 +20,14 @@ const TextInput: React.FC<TextInputProps> = ({
   text,
   setText,
   onAnalyze,
+  onClear,
   isAnalyzing,
   maxLength,
 }) => {
   // const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
 
-  // Тексти для UI
+  // UI Text constants
   const title = "TEXT INPUT";
   const copyLabel = "Copy text";
   const clearLabel = "Clear text";
@@ -36,8 +38,6 @@ const TextInput: React.FC<TextInputProps> = ({
   const textareaAriaLabel = "Text input for analysis";
   const analyzeButtonText = "ANALYZE";
   const analyzingButtonText = "ANALYZING...";
-
-  const handleClear = () => setText("");
 
   const handleCopy = () => {
     if (text.trim()) {
@@ -56,7 +56,7 @@ const TextInput: React.FC<TextInputProps> = ({
 
   return (
     <div className="border border-black bg-white rounded-none">
-      {/* Header - іконку видалено для відповідності дизайн-системі */}
+      {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-black">
         <h2 className="font-mono font-medium text-ui-label uppercase text-black">
           {title}
@@ -71,7 +71,7 @@ const TextInput: React.FC<TextInputProps> = ({
               focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-accent
               ${
                 isCopied
-                  ? "bg-black text-white cursor-default" // Inverted style for "Copied!" state
+                  ? "bg-black text-white cursor-default"
                   : "bg-white text-black hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white"
               }
               ${
@@ -91,7 +91,7 @@ const TextInput: React.FC<TextInputProps> = ({
           </button>
           <button
             type="button"
-            onClick={handleClear}
+            onClick={onClear}
             disabled={!text.trim() || isAnalyzing}
             className="p-2 border border-black bg-white text-black rounded-none transition-colors duration-100 
                        hover:bg-black hover:text-white 
@@ -118,7 +118,8 @@ const TextInput: React.FC<TextInputProps> = ({
                      disabled:bg-bg-disabled disabled:cursor-not-allowed"
           aria-label={textareaAriaLabel}
           disabled={isAnalyzing}
-          maxLength={maxLength}
+          // --- MODIFICATION HERE ---
+          autoComplete="off"
         />
       </div>
 
@@ -127,13 +128,21 @@ const TextInput: React.FC<TextInputProps> = ({
         <div className="flex flex-col gap-y-4 sm:flex-row sm:justify-between sm:items-center sm:gap-y-0">
           <div className="flex flex-wrap gap-x-4 gap-y-1 order-2 sm:order-1 text-ui-label font-mono">
             <span
-              className={`text-text-secondary ${
-                isLimitExceeded ? "text-status-error" : ""
-              }`}
+              className={
+                isLimitExceeded ? "text-status-error" : "text-text-secondary"
+              }
             >
               {charactersLabel}{" "}
-              <strong className="font-medium text-black">{charCount}</strong> /{" "}
-              {maxLength}
+              <strong
+                className={
+                  isLimitExceeded
+                    ? "font-medium text-status-error"
+                    : "font-medium text-black"
+                }
+              >
+                {charCount}
+              </strong>{" "}
+              / {maxLength}
             </span>
             <span className="text-text-secondary">
               {wordsLabel}{" "}
@@ -144,7 +153,7 @@ const TextInput: React.FC<TextInputProps> = ({
             type="button"
             onClick={onAnalyze}
             disabled={!text.trim() || isAnalyzing || isLimitExceeded}
-            className="px-4 py-2 font-mono font-medium text-ui-label uppercase border-1 rounded-none order-1 sm:order-2 
+            className="px-4 py-2 font-mono font-medium text-ui-label uppercase border-2 rounded-none order-1 sm:order-2 
                        transition-colors duration-100 
                        bg-blue-accent text-white border-blue-accent 
                        hover:bg-blue-accent-hover hover:border-blue-accent-hover 

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react"; // ВИДАЛЕНО 'useMemo'
+import React, { useState, useCallback, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 
 import AnalysisResults, {
@@ -8,12 +8,7 @@ import TextInput from "../components/TextInput";
 import LanguageSelector, {
   AnalysisLanguage,
 } from "../components/LanguageSelector";
-// ВИДАЛЕНО НЕПОТРІБНІ ТИПИ З ІМПОРТУ
 import { analyzeText } from "../services/aiApiService";
-
-// Видалено імпорти, які тепер не потрібні на клієнті
-// import { MODELS_CASCADE } from '../config/modelsConfig';
-// import { SYSTEM_PROMPT_TOKEN_COUNT, OUTPUT_BUFFER_TOKENS, CHARS_PER_TOKEN } from '../config/promptConfig';
 
 import SYSTEM_PROMPT_EN from "../config/gemma_system_prompt_en.txt?raw";
 import SYSTEM_PROMPT_UK from "../config/gemma_system_prompt_uk.txt?raw";
@@ -59,17 +54,34 @@ const Home: React.FC = () => {
   };
 
   const [text, setText] = useState<string>("");
-  const [analysisLanguage, setAnalysisLanguage] =
-    useState<AnalysisLanguage>("en");
+  const [analysisLanguage, setAnalysisLanguage] = useState<AnalysisLanguage>(
+    () => {
+      const storedLang = localStorage.getItem("svitlogics_language");
+      if (storedLang === "uk" || storedLang === "en") {
+        return storedLang;
+      }
+      return "en";
+    }
+  );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisData, setAnalysisData] = useState(initialResultsState);
   const [apiError, setApiError] = useState<string | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem("svitlogics_language", analysisLanguage);
+  }, [analysisLanguage]);
 
   const maxChars = SAFE_CHARACTER_LIMIT;
 
   const resetAnalysisDisplay = useCallback(() => {
     setAnalysisData(initialResultsState);
   }, []);
+
+  const handleClear = useCallback(() => {
+    setText("");
+    resetAnalysisDisplay();
+    setApiError(null);
+  }, [resetAnalysisDisplay]);
 
   const handleAnalyze = useCallback(async () => {
     const inputText = text.trim();
@@ -173,9 +185,12 @@ const Home: React.FC = () => {
         </script>
       </Helmet>
 
-      <div className="space-y-12 lg:space-y-16">
-        <section className="flex flex-col lg:flex-row lg:justify-between lg:items-start lg:gap-x-8">
-          <div className="lg:w-full">
+      {/* --- МОДИФІКАЦІЯ ТУТ: Нова структура розмітки --- */}
+
+      {/* Секція №1 (Заголовок) тепер у своєму власному контейнері */}
+      <div className="container-main pt-16">
+        <section>
+          <div className="w-full">
             <h1 className="font-mono font-bold text-h1-mobile normal-case md:uppercase lg:text-h1-desktop text-black mb-4 text-left">
               {content.mainHeading}
             </h1>
@@ -184,77 +199,82 @@ const Home: React.FC = () => {
             </p>
           </div>
         </section>
+      </div>
 
-        <section className="space-y-8">
-          <LanguageSelector
-            selectedLanguage={analysisLanguage}
-            onLanguageChange={(lang) => {
-              setAnalysisLanguage(lang);
-              resetAnalysisDisplay();
-              setApiError(null);
-            }}
-          />
-
-          <TextInput
-            text={text}
-            setText={setText}
-            onAnalyze={handleAnalyze}
-            isAnalyzing={isAnalyzing}
-            maxLength={maxChars}
-          />
-        </section>
-
-        <section aria-live="polite" aria-atomic="true">
-          {apiError && (
-            <div className="p-4 border-2 border-status-error bg-white text-status-error font-mono mb-8 rounded-none">
-              <strong className="font-mono font-medium text-ui-label uppercase">
-                Error:
-              </strong>
-              <span className="font-mono font-normal text-body-main">
-                {" "}
-                {apiError.replace("Error: ", "")}
-              </span>
-            </div>
-          )}
-          <AnalysisResults
-            categories={analysisData.categories}
-            isAnalyzing={isAnalyzing}
-            overallSummary={analysisData.overallSummary}
-          />
-        </section>
-
-        <section className="max-w-3xl mx-auto">
-          <h2 className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-6 normal-case text-center">
-            {content.newSection.title}
-          </h2>
-          <div className="space-y-4 font-mono font-normal text-body-main leading-body text-black">
-            {content.newSection.paragraphs.map((p, index) => (
-              <p
-                key={index}
-                dangerouslySetInnerHTML={{
-                  __html: p.replace(
-                    /<em>(.*?)<\/em>/g,
-                    '<em class="font-mono not-italic font-medium">$1</em>'
-                  ),
-                }}
-              />
-            ))}
-            <ul className="list-disc ml-6 space-y-2 pt-2">
-              {content.newSection.criteria.map((criterion) => (
-                <li
-                  key={criterion}
-                  dangerouslySetInnerHTML={{ __html: criterion }}
-                />
-              ))}
-            </ul>
-            <p
-              className="pt-4"
-              dangerouslySetInnerHTML={{
-                __html: content.newSection.finalParagraph,
+      {/* Всі інші секції тепер у своєму контейнері */}
+      <div className="container-main pt-12 lg:pt-16 pb-16">
+        <div className="space-y-12 lg:space-y-16">
+          <section className="space-y-8">
+            <LanguageSelector
+              selectedLanguage={analysisLanguage}
+              onLanguageChange={(lang) => {
+                setAnalysisLanguage(lang);
+                resetAnalysisDisplay();
+                setApiError(null);
               }}
             />
-          </div>
-        </section>
+            <TextInput
+              text={text}
+              setText={setText}
+              onAnalyze={handleAnalyze}
+              onClear={handleClear}
+              isAnalyzing={isAnalyzing}
+              maxLength={maxChars}
+            />
+          </section>
+
+          <section aria-live="polite" aria-atomic="true">
+            {apiError && (
+              <div className="p-4 border-2 border-status-error bg-white text-status-error font-mono mb-8 rounded-none">
+                <strong className="font-mono font-medium text-ui-label uppercase">
+                  Error:
+                </strong>
+                <span className="font-mono font-normal text-body-main">
+                  {" "}
+                  {apiError.replace("Error: ", "")}
+                </span>
+              </div>
+            )}
+            <AnalysisResults
+              categories={analysisData.categories}
+              isAnalyzing={isAnalyzing}
+              overallSummary={analysisData.overallSummary}
+            />
+          </section>
+
+          <section className="max-w-3xl mx-auto">
+            <h2 className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-6 normal-case text-center">
+              {content.newSection.title}
+            </h2>
+            <div className="space-y-4 font-mono font-normal text-body-main leading-body text-black">
+              {content.newSection.paragraphs.map((p, index) => (
+                <p
+                  key={index}
+                  dangerouslySetInnerHTML={{
+                    __html: p.replace(
+                      /<em>(.*?)<\/em>/g,
+                      '<em class="font-mono not-italic font-medium">$1</em>'
+                    ),
+                  }}
+                />
+              ))}
+              <ul className="list-disc ml-6 space-y-2 pt-2">
+                {content.newSection.criteria.map((criterion) => (
+                  <li
+                    key={criterion}
+                    dangerouslySetInnerHTML={{ __html: criterion }}
+                  />
+                ))}
+              </ul>
+              <p
+                className="pt-4"
+                dangerouslySetInnerHTML={{
+                  __html: content.newSection.finalParagraph,
+                }}
+              />
+            </div>
+          </section>
+        </div>
       </div>
     </>
   );

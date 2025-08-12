@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Github, Mail } from "lucide-react";
 // import { useTranslation } from 'react-i18next';
 
-// Дані для навігаційних посилань, винесені для чистоти та легкого управління
 const navLinks = [
   { to: "/about", label: "ABOUT" },
   { to: "/how-it-works", label: "HOW IT WORKS" },
@@ -15,16 +15,15 @@ const navLinks = [
 ];
 
 const Footer: React.FC = () => {
-  // const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   const copyrightText = `© ${currentYear} SVITLOGICS BY EUGENE KOZLOVSKY. ALL RIGHTS RESERVED.`;
-  const versionText = "SVITLOGICS V0.3.1 (BETA)";
+  const versionText = "SVITLOGICS V0.3.2 (BETA)";
 
   return (
     <footer className="bg-white border-t border-black px-4 py-8">
       <div className="max-w-container mx-auto">
-        {/* Верхня секція футера з навігаційними посиланнями */}
+        {/* Top section: Navigation links */}
         <nav className="mb-8" aria-label="Footer Navigation">
           <ul className="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-3">
             {navLinks.map((link) => (
@@ -33,25 +32,46 @@ const Footer: React.FC = () => {
                   to={link.to}
                   className="font-mono font-medium text-ui-label uppercase text-blue-accent no-underline hover:underline focus-visible:underline"
                 >
-                  {
-                    /* t(`footer.nav.${link.label.toLowerCase()}`) || */ link.label
-                  }
+                  {link.label}
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        {/* Нижня секція футера з копірайтом та версією */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-y-2 pt-8 border-t border-black">
-          <p className="font-mono text-ui-label text-black text-center sm:text-left uppercase">
-            {
-              /* t('footer.copyright', { year: currentYear }) || */ copyrightText
-            }
-          </p>
-          <p className="font-mono text-ui-label text-text-secondary text-center sm:text-right uppercase">
-            {/* t('footer.version') || */ versionText}
-          </p>
+        {/* --- МОДИФІКАЦІЯ ТУТ: Оновлена нижня секція --- */}
+        <div className="pt-8 border-t border-black">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-y-4">
+            {/* Ліва сторона: Копірайт */}
+            <p className="font-mono text-ui-label text-black text-center sm:text-left uppercase">
+              {copyrightText}
+            </p>
+
+            {/* Права сторона: Версія та іконки */}
+            <div className="flex items-center justify-center sm:justify-end gap-x-6">
+              <p className="font-mono text-ui-label text-text-secondary uppercase">
+                {versionText}
+              </p>
+              <div className="flex items-center gap-x-4">
+                <a
+                  href="https://github.com/koztechie/svitlogics"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="View Svitlogics on GitHub"
+                  className="text-black hover:text-blue-accent transition-colors duration-100"
+                >
+                  <Github size={24} strokeWidth={1.5} />
+                </a>
+                <a
+                  href="mailto:hello@svitlogics.com"
+                  aria-label="Contact via Email"
+                  className="text-black hover:text-blue-accent transition-colors duration-100"
+                >
+                  <Mail size={24} strokeWidth={1.5} />
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
