@@ -1,20 +1,20 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { usePageTracking } from './hooks/usePageTracking';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { usePageTracking } from "./hooks/usePageTracking";
 
 // Layout Components
-import Layout from './components/layout/Layout';
+import Layout from "./components/layout/Layout";
 
 // Page Components
-import Home from './pages/Home';
-import AboutPage from './pages/AboutPage';
-import HowItWorksPage from './pages/HowItWorksPage';
-import FAQPage from './pages/FAQPage';
-import PricingLimitsPage from './pages/PricingLimitsPage';
-import ContactPage from './pages/ContactPage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import TermsOfUsePage from './pages/TermsOfUsePage';
-import ChangelogPage from './pages/ChangelogPage';
+import Home from "./pages/Home";
+import AboutPage from "./pages/AboutPage";
+import HowItWorksPage from "./pages/HowItWorksPage";
+import FAQPage from "./pages/FAQPage";
+import PricingLimitsPage from "./pages/PricingLimitsPage";
+import ContactPage from "./pages/ContactPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfUsePage from "./pages/TermsOfUsePage";
+import ChangelogPage from "./pages/ChangelogPage";
 
 /**
  * The root component of the Svitlogics application.
@@ -31,14 +31,14 @@ const App: React.FC = () => {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/how-it-works" element={<HowItWorksPage />} />
         <Route path="/faq" element={<FAQPage />} />
-        
+
         {/* Informational & Legal Pages */}
         <Route path="/pricing-limits" element={<PricingLimitsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/terms-of-use" element={<TermsOfUsePage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
-        
+
         {/* A catch-all route for 404 pages could be added here later if needed */}
         {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Routes>

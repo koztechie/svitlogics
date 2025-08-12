@@ -8,10 +8,10 @@
 export interface AnalysisCategory {
   /** The name of the category (e.g., "Manipulative Content"). */
   name: string;
-  
+
   /** The assessed score for this category, from 0 to 100, or null if not yet analyzed. */
   percentage: number | null;
-  
+
   /** A brief textual justification for the assigned score, or null if not yet analyzed. */
   explanation: string | null;
 }

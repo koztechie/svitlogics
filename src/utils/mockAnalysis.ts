@@ -1,4 +1,4 @@
-import { Category } from "../types"; // Припускаємо, що цей тип є { name: string; percentage: number | null; explanation: string | null; }
+import { Category } from "../components/AnalysisResults";
 
 // Узгоджуємо назви категорій з тими, що використовуються в Home.tsx
 const CATEGORY_NAMES = [

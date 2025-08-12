@@ -1,8 +1,8 @@
 import React from "react";
 // import { useTranslation } from 'react-i18next';
 
-// Типи для пропсів
-interface Category {
+// --- ЗМІНА ТУТ: Додаємо 'export', щоб зробити тип доступним для інших файлів ---
+export interface Category {
   name: string;
   percentage: number | null;
   explanation: string | null;

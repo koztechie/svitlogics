@@ -14,7 +14,9 @@
 
 @layer base {
   /* --- Global Reset & Document Setup --- */
-  html, body, #root {
+  html,
+  body,
+  #root {
     @apply font-mono text-black bg-white; /* Corresponds to theme('fontFamily.mono'), theme('colors.black'), theme('colors.white') */
     min-height: 100vh;
     margin: 0;
@@ -25,12 +27,17 @@
   }
 
   /* --- Typographic Resets & Defaults --- */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-mono; /* Ensure mono font is inherited */
     margin: 0;
     padding: 0;
   }
-  
+
   p {
     margin: 0;
     padding: 0;
@@ -42,28 +49,30 @@
     /* Hover and focus states are handled by utility classes directly on elements */
   }
 
-  strong, b {
+  strong,
+  b {
     /* Ensure bold text uses the correct weight from the font family */
     @apply font-bold;
   }
-  
+
   /* --- Global Interactive Element Styles --- */
-  
+
   /* Universal focus indicator for keyboard navigation */
   *:focus-visible {
     @apply outline-2 outline-offset-2 outline-blue-accent;
   }
-  
+
   /* Brutalist Reset: Enforce sharp corners on all interactive elements */
-  button, 
-  input, 
-  textarea, 
+  button,
+  input,
+  textarea,
   select {
     border-radius: 0 !important;
   }
 
   /* --- List Resets --- */
-  ul, ol {
+  ul,
+  ol {
     margin: 0;
     padding: 0;
   }
@@ -73,7 +82,8 @@
   ::selection {
     @apply bg-blue-accent text-white;
   }
-  ::-moz-selection { /* Firefox specific */
+  ::-moz-selection {
+    /* Firefox specific */
     @apply bg-blue-accent text-white;
   }
 }
