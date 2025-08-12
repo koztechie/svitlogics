@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink as RouterNavLink, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import SvitlogicsLogo from "../../assets/logo/SvitlogicsLogo.svg?react";
 // import { useTranslation } from 'react-i18next';
 // import InterfaceLanguageSwitcher from './InterfaceLanguageSwitcher';
 
@@ -45,14 +46,8 @@ const Header: React.FC = () => {
           className="flex items-baseline"
           aria-label="Svitlogics Homepage"
         >
-          <div className="font-mono font-bold text-[36px] text-blue-accent leading-none">
-            SVITLOGICS
-          </div>
-          <span className="font-mono font-medium text-ui-label text-text-secondary ml-2 normal-case">
-            beta
-          </span>
+          <SvitlogicsLogo className="h-8 w-auto text-black" />
         </Link>
-
         {/* Desktop Navigation & Controls */}
         <div className="hidden md:flex items-center gap-x-6">
           <nav aria-label="Main navigation">
@@ -89,9 +84,10 @@ const Header: React.FC = () => {
 
       {/* Mobile Navigation Panel */}
       {isMenuOpen && (
+        // --- ВИПРАВЛЕННЯ ТУТ: Видалено дублювання 'border-black' ---
         <div
           id="mobile-menu"
-          className="md:hidden absolute top-full left-0 right-0 w-full bg-white border-b border-black border-x border-black"
+          className="md:hidden absolute top-full left-0 right-0 w-full bg-white border-b border-x border-black"
         >
           <nav className="px-4 py-4" aria-label="Mobile navigation">
             <ul className="flex flex-col gap-y-3">

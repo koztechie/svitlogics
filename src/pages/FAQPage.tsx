@@ -173,7 +173,7 @@ const FAQPage: React.FC = () => {
         />
         <meta property="og:description" content={seoDescription} />
         <meta property="og:url" content="https://svitlogics.com/faq" />
-        <meta property="og:type" content="website" />
+        {/* og:type="website" буде успадковано з Layout.tsx */}
         <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
       </Helmet>
 

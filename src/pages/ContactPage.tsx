@@ -100,7 +100,6 @@ const ContactPage: React.FC = () => {
         <meta property="og:title" content={content.seoTitle} />
         <meta property="og:description" content={content.seoDescription} />
         <meta property="og:url" content="https://svitlogics.com/contact" />
-        <meta property="og:type" content="website" />
       </Helmet>
 
       <div className="container-main pt-16 pb-16">

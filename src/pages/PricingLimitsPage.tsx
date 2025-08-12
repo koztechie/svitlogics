@@ -90,7 +90,6 @@ const PricingLimitsPage: React.FC = () => {
           property="og:url"
           content="https://svitlogics.com/pricing-limits"
         />
-        <meta property="og:type" content="website" />
       </Helmet>
 
       <div className="container-main pt-16 pb-16">

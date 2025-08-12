@@ -11,7 +11,17 @@ interface ChangelogEntryData {
 
 // Фінальні дані чейнджлогу, сфокусовані на продукті
 const changelogData: ChangelogEntryData[] = [
-  // --- НОВА ВЕРСІЯ, СФОКУСОВАНА НА КОРИСТУВАЧІ ---
+  // --- НОВА ВЕРСІЯ ---
+  {
+    version: "v0.3.1 (Beta)",
+    date: "August 12, 2025",
+    changes: [
+      "<strong>ADDED:</strong> Implemented the official Svitlogics brand identity, replacing the text-based title with a new SVG logo for a crisp, professional look.",
+      "<strong>ADDED:</strong> Integrated a comprehensive set of high-resolution favicons for a consistent appearance across all browsers, devices, and platforms.",
+      "<strong>IMPROVED:</strong> Updated Open Graph meta tags to include a custom social media banner (`og:image`), ensuring proper branding when sharing links.",
+    ],
+  },
+  // --- ПОПЕРЕДНІ ВЕРСІЇ ---
   {
     version: "v0.3.0 (Beta)",
     date: "August 12, 2025",
@@ -22,7 +32,6 @@ const changelogData: ChangelogEntryData[] = [
       "<strong>IMPROVED:</strong> Enhanced overall application stability and performance by moving complex computations from the user's browser to the server.",
     ],
   },
-  // --- ПОПЕРЕДНІ ВЕРСІЇ ЗАЛИШАЮТЬСЯ ЯК ІСТОРІЯ ---
   {
     version: "v0.1.0 (Public Beta)",
     date: "June 29, 2025",

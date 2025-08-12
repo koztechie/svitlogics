@@ -168,7 +168,6 @@ const Home: React.FC = () => {
         <meta property="og:title" content={content.seoTitle} />
         <meta property="og:description" content={content.seoDescription} />
         <meta property="og:url" content="https://svitlogics.com/" />
-        <meta property="og:type" content="website" />
         <script type="application/ld+json">
           {JSON.stringify(softwareAppJsonLd)}
         </script>

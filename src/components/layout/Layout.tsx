@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+import { Helmet } from "react-helmet-async";
 
 // Define the interface for the component's props
 interface LayoutProps {
@@ -22,6 +23,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     // - `bg-white`: Sets the primary background color as per the design system.
     // - Text color and font family are inherited from the styles applied to `body` in `src/index.css`.
     <div className="flex flex-col min-h-screen bg-white">
+      <Helmet>
+        {/* --- ГЛОБАЛЬНІ OG-ТЕГИ ДЛЯ ВСЬОГО САЙТУ --- */}
+        <meta property="og:site_name" content="Svitlogics" />
+        <meta property="og:locale" content="en_US" />{" "}
+        {/* Більш точний формат */}
+        <meta property="og:type" content="website" />{" "}
+        {/* Тип "website" є глобальним */}
+        {/* --- ГЛОБАЛЬНИЙ БАНЕР --- */}
+        <meta
+          property="og:image"
+          content="https://svitlogics.com/svitlogics-og-banner.png"
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+      </Helmet>
       <Header />
 
       {/* Main content area */}
