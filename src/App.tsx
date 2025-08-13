@@ -15,6 +15,7 @@ import ContactPage from "./pages/ContactPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfUsePage from "./pages/TermsOfUsePage";
 import ChangelogPage from "./pages/ChangelogPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 /**
  * The root component of the Svitlogics application.
@@ -39,8 +40,8 @@ const App: React.FC = () => {
         <Route path="/terms-of-use" element={<TermsOfUsePage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
 
-        {/* A catch-all route for 404 pages could be added here later if needed */}
-        {/* <Route path="*" element={<NotFoundPage />} /> */}
+        {/* A catch-all route for 404 pages */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Layout>
   );
