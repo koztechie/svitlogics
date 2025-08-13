@@ -204,7 +204,7 @@ const Home: React.FC = () => {
       {/* Всі інші секції тепер у своєму контейнері */}
       <div className="container-main pt-12 lg:pt-16 pb-16">
         <div className="space-y-12 lg:space-y-16">
-          <section className="space-y-8">
+          <section id="analysis-form-section" className="space-y-8">
             <LanguageSelector
               selectedLanguage={analysisLanguage}
               onLanguageChange={(lang) => {
@@ -242,7 +242,7 @@ const Home: React.FC = () => {
             />
           </section>
 
-          <section className="max-w-3xl mx-auto">
+          <section id="methodology-section" className="max-w-3xl mx-auto">
             <h2 className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-6 normal-case text-center">
               {content.newSection.title}
             </h2>

@@ -11,7 +11,15 @@ interface ChangelogEntryData {
 
 // Фінальні дані чейнджлогу з новою версією v0.3.2
 const changelogData: ChangelogEntryData[] = [
-  // --- НОВА ВЕРСІЯ ---
+  {
+    version: "v0.3.3 (Beta)",
+    date: "August 13, 2025",
+    changes: [
+      "<strong>PERFORMANCE:</strong> Improved the Largest Contentful Paint (LCP) metric by adding `preconnect` links for Google Fonts, accelerating font loading times.",
+      "<strong>IMPROVED:</strong> Added print-specific styles (`@media print`) that hide the interface, allowing users to print or save a clean, report-only version of the analysis results.",
+      "<strong>ACCESSIBILITY:</strong> Enhanced accessibility by adding `title` attributes to all icon-based links, providing tooltips for better user guidance.",
+    ],
+  },
   {
     version: "v0.3.2 (Beta)",
     date: "August 13, 2025",
@@ -24,7 +32,6 @@ const changelogData: ChangelogEntryData[] = [
       '<strong>SECURITY:</strong> Added `autoComplete="off"` to the text input field to prevent browsers from suggesting previously analyzed (and potentially sensitive) text.',
     ],
   },
-  // --- ПОПЕРЕДНІ ВЕРСІЇ ---
   {
     version: "v0.3.1 (Beta)",
     date: "August 12, 2025",
