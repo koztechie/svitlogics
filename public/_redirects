@@ -1,5 +1,0 @@
-# Redirect from Netlify subdomain to primary domain
-https://svitlogics.netlify.app/* https://svitlogics.com/:splat 301!
-
-# SPA fallback
-/*    /index.html    200

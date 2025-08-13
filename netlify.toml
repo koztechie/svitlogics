@@ -1,39 +1,38 @@
-# === Netlify Configuration File v2.0 ===
+# === Netlify Configuration File v3.0 (Final) ===
 
-# Глобальні налаштування збірки, які застосовуються до всіх середовищ 
 [build]
   command = "npm run build"
   publish = "dist"
 
-# --- Контекст для Production (гілка 'main') ---
-[context.production]
-  # Тут можна перевизначити команду збірки або додати змінні оточення
-  # наприклад, для Google Analytics
-  [context.production.environment]
-    # VITE_GTM_ID = "GTM-XXXXXXX" 
+# --- ВИМКНЕННЯ "МАГІЇ" NETLIFY ---
+# Ця секція каже Netlify: "Не намагайся бути розумним. 
+# Я сам керую своїми редиректами".
+[build.processing]
+  skip_processing = true
+[build.processing.css]
+  bundle = false
+  minify = false
+[build.processing.js]
+  bundle = false
+  minify = false
+[build.processing.html]
+  pretty_urls = false
+[build.processing.images]
+  compress = false
 
-# --- Контекст для Branch Deploys (всі гілки, крім 'main') ---
-# Сюди потрапить наша 'dev' гілка
-[context.branch-deploy]
-  # Тут можна, наприклад, вказати тестовий API ключ
-  [context.branch-deploy.environment]
-    # VITE_GEMMA_API_KEY = "test_api_key_123"
+# --- НАШІ ВЛАСНІ ПРАВИЛА ---
 
-# --- Налаштування заголовків (застосовуються до всіх) ---
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Заголовки залишаються такими ж
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com https://www.google-analytics.com; frame-src https://challenges.cloudflare.com; object-src 'none';"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://challenges.cloudflare.com https://*.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com https://www.google-analytics.com https://*.google-analytics.com; frame-src https://challenges.cloudflare.com; object-src 'none';"
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
-
-# --- Налаштування редиректів ---
-
-# Редирект зі старого домену залишається
-[[redirects]]
-  from = "https://svitlogics.netlify.app/*"
-  to = "https://svitlogics.com/:splat"
-  status = 301
-  force = true
