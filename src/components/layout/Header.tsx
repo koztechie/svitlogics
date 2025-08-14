@@ -47,10 +47,6 @@ const Header: React.FC = () => {
           aria-label="Svitlogics Homepage"
         >
           <SvitlogicsLogo className="h-8 w-auto text-black" />
-          {/* Повертаємо текст "beta", який я випадково видалив */}
-          <span className="font-mono font-medium text-ui-label text-text-secondary ml-2 normal-case">
-            beta
-          </span>
         </Link>
         {/* Desktop Navigation & Controls */}
         <div className="hidden md:flex items-center gap-x-6">
