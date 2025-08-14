@@ -5,6 +5,7 @@ import { Github, Mail } from "lucide-react";
 
 const navLinks = [
   { to: "/about", label: "ABOUT" },
+  { to: "/blog", label: "BLOG" },
   { to: "/how-it-works", label: "HOW IT WORKS" },
   { to: "/faq", label: "FAQ" },
   { to: "/pricing-limits", label: "PRICING & LIMITS" },

@@ -11,8 +11,8 @@ const navItems = [
   { to: "/about", label: "ABOUT" },
   { to: "/how-it-works", label: "HOW IT WORKS" },
   { to: "/faq", label: "FAQ" },
+  { to: "/blog", label: "BLOG" },
 ];
-
 // Розширений набір для мобільного меню
 const mobileNavItems = [
   ...navItems,

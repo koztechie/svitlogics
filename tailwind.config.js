@@ -76,6 +76,4 @@ export default {
       // e.g., spacing: { '18': '4.5rem' } for 72px
     },
   },
-
-  plugins: [],
 };

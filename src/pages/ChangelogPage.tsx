@@ -12,6 +12,15 @@ interface ChangelogEntryData {
 // Фінальні дані чейнджлогу з новою версією v0.3.2
 const changelogData: ChangelogEntryData[] = [
   {
+    version: "v0.3.4 (Beta)",
+    date: "August 14, 2025",
+    changes: [
+      "<strong>ADDED:</strong> Introduced a new 'Blog' section to the website, creating a platform for articles, updates, and deeper insights into text analysis.",
+      "<strong>ADDED:</strong> Implemented a lightweight, Markdown-based content system, allowing for easy creation and management of new articles without complex CMS dependencies.",
+      "<strong>ADDED:</strong> Created new page templates for the blog index and individual article views, fully integrated with the Svitlogics design system.",
+    ],
+  },
+  {
     version: "v0.3.3 (Beta)",
     date: "August 13, 2025",
     changes: [

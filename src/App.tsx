@@ -15,7 +15,10 @@ import ContactPage from "./pages/ContactPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfUsePage from "./pages/TermsOfUsePage";
 import ChangelogPage from "./pages/ChangelogPage";
+// --- ВИПРАВЛЕННЯ ТУТ: Об'єднано всі імпорти ---
 import NotFoundPage from "./pages/NotFoundPage";
+import BlogIndexPage from "./pages/BlogIndexPage";
+import ArticlePage from "./pages/ArticlePage";
 
 /**
  * The root component of the Svitlogics application.
@@ -32,6 +35,10 @@ const App: React.FC = () => {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/how-it-works" element={<HowItWorksPage />} />
         <Route path="/faq" element={<FAQPage />} />
+
+        {/* Blog Pages */}
+        <Route path="/blog" element={<BlogIndexPage />} />
+        <Route path="/blog/:slug" element={<ArticlePage />} />
 
         {/* Informational & Legal Pages */}
         <Route path="/pricing-limits" element={<PricingLimitsPage />} />

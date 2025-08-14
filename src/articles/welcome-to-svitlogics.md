@@ -1,0 +1,33 @@
+---
+title: "Welcome to Svitlogics: A Tool for a New Era of Information"
+date: "August 14, 2025"
+summary: "An introduction to the mission, methodology, and core principles behind the Svitlogics project, written by its founder."
+---
+
+My name is Eugene Kozlovsky. Svitlogics is not just an application; it is my answer to a problem I live with every day.
+
+For a long time, I felt a passive anger towards the manipulation I saw everywhere — in the news, on social media, in professional discourse. This feeling crystallized into action after I saw a viral post that used the tragedy of war to justify poor service. People saw patriotism; I saw a masterclass in emotional exploitation.
+
+It was no longer enough to simply see the manipulation. I had to build a tool to help others see it too.
+
+### The Mission: Clarity in Chaos
+
+The mission of Svitlogics is direct: to provide an accessible, transparent instrument for identifying manipulative techniques. It was developed as a solo project from my home in Kyiv, Ukraine, born from the daily reality of information warfare.
+
+This tool is not a "truth machine." It does not deliver a simple "true" or "false" verdict. Effective manipulation rarely relies on a single, verifiable lie. Instead, it uses a complex web of emotional appeals, logical fallacies, and carefully framed narratives.
+
+### How It Works
+
+Svitlogics is designed as an auxiliary instrument for your own critical thinking. By leveraging a cascade of advanced AI models, it deconstructs text and provides a structured report across five core criteria:
+
+- Manipulative Content
+- Propagandistic Content
+- Disinformation
+- Unbiased Presentation
+- Emotional Tone
+
+My core principle is that understanding _how_ a message is constructed to influence you is the first and most critical step toward resisting it.
+
+This blog will serve as a platform to explore these topics further, share insights on new techniques of manipulation, and document the continued development of Svitlogics.
+
+Thank you for joining me on this journey.
