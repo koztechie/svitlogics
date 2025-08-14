@@ -54,24 +54,27 @@ const Home: React.FC = () => {
   };
 
   const [text, setText] = useState<string>("");
-
-  // --- ВИПРАВЛЕННЯ ТУТ: Безпечна ініціалізація для SSR ---
   const [analysisLanguage, setAnalysisLanguage] =
-    useState<AnalysisLanguage>("en"); // Завжди починаємо з 'en'
-
+    useState<AnalysisLanguage>("en");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisData, setAnalysisData] = useState(initialResultsState);
   const [apiError, setApiError] = useState<string | null>(null);
 
-  // --- ВИПРАВЛЕННЯ ТУТ: Об'єднаний useEffect для роботи з localStorage ---
+  // --- ВИПРАВЛЕННЯ ТУТ: Розділено на два useEffect ---
+
+  // Хук №1: Читання з localStorage. Виконується ТІЛЬКИ ОДИН РАЗ.
   useEffect(() => {
-    // Цей код виконається ТІЛЬКИ в браузері
     const storedLang = localStorage.getItem("svitlogics_language");
     if (storedLang === "uk" || storedLang === "en") {
-      setAnalysisLanguage(storedLang); // Відновлюємо стан при першому завантаженні
+      // Важливо: перевіряємо, чи поточний стан вже не такий, як збережений
+      if (storedLang !== analysisLanguage) {
+        setAnalysisLanguage(storedLang);
+      }
     }
+  }, []); // Пустий масив залежностей означає "виконати один раз при першому рендері"
 
-    // Ця частина буде виконуватися при кожній зміні мови, зберігаючи новий вибір
+  // Хук №2: Запис у localStorage. Виконується ТІЛЬКИ при зміні мови.
+  useEffect(() => {
     localStorage.setItem("svitlogics_language", analysisLanguage);
   }, [analysisLanguage]);
 
