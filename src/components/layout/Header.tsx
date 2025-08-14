@@ -47,6 +47,10 @@ const Header: React.FC = () => {
           aria-label="Svitlogics Homepage"
         >
           <SvitlogicsLogo className="h-8 w-auto text-black" />
+          {/* Повертаємо текст "beta", який я випадково видалив */}
+          <span className="font-mono font-medium text-ui-label text-text-secondary ml-2 normal-case">
+            beta
+          </span>
         </Link>
         {/* Desktop Navigation & Controls */}
         <div className="hidden md:flex items-center gap-x-6">
@@ -84,7 +88,6 @@ const Header: React.FC = () => {
 
       {/* Mobile Navigation Panel */}
       {isMenuOpen && (
-        // --- ВИПРАВЛЕННЯ ТУТ: Видалено дублювання 'border-black' ---
         <div
           id="mobile-menu"
           className="md:hidden absolute top-full left-0 right-0 w-full bg-white border-b border-x border-black"
@@ -121,19 +124,19 @@ const CustomNavLink: React.FC<CustomNavLinkProps> = ({
   const location = useLocation();
   const isActive = location.pathname === to;
 
+  // --- ВИПРАВЛЕННЯ ТУТ ---
   const baseClasses =
-    "font-mono font-medium text-ui-label uppercase text-blue-accent no-underline transition-colors duration-100 rounded-none";
+    "font-mono font-medium text-ui-label uppercase text-blue-accent transition-colors duration-100 rounded-none";
   const stateClasses = "hover:underline focus-visible:underline";
-  const activeClasses = "underline"; // A simple underline for the active link
+  // Умова тепер додає АБО 'underline', АБО 'no-underline', що виключає конфлікт
+  const activeClasses = isActive ? "underline" : "no-underline";
 
   const mobileSpecificClasses = mobile ? "block w-full py-2 text-left" : "py-1";
 
   return (
     <RouterNavLink
       to={to}
-      className={`${baseClasses} ${stateClasses} ${
-        isActive ? activeClasses : ""
-      } ${mobileSpecificClasses}`}
+      className={`${baseClasses} ${stateClasses} ${activeClasses} ${mobileSpecificClasses}`}
       aria-current={isActive ? "page" : undefined}
     >
       {children}

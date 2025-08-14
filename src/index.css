@@ -12,12 +12,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * We use @layer base to define our own base styles.
+ * IMPORTANT: We use pure CSS with the theme() function instead of @apply
+ * to avoid specificity conflicts with Tailwind's utility classes.
+ */
 @layer base {
   /* --- Global Reset & Document Setup --- */
   html,
   body,
   #root {
-    @apply font-mono text-black bg-white; /* Corresponds to theme('fontFamily.mono'), theme('colors.black'), theme('colors.white') */
+    font-family: theme("fontFamily.mono");
+    color: theme("colors.black");
+    background-color: theme("colors.white");
     min-height: 100vh;
     margin: 0;
     padding: 0;
@@ -33,7 +40,7 @@
   h4,
   h5,
   h6 {
-    @apply font-mono; /* Ensure mono font is inherited */
+    font-family: theme("fontFamily.mono");
     margin: 0;
     padding: 0;
   }
@@ -41,25 +48,25 @@
   p {
     margin: 0;
     padding: 0;
-    @apply leading-body; /* Corresponds to theme('lineHeight.body', '1.5') */
+    line-height: theme("lineHeight.body");
   }
 
   a {
-    @apply text-blue-accent no-underline;
-    /* Hover and focus states are handled by utility classes directly on elements */
+    color: theme("colors.blue-accent");
+    text-decoration-line: none;
   }
 
   strong,
   b {
-    /* Ensure bold text uses the correct weight from the font family */
-    @apply font-bold;
+    font-weight: theme("fontWeight.bold");
   }
 
   /* --- Global Interactive Element Styles --- */
 
   /* Universal focus indicator for keyboard navigation */
   *:focus-visible {
-    @apply outline-2 outline-offset-2 outline-blue-accent;
+    outline: 2px solid theme("colors.blue-accent");
+    outline-offset: 2px;
   }
 
   /* Brutalist Reset: Enforce sharp corners on all interactive elements */
@@ -78,16 +85,21 @@
   }
 
   /* --- Selection Styles --- */
-  /* Customizes the appearance of selected text to match the brand's accent color */
+  /* Customizes the appearance of selected text */
   ::selection {
-    @apply bg-blue-accent text-white;
+    background-color: theme("colors.blue-accent");
+    color: theme("colors.white");
   }
   ::-moz-selection {
     /* Firefox specific */
-    @apply bg-blue-accent text-white;
+    background-color: theme("colors.blue-accent");
+    color: theme("colors.white");
   }
 }
 
+/*
+ * Component classes: @apply is appropriate here.
+ */
 @layer components {
   /**
    * .container-main

@@ -12,6 +12,15 @@ interface ChangelogEntryData {
 // Фінальні дані чейнджлогу з новою версією v0.3.2
 const changelogData: ChangelogEntryData[] = [
   {
+    version: "v0.3.5 (Beta)",
+    date: "August 14, 2025",
+    changes: [
+      "<strong>PERFORMANCE:</strong> Implemented Static Site Generation (SSG) for the entire application. All pages are now pre-rendered into static HTML files during the build process.",
+      "<strong>SEO:</strong> The move to SSG ensures that all content is immediately available to search engine crawlers, significantly improving indexing and SEO potential.",
+      "<strong>PERFORMANCE:</strong> Achieved near-instantaneous page loads and a dramatically improved Largest Contentful Paint (LCP) score, providing a much faster user experience.",
+    ],
+  },
+  {
     version: "v0.3.4 (Beta)",
     date: "August 14, 2025",
     changes: [

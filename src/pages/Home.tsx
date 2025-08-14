@@ -54,20 +54,24 @@ const Home: React.FC = () => {
   };
 
   const [text, setText] = useState<string>("");
-  const [analysisLanguage, setAnalysisLanguage] = useState<AnalysisLanguage>(
-    () => {
-      const storedLang = localStorage.getItem("svitlogics_language");
-      if (storedLang === "uk" || storedLang === "en") {
-        return storedLang;
-      }
-      return "en";
-    }
-  );
+
+  // --- ВИПРАВЛЕННЯ ТУТ: Безпечна ініціалізація для SSR ---
+  const [analysisLanguage, setAnalysisLanguage] =
+    useState<AnalysisLanguage>("en"); // Завжди починаємо з 'en'
+
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisData, setAnalysisData] = useState(initialResultsState);
   const [apiError, setApiError] = useState<string | null>(null);
 
+  // --- ВИПРАВЛЕННЯ ТУТ: Об'єднаний useEffect для роботи з localStorage ---
   useEffect(() => {
+    // Цей код виконається ТІЛЬКИ в браузері
+    const storedLang = localStorage.getItem("svitlogics_language");
+    if (storedLang === "uk" || storedLang === "en") {
+      setAnalysisLanguage(storedLang); // Відновлюємо стан при першому завантаженні
+    }
+
+    // Ця частина буде виконуватися при кожній зміні мови, зберігаючи новий вибір
     localStorage.setItem("svitlogics_language", analysisLanguage);
   }, [analysisLanguage]);
 
@@ -185,9 +189,6 @@ const Home: React.FC = () => {
         </script>
       </Helmet>
 
-      {/* --- МОДИФІКАЦІЯ ТУТ: Нова структура розмітки --- */}
-
-      {/* Секція №1 (Заголовок) тепер у своєму власному контейнері */}
       <div className="container-main pt-16">
         <section>
           <div className="w-full">
@@ -201,7 +202,6 @@ const Home: React.FC = () => {
         </section>
       </div>
 
-      {/* Всі інші секції тепер у своєму контейнері */}
       <div className="container-main pt-12 lg:pt-16 pb-16">
         <div className="space-y-12 lg:space-y-16">
           <section id="analysis-form-section" className="space-y-8">

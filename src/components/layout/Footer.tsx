@@ -18,7 +18,7 @@ const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   const copyrightText = `© ${currentYear} SVITLOGICS BY EUGENE KOZLOVSKY. ALL RIGHTS RESERVED.`;
-  const versionText = "SVITLOGICS V0.3.4 (BETA)";
+  const versionText = "SVITLOGICS V0.3.5 (BETA)";
 
   return (
     <footer className="bg-white border-t border-black px-4 py-8">
