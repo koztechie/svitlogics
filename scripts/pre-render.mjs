@@ -27,6 +27,22 @@ async function generateRoutes() {
   return [...staticRoutes, ...dynamicRoutes];
 }
 
+async function generateSitemap(routes, outDir) {
+  const domain = "https://svitlogics.com";
+  const today = new Date().toISOString().split("T")[0];
+
+  const urlEntries = routes
+    .map((route) => {
+      return `<url><loc>${domain}${route}</loc><lastmod>${today}</lastmod></url>`;
+    })
+    .join("");
+
+  const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urlEntries}</urlset>`;
+
+  const sitemapPath = path.join(outDir, "sitemap.xml");
+  await fs.writeFile(sitemapPath, sitemapContent);
+}
+
 async function runPreRender() {
   console.log("🚀 Starting Svitlogics pre-rendering process...");
 
@@ -84,6 +100,9 @@ async function runPreRender() {
 
     console.log(`  ✓ Rendered ${route} to ${filePath}`);
   }
+
+  await generateSitemap(allRoutes, outDir);
+  console.log("  ✓ Generated sitemap.xml");
 
   console.log("\n✅ Pre-rendering complete.");
 }
