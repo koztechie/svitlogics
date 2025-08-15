@@ -208,7 +208,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <>
+    <div>
       <Helmet>
         <title>{content.seoTitle}</title>
         <meta name="description" content={content.seoDescription} />
@@ -308,7 +308,7 @@ const Home: React.FC = () => {
           </section>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
