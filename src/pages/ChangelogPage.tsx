@@ -12,6 +12,16 @@ interface ChangelogEntryData {
 // Фінальні дані чейнджлогу з новою версією v0.3.2
 const changelogData: ChangelogEntryData[] = [
   {
+    version: "v0.3.6 (Beta)",
+    date: "August 15, 2025",
+    changes: [
+      "<strong>ARCHITECTURE:</strong> Migrated the core analysis engine to a fully asynchronous architecture using Netlify Background Functions. This completely removes the previous 10-second execution limit.",
+      "<strong>IMPROVED:</strong> The application can now handle complex and lengthy analysis tasks (up to 15 minutes), allowing the use of the most powerful AI models without timeouts.",
+      "<strong>IMPROVED:</strong> User experience during analysis has been enhanced. The interface now polls for results in the background, providing a more robust and stable process for the user.",
+      "<strong>SECURITY:</strong> Re-architected the backend with a dedicated trigger function and a background worker, further isolating processes and improving the security posture.",
+    ],
+  },
+  {
     version: "v0.3.5 (Beta)",
     date: "August 14, 2025",
     changes: [

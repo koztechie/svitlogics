@@ -1,17 +1,19 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 
 import AnalysisResults, {
   AnalysisResultsProps,
+  Category, // Імпортуємо тип Category для типізації
 } from "../components/AnalysisResults";
 import TextInput from "../components/TextInput";
 import LanguageSelector, {
   AnalysisLanguage,
 } from "../components/LanguageSelector";
-import { analyzeText } from "../services/aiApiService";
+import { startAnalysis, checkAnalysisStatus } from "../services/aiApiService";
 
-import SYSTEM_PROMPT_EN from "../config/gemma_system_prompt_en.txt?raw";
-import SYSTEM_PROMPT_UK from "../config/gemma_system_prompt_uk.txt?raw";
+// ВИДАЛЕНО: Непотрібні імпорти промптів
+// import SYSTEM_PROMPT_EN from "../config/gemma_system_prompt_en.txt?raw";
+// import SYSTEM_PROMPT_UK from "../config/gemma_system_prompt_uk.txt?raw";
 
 const initialResultsState: Omit<AnalysisResultsProps, "isAnalyzing"> = {
   categories: [
@@ -60,23 +62,32 @@ const Home: React.FC = () => {
   const [analysisData, setAnalysisData] = useState(initialResultsState);
   const [apiError, setApiError] = useState<string | null>(null);
 
-  // --- ВИПРАВЛЕННЯ ТУТ: Розділено на два useEffect ---
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Хук №1: Читання з localStorage. Виконується ТІЛЬКИ ОДИН РАЗ.
   useEffect(() => {
     const storedLang = localStorage.getItem("svitlogics_language");
     if (storedLang === "uk" || storedLang === "en") {
-      // Важливо: перевіряємо, чи поточний стан вже не такий, як збережений
       if (storedLang !== analysisLanguage) {
         setAnalysisLanguage(storedLang);
       }
     }
-  }, []); // Пустий масив залежностей означає "виконати один раз при першому рендері"
+  }, []);
 
-  // Хук №2: Запис у localStorage. Виконується ТІЛЬКИ при зміні мови.
   useEffect(() => {
     localStorage.setItem("svitlogics_language", analysisLanguage);
   }, [analysisLanguage]);
+
+  useEffect(() => {
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const maxChars = SAFE_CHARACTER_LIMIT;
 
@@ -88,6 +99,9 @@ const Home: React.FC = () => {
     setText("");
     resetAnalysisDisplay();
     setApiError(null);
+    setIsAnalyzing(false);
+    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
   }, [resetAnalysisDisplay]);
 
   const handleAnalyze = useCallback(async () => {
@@ -108,55 +122,70 @@ const Home: React.FC = () => {
 
     setIsAnalyzing(true);
 
+    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
     try {
-      const systemPrompt =
-        analysisLanguage === "uk" ? SYSTEM_PROMPT_UK : SYSTEM_PROMPT_EN;
+      const { taskId } = await startAnalysis(inputText, analysisLanguage);
 
-      const result = await analyzeText(
-        inputText,
-        analysisLanguage,
-        systemPrompt
-      );
+      const ANALYSIS_TIMEOUT = 90000; // 90 секунд
+      timeoutRef.current = setTimeout(() => {
+        clearInterval(pollingIntervalRef.current!);
+        setIsAnalyzing(false);
+        setApiError(
+          "Error: Analysis timed out. The server may be under heavy load. Please try again."
+        );
+      }, ANALYSIS_TIMEOUT);
 
-      if ("error" in result) {
-        throw new Error(result.error);
-      }
+      pollingIntervalRef.current = setInterval(async () => {
+        try {
+          const statusResponse = await checkAnalysisStatus(taskId);
 
-      if (Array.isArray(result.analysis_results)) {
-        const updatedCategories = initialResultsState.categories.map(
-          (initialCategory) => {
-            const resultCategory = result.analysis_results.find(
-              (resCat) =>
-                resCat.category_name === initialCategory.name ||
-                resCat.category_name.startsWith(initialCategory.name)
+          if (statusResponse.status === "completed" && statusResponse.data) {
+            clearInterval(pollingIntervalRef.current!);
+            clearTimeout(timeoutRef.current!);
+            setIsAnalyzing(false);
+
+            const result = statusResponse.data;
+
+            const updatedCategories: Category[] = result.analysis_results.map(
+              (backendCategory) => ({
+                name: backendCategory.category_name,
+                percentage: backendCategory.percentage_score,
+                explanation: backendCategory.justification,
+              })
             );
-            return resultCategory
-              ? {
-                  name: initialCategory.name,
-                  percentage: resultCategory.percentage_score,
-                  explanation: resultCategory.justification,
-                }
-              : initialCategory;
-          }
-        );
 
-        setAnalysisData({
-          categories: updatedCategories,
-          overallSummary: result.overall_summary || "",
-        });
-      } else {
-        throw new Error(
-          "Analysis failed due to an unexpected response from the server."
-        );
-      }
+            const finalCategories = initialResultsState.categories.map(
+              (cat) =>
+                updatedCategories.find((upd) => upd.name === cat.name) || cat
+            );
+
+            setAnalysisData({
+              categories: finalCategories,
+              overallSummary: result.overall_summary || "",
+            });
+          } else if (statusResponse.status === "failed") {
+            clearInterval(pollingIntervalRef.current!);
+            clearTimeout(timeoutRef.current!);
+            setIsAnalyzing(false);
+            setApiError(
+              `Error: ${
+                statusResponse.error || "Analysis failed on the server."
+              }`
+            );
+          }
+        } catch (pollError: any) {
+          clearInterval(pollingIntervalRef.current!);
+          clearTimeout(timeoutRef.current!);
+          setIsAnalyzing(false);
+          setApiError(`Error checking status: ${pollError.message}`);
+        }
+      }, 3000);
     } catch (e: any) {
-      console.error("Error in handleAnalyze:", e);
-      setApiError(
-        `Error: ${e.message}` ||
-          "An unexpected error occurred during the process."
-      );
-    } finally {
+      console.error("Error starting analysis:", e);
       setIsAnalyzing(false);
+      setApiError(`Error: ${e.message}`);
     }
   }, [text, analysisLanguage, maxChars, resetAnalysisDisplay]);
 

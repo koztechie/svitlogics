@@ -1,9 +1,8 @@
-// netlify/functions/analyze.ts
+// netlify/functions/analyze-background.ts
 import { Handler } from "@netlify/functions";
-import NodeCache from "node-cache";
+import { getStore } from "@netlify/blobs";
 import { MODELS_CASCADE, ModelConfig } from "./config/modelsConfig";
 import { SYSTEM_PROMPT_EN, SYSTEM_PROMPT_UK } from "./config/promptConfig";
-const ipCache = new NodeCache({ stdTTL: 3600 });
 
 // --- ІНТЕРФЕЙСИ ---
 interface AnalysisResult {
@@ -19,10 +18,6 @@ interface SvitlogicsAnalysisResponse {
 interface GoogleAIResponse {
   candidates?: { content: { parts: { text: string }[] } }[];
   promptFeedback?: { blockReason: string };
-}
-interface TurnstileResponse {
-  success: boolean;
-  "error-codes"?: string[];
 }
 
 // --- ГОЛОВНА AI-ЛОГІКА ---
@@ -115,6 +110,7 @@ async function analyzeTextWithSvitlogicsAI(
         modelIndex + 1
       );
     }
+
     const match = generatedText.match(/```json\s*([\s\S]*?)\s*```/);
     const jsonString = match ? match[1] : generatedText.trim();
     const parsedResult = JSON.parse(jsonString);
@@ -136,49 +132,28 @@ async function analyzeTextWithSvitlogicsAI(
 
 // --- ГОЛОВНИЙ ОБРОБНИК NETLIFY ---
 export const handler: Handler = async (event) => {
-  if (event.httpMethod !== "POST" || !event.body) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "Invalid request" }),
-    };
+  if (!event.body) {
+    console.error("Background function invoked without a body.");
+    return { statusCode: 400 };
   }
-  const body =
-    typeof event.body === "string" ? JSON.parse(event.body) : event.body;
-  if (!body) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "Invalid request body" }),
-    };
-  }
-  const clientIp = event.headers["x-nf-client-connection-ip"];
 
-  // IP-BASED RATE LIMITING (ТЕПЕР ЦЕ ВАШ ГОЛОВНИЙ ЗАХИСТ)
-  if (clientIp) {
-    const requestCount = (ipCache.get<number>(clientIp) || 0) + 1;
-    if (requestCount > 20) {
-      return {
-        statusCode: 429,
-        body: JSON.stringify({ error: "Too many requests" }),
-      };
-    }
-    ipCache.set(clientIp, requestCount);
-  }
+  let taskId: string | undefined;
 
   try {
-    const { text, language } = body; // Більше немає turnstileToken
+    const body = JSON.parse(event.body);
+    taskId = body.taskId; // Зберігаємо taskId для блоку catch
+    const { text, language, systemPrompt } = body;
     const apiKey = process.env.GOOGLE_AI_KEY;
+
     if (!apiKey) {
-      throw new Error("Server config error");
-    }
-    if (!text || !language) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Missing text or language" }),
-      };
+      throw new Error("Server configuration error: GOOGLE_AI_KEY is not set.");
     }
 
-    const systemPrompt =
-      language === "uk" ? SYSTEM_PROMPT_UK : SYSTEM_PROMPT_EN;
+    if (!taskId || !text || !language || !systemPrompt) {
+      throw new Error("Background function invoked with missing parameters.");
+    }
+
+    console.log(`[Background Job ${taskId}] Starting analysis...`);
     const result = await analyzeTextWithSvitlogicsAI(
       systemPrompt,
       text,
@@ -186,17 +161,36 @@ export const handler: Handler = async (event) => {
       apiKey
     );
 
+    // --- ВИПРАВЛЕННЯ ТУТ ---
+    const store = getStore({
+      name: "analysis_results",
+      siteID: process.env.NETLIFY_SITE_ID,
+      token: process.env.NETLIFY_API_TOKEN,
+    });
+
+    await store.setJSON(taskId, { status: "completed", data: result });
+    console.log(`[Background Job ${taskId}] Analysis complete. Result saved.`);
+
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(result),
     };
   } catch (error: any) {
+    console.error("[Background Job] A critical error occurred:", error);
+
+    if (taskId) {
+      // --- ВИПРАВЛЕННЯ ТУТ ---
+      const store = getStore({
+        name: "analysis_results",
+        siteID: process.env.NETLIFY_SITE_ID,
+        token: process.env.NETLIFY_API_TOKEN,
+      });
+      await store.setJSON(taskId, {
+        status: "failed",
+        error: error.message,
+      });
+    }
     return {
-      statusCode: 503,
-      body: JSON.stringify({
-        error: error.message || "AI providers unavailable",
-      }),
+      statusCode: 500,
     };
   }
 };
