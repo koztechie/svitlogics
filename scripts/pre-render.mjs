@@ -51,21 +51,28 @@ async function runPreRender() {
   for (const route of allRoutes) {
     const { appHtml, helmet } = render(route);
 
-    // --- ВИПРАВЛЕННЯ ТУТ: Надійна заміна контенту ---
-    // Використовуємо регулярний вираз, щоб замінити <div id="root">...</div>
-    // незалежно від його вмісту.
-    const finalHtml = template
-      .replace(/<div id="root">.*?<\/div>/s, `<div id="root">${appHtml}</div>`) // Додано прапор 's' для багаторядкового вмісту
-      .replace(
-        "</head>",
-        `${helmet?.title?.toString() || ""}
-         ${helmet?.meta?.toString() || ""}
-         ${helmet?.link?.toString() || ""}
-         ${helmet?.script?.toString() || ""}
-        </head>`
-      );
+    // --- ВИПРАВЛЕННЯ ТУТ: Нова, більш надійна логіка ---
 
-    const cleanedHtml = finalHtml.replace(/ \/>/g, ">");
+    // 1. Вставляємо зрендерений HTML, використовуючи групи захоплення
+    let finalHtml = template.replace(
+      /(<div id="root">)(.*?)(<\/div>)/s,
+      `$1${appHtml}$3`
+    );
+
+    // 2. Формуємо рядок з мета-тегами
+    const helmetContent = `
+      ${helmet?.title?.toString() || ""}
+      ${helmet?.meta?.toString() || ""}
+      ${helmet?.link?.toString() || ""}
+      ${helmet?.script?.toString() || ""}
+    `;
+
+    // 3. Вставляємо мета-теги перед закриваючим </head>
+    finalHtml = finalHtml.replace("</head>", `${helmetContent}</head>`);
+
+    // 4. Очищуємо HTML від зайвих слешів для валідації
+    // Цей регулярний вираз знаходить /> і в <meta/>, і в <link />, незалежно від пробілу
+    const cleanedHtml = finalHtml.replace(/\/>/g, ">");
 
     const filePath = path.join(
       outDir,
@@ -73,7 +80,7 @@ async function runPreRender() {
     );
 
     await fs.mkdir(path.dirname(filePath), { recursive: true });
-    await fs.writeFile(filePath, cleanedHtml);
+    await fs.writeFile(filePath, cleanedHtml); // Записуємо очищену версію
 
     console.log(`  ✓ Rendered ${route} to ${filePath}`);
   }
