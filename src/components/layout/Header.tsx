@@ -120,7 +120,6 @@ const CustomNavLink: React.FC<CustomNavLinkProps> = ({
   const location = useLocation();
   const isActive = location.pathname === to;
 
-  // --- ВИПРАВЛЕННЯ ТУТ ---
   const baseClasses =
     "font-mono font-medium text-ui-label uppercase text-blue-accent transition-colors duration-100 rounded-none";
   const stateClasses = "hover:underline focus-visible:underline";
