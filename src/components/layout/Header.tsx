@@ -22,7 +22,6 @@ const mobileNavItems = [
   { to: "/terms-of-use", label: "TERMS OF USE" },
   { to: "/changelog", label: "CHANGELOG" },
 ];
-
 /**
  * Main application header.
  * Contains the logo, primary desktop navigation, and a collapsible mobile menu.
@@ -86,6 +85,7 @@ const Header: React.FC = () => {
       {isMenuOpen && (
         <div
           id="mobile-menu"
+          role="region"
           className="md:hidden absolute top-full left-0 right-0 w-full bg-white border-b border-x border-black"
         >
           <nav className="px-4 py-4" aria-label="Mobile navigation">

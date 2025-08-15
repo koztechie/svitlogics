@@ -65,13 +65,15 @@ async function runPreRender() {
         </head>`
       );
 
+    const cleanedHtml = finalHtml.replace(/ \/>/g, ">");
+
     const filePath = path.join(
       outDir,
       route === "/" ? "index.html" : `${route.substring(1)}/index.html`
     );
 
     await fs.mkdir(path.dirname(filePath), { recursive: true });
-    await fs.writeFile(filePath, finalHtml);
+    await fs.writeFile(filePath, cleanedHtml);
 
     console.log(`  ✓ Rendered ${route} to ${filePath}`);
   }
