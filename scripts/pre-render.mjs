@@ -9,7 +9,7 @@ import { articleFrontmatterSchema } from "../src/config/schemas.ts";
 
 const root = process.cwd();
 
-// --- ВИПРАВЛЕННЯ ТУТ: Додаємо функцію slugify ---
+// --- ВИПРАВЛЕННЯ ТУТ: Повертаємо функцію slugify ---
 const slugify = (text) => {
   if (!text) return "";
   return text
@@ -74,14 +74,44 @@ async function generateArticlesData() {
   );
 
   const articlesFileContent = `// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.
-// ... (решта файлу без змін)
+
+export interface Article {
+  slug: string;
+  title: string;
+  date: string;
+  summary: string;
+  author?: string;
+  category?: string;
+  content: string;
+}
+
+const _articles: Article[] = ${JSON.stringify(articles, null, 2)};
+
+export function getArticles(): Article[] {
+  return _articles;
+}
 `;
+
   await fs.writeFile(
     path.resolve(root, "src/articles/index.ts"),
     articlesFileContent
   );
   console.log("✅ Articles data file generated at src/articles/index.ts");
   return articles;
+}
+
+async function generateSitemap(routes, outDir) {
+  const domain = "https://svitlogics.com";
+  const today = new Date().toISOString().split("T")[0];
+  const urlEntries = routes
+    .map(
+      (route) =>
+        `<url><loc>${domain}${route}</loc><lastmod>${today}</lastmod></url>`
+    )
+    .join("");
+  const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urlEntries}</urlset>`;
+  const sitemapPath = path.join(outDir, "sitemap.xml");
+  await fs.writeFile(sitemapPath, sitemapContent);
 }
 
 async function runPreRender() {
@@ -101,15 +131,12 @@ async function runPreRender() {
     "/blog",
   ];
   const articleRoutes = articles.map((article) => `/blog/${article.slug}`);
-
-  // --- ВИПРАВЛЕННЯ ТУТ: Використовуємо slugify для створення роутів категорій ---
-  const categories = [
-    ...new Set(articles.map((a) => a.category).filter(Boolean)),
+  const uniqueCategories = [
+    ...new Set(articles.map((article) => article.category).filter(Boolean)),
   ];
-  const categoryRoutes = categories.map(
-    (category) => `/blog/category/${slugify(category)}`
-  );
-
+  const categoryRoutes = uniqueCategories.map((category) => {
+    return `/blog/category/${slugify(category)}`;
+  });
   const allRoutes = [...staticRoutes, ...articleRoutes, ...categoryRoutes];
   console.log("Found routes to pre-render:", allRoutes);
 
