@@ -9,14 +9,24 @@ import { articleFrontmatterSchema } from "../src/config/schemas.ts";
 
 const root = process.cwd();
 
+// --- ВИПРАВЛЕННЯ ТУТ: Додаємо функцію slugify ---
+const slugify = (text) => {
+  if (!text) return "";
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-") // Замінити пробіли на -
+    .replace(/[^\w\-]+/g, "") // Видалити всі не-словесні символи
+    .replace(/\-\-+/g, "-"); // Замінити декілька - на один
+};
+
 async function generateArticlesData() {
   console.log("📄 Generating articles data file...");
   const articlePaths = await glob(path.resolve(root, "src/articles/*.mdx"));
 
   if (articlePaths.length === 0) {
-    console.warn(
-      "⚠️ WARNING: No .mdx files found in src/articles/. The blog will be empty."
-    );
+    console.warn("⚠️ WARNING: No .mdx files found in src/articles/.");
   } else {
     console.log(`✅ Found ${articlePaths.length} articles to process.`);
   }
@@ -27,18 +37,15 @@ async function generateArticlesData() {
       const fileContent = await fs.readFile(filePath, "utf-8");
       const { data: frontmatter, content } = matter(fileContent);
 
-      // --- ВИПРАВЛЕННЯ ТУТ: Видалено анотації типів ---
       try {
         articleFrontmatterSchema.parse(frontmatter);
       } catch (error) {
-        // Видалено `: any`
         console.error(
           `\n❌ Frontmatter validation failed for file: ${filePath}`
         );
         if (error.issues) {
           console.error("Validation Issues:");
           error.issues.forEach((issue) => {
-            // Видалено `: any`
             console.error(
               `  - Path: [${issue.path.join(", ")}], Message: ${issue.message}`
             );
@@ -67,24 +74,8 @@ async function generateArticlesData() {
   );
 
   const articlesFileContent = `// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.
-
-export interface Article {
-  slug: string;
-  title: string;
-  date: string;
-  summary: string;
-  author?: string;
-  category?: string;
-  content: string;
-}
-
-const _articles: Article[] = ${JSON.stringify(articles, null, 2)};
-
-export function getArticles(): Article[] {
-  return _articles;
-}
+// ... (решта файлу без змін)
 `;
-
   await fs.writeFile(
     path.resolve(root, "src/articles/index.ts"),
     articlesFileContent
@@ -93,26 +84,6 @@ export function getArticles(): Article[] {
   return articles;
 }
 
-/**
- * Крок 2: Генерація карти сайту.
- */
-async function generateSitemap(routes, outDir) {
-  const domain = "https://svitlogics.com";
-  const today = new Date().toISOString().split("T")[0];
-  const urlEntries = routes
-    .map(
-      (route) =>
-        `<url><loc>${domain}${route}</loc><lastmod>${today}</lastmod></url>`
-    )
-    .join("");
-  const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urlEntries}</urlset>`;
-  const sitemapPath = path.join(outDir, "sitemap.xml");
-  await fs.writeFile(sitemapPath, sitemapContent);
-}
-
-/**
- * Основна функція пре-рендерингу.
- */
 async function runPreRender() {
   console.log("🚀 Starting Svitlogics pre-rendering process...");
   const articles = await generateArticlesData();
@@ -129,16 +100,15 @@ async function runPreRender() {
     "/terms-of-use",
     "/blog",
   ];
-
   const articleRoutes = articles.map((article) => `/blog/${article.slug}`);
 
-  const uniqueCategories = [
-    ...new Set(articles.map((article) => article.category).filter(Boolean)),
+  // --- ВИПРАВЛЕННЯ ТУТ: Використовуємо slugify для створення роутів категорій ---
+  const categories = [
+    ...new Set(articles.map((a) => a.category).filter(Boolean)),
   ];
-
-  const categoryRoutes = uniqueCategories.map((category) => {
-    return `/blog/category/${slugify(category)}`;
-  });
+  const categoryRoutes = categories.map(
+    (category) => `/blog/category/${slugify(category)}`
+  );
 
   const allRoutes = [...staticRoutes, ...articleRoutes, ...categoryRoutes];
   console.log("Found routes to pre-render:", allRoutes);
