@@ -5,25 +5,10 @@ import path from "path";
 import { glob } from "glob";
 import matter from "gray-matter";
 import { render } from "../src/entry-server.tsx";
+import { articleFrontmatterSchema } from "../src/config/schemas.ts";
 
-// --- Утиліта для створення URL-slug ---
-const slugify = (text) => {
-  if (!text) return "";
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-") // Замінити пробіли на -
-    .replace(/[^\w\-]+/g, "") // Видалити всі не-словесні символи
-    .replace(/\-\-+/g, "-"); // Замінити кілька - на один -
-};
-
-// Визначаємо кореневу папку проєкту
 const root = process.cwd();
 
-/**
- * Крок 1: Генерація файлу-реєстру статей.
- */
 async function generateArticlesData() {
   console.log("📄 Generating articles data file...");
   const articlePaths = await glob(path.resolve(root, "src/articles/*.mdx"));
@@ -40,19 +25,38 @@ async function generateArticlesData() {
     articlePaths.map(async (filePath) => {
       const slug = path.basename(filePath, ".mdx");
       const fileContent = await fs.readFile(filePath, "utf-8");
-      const { data, content } = matter(fileContent);
+      const { data: frontmatter, content } = matter(fileContent);
 
-      if (!data.title || !data.date || !data.summary) {
-        throw new Error(`Missing frontmatter in ${filePath}`);
+      // --- ВИПРАВЛЕННЯ ТУТ: Видалено анотації типів ---
+      try {
+        articleFrontmatterSchema.parse(frontmatter);
+      } catch (error) {
+        // Видалено `: any`
+        console.error(
+          `\n❌ Frontmatter validation failed for file: ${filePath}`
+        );
+        if (error.issues) {
+          console.error("Validation Issues:");
+          error.issues.forEach((issue) => {
+            // Видалено `: any`
+            console.error(
+              `  - Path: [${issue.path.join(", ")}], Message: ${issue.message}`
+            );
+          });
+        } else {
+          console.error(error);
+        }
+        console.error("\nBuild process terminated.");
+        process.exit(1);
       }
 
       return {
         slug,
-        title: data.title,
-        date: data.date,
-        summary: data.summary,
-        author: data.author || null,
-        category: data.category || null,
+        title: frontmatter.title,
+        date: frontmatter.date,
+        summary: frontmatter.summary,
+        author: frontmatter.author || null,
+        category: frontmatter.category || null,
         content: content.trim(),
       };
     })
@@ -80,6 +84,7 @@ export function getArticles(): Article[] {
   return _articles;
 }
 `;
+
   await fs.writeFile(
     path.resolve(root, "src/articles/index.ts"),
     articlesFileContent
@@ -127,7 +132,6 @@ async function runPreRender() {
 
   const articleRoutes = articles.map((article) => `/blog/${article.slug}`);
 
-  // --- ВИПРАВЛЕННЯ ТУТ: Додаємо генерацію маршрутів для категорій ---
   const uniqueCategories = [
     ...new Set(articles.map((article) => article.category).filter(Boolean)),
   ];

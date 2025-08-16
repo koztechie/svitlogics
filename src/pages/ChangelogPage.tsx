@@ -12,6 +12,15 @@ interface ChangelogEntryData {
 // Фінальні дані чейнджлогу з новою версією v0.3.2
 const changelogData: ChangelogEntryData[] = [
   {
+    version: "v0.3.8 (Beta)",
+    date: "August 16, 2025",
+    changes: [
+      "<strong>ADDED:</strong> Implemented strict schema validation for article frontmatter using Zod. The build process will now fail if an article is missing critical metadata (like `title` or `summary`) or if the data is malformed.",
+      "<strong>IMPROVED:</strong> Enhanced the reliability of the content pipeline by adding a data validation step, ensuring that all published articles meet predefined quality and SEO standards.",
+      "<strong>IMPROVED:</strong> The build script now provides detailed, user-friendly error messages if validation fails, pinpointing the exact file and issue that needs to be fixed.",
+    ],
+  },
+  {
     version: "v0.3.7 (Beta)",
     date: "August 15, 2025",
     changes: [
