@@ -108,6 +108,18 @@
   .container-main {
     @apply max-w-container mx-auto px-4; /* max-w-container should be 1024px, px-4 is 16px */
   }
+
+  /* --- MDX Components Styling --- */
+  h2 > a.autolink-anchor,
+  h3 > a.autolink-anchor {
+    @apply text-black no-underline opacity-0 group-hover:opacity-100 transition-opacity;
+    margin-left: 8px;
+  }
+
+  h2:hover .autolink-anchor,
+  h3:hover .autolink-anchor {
+    @apply opacity-100;
+  }
 }
 
 /* --- Print-Specific Styles --- */

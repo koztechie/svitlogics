@@ -12,6 +12,16 @@ interface ChangelogEntryData {
 // Фінальні дані чейнджлогу з новою версією v0.3.2
 const changelogData: ChangelogEntryData[] = [
   {
+    version: "v0.3.7 (Beta)",
+    date: "August 15, 2025",
+    changes: [
+      "<strong>ADDED:</strong> Implemented a full-featured category system for the blog, including a dedicated category index and individual category pages.",
+      "<strong>IMPROVED:</strong> Migrated all blog articles from Markdown (`.md`) to MDX (`.mdx`) to allow for future use of interactive React components within articles.",
+      "<strong>ADDED:</strong> Integrated and configured the `@mdx-js/rollup` plugin to process MDX files during the build.",
+      "<strong>IMPROVED:</strong> Updated the Static Site Generation (SSG) script to automatically discover and pre-render all category pages, ensuring they are fast and SEO-friendly.",
+    ],
+  },
+  {
     version: "v0.3.6 (Beta)",
     date: "August 15, 2025",
     changes: [
