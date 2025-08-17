@@ -3,34 +3,77 @@
 import { z } from "zod";
 
 /**
- * Defines the Zod schema for validating the frontmatter of MDX articles.
- * This ensures data integrity for titles, dates, summaries, and optional metadata.
+ * Defines the "Golden Standard" Zod schema for validating the frontmatter
+ * of all MDX content. This strict schema ensures data integrity and consistency
+ * across all published articles.
  */
 export const articleFrontmatterSchema = z.object({
   /**
-   * The primary title of the article. It must be a string and cannot be empty.
+   * The primary title of the article, used for SEO and display.
+   * It must be a non-empty string with a maximum length of 60 characters.
    */
-  title: z.string().nonempty(),
-
-  /**
-   * The publication date of the article. It must be a string that can be
-   * successfully coerced into a valid JavaScript Date object.
-   */
-  date: z.string().pipe(z.coerce.date()),
+  title: z.string().nonempty().max(60),
 
   /**
    * A brief summary of the article, suitable for meta descriptions.
    * It must be a non-empty string with a maximum length of 160 characters.
    */
-  summary: z.string().nonempty().max(160),
+  description: z.string().nonempty().max(160),
 
   /**
-   * The optional author of the article.
+   * The URL-friendly identifier for the article.
+   * It must be a non-empty string.
    */
-  author: z.string().optional(),
+  slug: z.string().nonempty(),
 
   /**
-   * The optional category for the article.
+   * The initial publication date of the article.
+   * It must be a string that can be coerced into a valid JavaScript Date object.
    */
-  category: z.string().optional(),
+  createdAt: z.string().pipe(z.coerce.date()),
+
+  /**
+   * The date of the last significant update to the article. Optional.
+   * If provided, it must be a string coercible to a valid Date.
+   */
+  updatedAt: z.string().pipe(z.coerce.date()).optional(),
+
+  /**
+   * The author's name. It must be a non-empty string.
+   */
+  author: z.string().nonempty(),
+
+  /**
+   * The URL for the article's main image, used for social sharing cards.
+   * It must be a valid URL string.
+   */
+  image: z.string().url(),
+
+  /**
+   * A list of tags or keywords associated with the article.
+   * It must be an array of non-empty strings.
+   */
+  tags: z.array(z.string().nonempty()),
+
+  /**
+   * The primary language of the article content.
+   * It must be either 'en' (English) or 'uk' (Ukrainian).
+   */
+  language: z.enum(["en", "uk"]),
+
+  /**
+   * An optional canonical URL to indicate the "preferred" version of a page.
+   * If provided, it must be a valid URL string.
+   */
+  canonicalUrl: z.string().url().optional(),
+
+  /**
+   * Optional meta robots tag content (e.g., "noindex, nofollow").
+   */
+  robots: z.string().optional(),
+
+  /**
+   * Optional JSON-LD schema string for advanced SEO.
+   */
+  schema: z.string().optional(),
 });

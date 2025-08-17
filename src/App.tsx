@@ -18,7 +18,8 @@ import ChangelogPage from "./pages/ChangelogPage";
 import BlogIndexPage from "./pages/BlogIndexPage";
 import ArticlePage from "./pages/ArticlePage";
 import CategoryPage from "./pages/CategoryPage";
-import NotFoundPage from "./pages/NotFoundPage";
+import TagPage from "./pages/TagPage"; // Додано імпорт з 'dev'
+import NotFoundPage from "./pages/NotFoundPage"; // Додано імпорт з 'main'
 
 /**
  * The root component of the Svitlogics application.
@@ -39,6 +40,7 @@ const App: React.FC = () => {
         {/* Blog Pages */}
         <Route path="/blog" element={<BlogIndexPage />} />
         <Route path="/blog/category/:categorySlug" element={<CategoryPage />} />
+        <Route path="/blog/tag/:tagSlug" element={<TagPage />} />
         <Route path="/blog/:slug" element={<ArticlePage />} />
 
         {/* Informational & Legal Pages */}

@@ -6,7 +6,22 @@ import { MDXRemote, MDXRemoteProps } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
-// ВИДАЛЕНО: import rehypeAutolinkHeadings from "rehype-autolink-headings";
+
+/**
+ * A utility function to convert a string into a URL-friendly slug.
+ * @param text The string to convert.
+ * @returns The slugified string.
+ */
+const slugify = (text: string): string => {
+  if (!text) return "";
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-") // Replace spaces with -
+    .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+    .replace(/\-\-+/g, "-"); // Replace multiple - with single -
+};
 
 const mdxComponents: MDXRemoteProps["components"] = {
   h2: (props) => (
@@ -105,18 +120,26 @@ const ArticlePage: React.FC = () => {
     <div>
       <Helmet>
         <title>{`${article.title} | Svitlogics Blog`}</title>
-        <meta name="description" content={article.summary} />
-        <meta property="og:title" content={article.title} />
-        <meta property="og:description" content={article.summary} />
-        <meta property="og:type" content="article" />
+        <meta name="description" content={article.description} />
+        {article.robots && <meta name="robots" content={article.robots} />}
         <link
           rel="canonical"
-          href={`https://svitlogics.com/blog/${article.slug}`}
+          href={
+            article.canonicalUrl ||
+            `https://svitlogics.com/blog/${article.slug}`
+          }
         />
+        <meta property="og:title" content={article.title} />
+        <meta property="og:description" content={article.description} />
+        <meta property="og:image" content={article.image} />
         <meta
           property="og:url"
           content={`https://svitlogics.com/blog/${article.slug}`}
         />
+        <meta property="og:type" content="article" />
+        {article.schema && (
+          <script type="application/ld+json">{article.schema}</script>
+        )}
       </Helmet>
 
       <div className="container-main pt-16 pb-16">
@@ -131,27 +154,16 @@ const ArticlePage: React.FC = () => {
             <h1 className="font-mono font-bold text-h1-mobile normal-case md:uppercase lg:text-h1-desktop text-black mb-4">
               {article.title}
             </h1>
-            <div className="flex flex-wrap items-center gap-x-3 font-mono text-ui-label text-black normal-case">
-              <span>{article.date}</span>
-              {article.category && (
-                <>
-                  <span aria-hidden="true">•</span>
-                  <Link
-                    to={`/blog/category/${article.category
-                      .toLowerCase()
-                      .replace(/\s+/g, "-")}`}
-                    className="text-blue-accent hover:underline"
-                  >
-                    {article.category}
-                  </Link>
-                </>
-              )}
-              {article.author && (
-                <>
-                  <span aria-hidden="true">•</span>
-                  <span>by {article.author}</span>
-                </>
-              )}
+            <div className="flex flex-wrap items-center gap-x-3 font-mono text-ui-label text-text-secondary normal-case">
+              <span>
+                {new Date(article.createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+              <span aria-hidden="true">•</span>
+              <span>{article.author}</span>
             </div>
           </header>
 
@@ -159,6 +171,25 @@ const ArticlePage: React.FC = () => {
             <MDXRemote {...mdxSource} components={mdxComponents} />
           ) : (
             <p>Rendering content...</p>
+          )}
+
+          {article.tags && article.tags.length > 0 && (
+            <footer className="mt-8 pt-8 border-t border-black">
+              <p className="font-mono text-ui-label uppercase text-black mb-4">
+                TAGS
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {article.tags.map((tag) => (
+                  <Link
+                    key={tag}
+                    to={`/blog/tag/${slugify(tag)}`}
+                    className="block border border-black rounded-none px-3 py-1 font-mono text-ui-label text-black bg-white transition-colors duration-100 hover:border-blue-accent hover:text-blue-accent"
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            </footer>
           )}
         </article>
       </div>

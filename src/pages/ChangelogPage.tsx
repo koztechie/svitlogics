@@ -12,6 +12,15 @@ interface ChangelogEntryData {
 // Фінальні дані чейнджлогу з новою версією v0.3.2
 const changelogData: ChangelogEntryData[] = [
   {
+    version: "v0.3.9 (Beta)",
+    date: "August 17, 2025",
+    changes: [
+      "<strong>SEO:</strong> Implemented a 'Golden Standard' for article frontmatter, enforcing a comprehensive set of required and optional fields for metadata.",
+      "<strong>DEVELOPMENT:</strong> Integrated Zod schema validation directly into the build process. The build now automatically fails if any article's frontmatter is incomplete or malformed, preventing the deployment of pages with poor SEO data.",
+      "<strong>IMPROVED:</strong> Article pages now programmatically generate a full suite of SEO and Open Graph meta tags (`og:image`, `canonical`, `robots`, etc.) directly from the validated frontmatter.",
+    ],
+  },
+  {
     version: "v0.3.8 (Beta)",
     date: "August 16, 2025",
     changes: [

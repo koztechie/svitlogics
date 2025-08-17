@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { getArticles } from "../articles";
 
 const slugify = (text: string): string => {
+  if (!text) return "";
   return text
     .toString()
     .toLowerCase()
@@ -16,16 +17,10 @@ const slugify = (text: string): string => {
 const BlogIndexPage: React.FC = () => {
   const articles = getArticles();
 
-  const uniqueCategories = useMemo(() => {
-    const categories = articles
-      .map((article) => article.category)
-      .filter((category): category is string => !!category);
-    return [...new Set(categories)];
+  const uniqueTags = useMemo(() => {
+    const allTags = articles.flatMap((article) => article.tags);
+    return [...new Set(allTags)];
   }, [articles]);
-
-  const handleCategoryClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
 
   return (
     <div>
@@ -50,35 +45,31 @@ const BlogIndexPage: React.FC = () => {
         </h1>
 
         <div className="max-w-3xl">
-          {/* --- БЛОК КАТЕГОРІЙ --- */}
-          {uniqueCategories.length > 0 && (
+          {uniqueTags.length > 0 && (
             <section className="mb-12">
-              <h2 className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-6 normal-case">
-                Categories
+              <h2 className="font-mono font-medium text-ui-label uppercase text-black mb-4">
+                TAGS
               </h2>
               <div className="flex flex-wrap gap-2">
-                {uniqueCategories.map((category) => (
+                {uniqueTags.map((tag) => (
                   <Link
-                    key={category}
-                    to={`/blog/category/${slugify(category)}`}
-                    // Стиль "Secondary Button" з вашої дизайн-системи
-                    className="block border border-black rounded-none px-3 py-1 font-mono font-medium text-ui-label uppercase text-black bg-white transition-colors duration-100 hover:bg-black hover:text-white"
+                    key={tag}
+                    to={`/blog/tag/${slugify(tag)}`}
+                    className="block border border-black rounded-none px-3 py-1 font-mono text-ui-label text-black bg-white transition-colors duration-100 hover:border-blue-accent hover:text-blue-accent"
                   >
-                    {category}
+                    {tag}
                   </Link>
                 ))}
               </div>
             </section>
           )}
 
-          {/* --- СПИСОК СТАТЕЙ --- */}
           {articles.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-8">
               {articles.map((article) => (
                 <Link
                   key={article.slug}
                   to={`/blog/${article.slug}`}
-                  // Стиль "Container / Card" з вашої дизайн-системи
                   className="block border border-black p-4 bg-white rounded-none transition-colors duration-100 hover:border-blue-accent group"
                 >
                   <article>
@@ -86,32 +77,37 @@ const BlogIndexPage: React.FC = () => {
                       {article.title}
                     </h3>
 
-                    {/* Метадані тепер чорні, як і має бути */}
-                    <div className="flex flex-wrap items-center gap-x-3 font-mono text-ui-label text-black normal-case mb-4">
-                      <span>{article.date}</span>
-                      {article.category && (
-                        <>
-                          <span aria-hidden="true">•</span>
-                          <Link
-                            to={`/blog/category/${slugify(article.category)}`}
-                            onClick={handleCategoryClick}
-                            className="text-blue-accent hover:underline z-10 relative"
-                          >
-                            {article.category}
-                          </Link>
-                        </>
-                      )}
-                      {article.author && (
-                        <>
-                          <span aria-hidden="true">•</span>
-                          <span>by {article.author}</span>
-                        </>
-                      )}
+                    <div className="flex flex-wrap items-center gap-x-2 font-mono text-ui-label text-text-secondary normal-case mb-4">
+                      <span>
+                        {new Date(article.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )}
+                      </span>
+                      <span aria-hidden="true">•</span>
+                      <span>{article.author}</span>
                     </div>
 
                     <p className="font-mono font-normal text-body-main leading-body text-black">
-                      {article.summary}
+                      {article.description}
                     </p>
+
+                    {article.tags && article.tags.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {article.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="block border border-black rounded-none px-2 py-0.5 font-mono text-xs text-black bg-white"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </article>
                 </Link>
               ))}

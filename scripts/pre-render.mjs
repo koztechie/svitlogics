@@ -9,7 +9,6 @@ import { articleFrontmatterSchema } from "../src/config/schemas.ts";
 
 const root = process.cwd();
 
-// --- ВИПРАВЛЕННЯ ТУТ: Повертаємо функцію slugify ---
 const slugify = (text) => {
   if (!text) return "";
   return text
@@ -33,7 +32,6 @@ async function generateArticlesData() {
 
   const articles = await Promise.all(
     articlePaths.map(async (filePath) => {
-      const slug = path.basename(filePath, ".mdx");
       const fileContent = await fs.readFile(filePath, "utf-8");
       const { data: frontmatter, content } = matter(fileContent);
 
@@ -58,19 +56,25 @@ async function generateArticlesData() {
       }
 
       return {
-        slug,
+        slug: frontmatter.slug,
         title: frontmatter.title,
-        date: frontmatter.date,
-        summary: frontmatter.summary,
-        author: frontmatter.author || null,
-        category: frontmatter.category || null,
+        description: frontmatter.description,
+        createdAt: frontmatter.createdAt,
+        updatedAt: frontmatter.updatedAt,
+        author: frontmatter.author,
+        image: frontmatter.image,
+        tags: frontmatter.tags,
+        language: frontmatter.language,
+        canonicalUrl: frontmatter.canonicalUrl,
+        robots: frontmatter.robots,
+        schema: frontmatter.schema,
         content: content.trim(),
       };
     })
   );
 
   articles.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
   const articlesFileContent = `// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.
@@ -78,10 +82,16 @@ async function generateArticlesData() {
 export interface Article {
   slug: string;
   title: string;
-  date: string;
-  summary: string;
-  author?: string;
-  category?: string;
+  description: string;
+  createdAt: string; // Stored as ISO string
+  updatedAt?: string;
+  author: string;
+  image: string;
+  tags: string[];
+  language: 'en' | 'uk';
+  canonicalUrl?: string;
+  robots?: string;
+  schema?: string;
   content: string;
 }
 
@@ -131,13 +141,14 @@ async function runPreRender() {
     "/blog",
   ];
   const articleRoutes = articles.map((article) => `/blog/${article.slug}`);
-  const uniqueCategories = [
-    ...new Set(articles.map((article) => article.category).filter(Boolean)),
-  ];
-  const categoryRoutes = uniqueCategories.map((category) => {
-    return `/blog/category/${slugify(category)}`;
+
+  // --- ВИПРАВЛЕННЯ ТУТ: Додаємо генерацію маршрутів для тегів ---
+  const uniqueTags = [...new Set(articles.flatMap((article) => article.tags))];
+  const tagRoutes = uniqueTags.map((tag) => {
+    return `/blog/tag/${slugify(tag)}`;
   });
-  const allRoutes = [...staticRoutes, ...articleRoutes, ...categoryRoutes];
+
+  const allRoutes = [...staticRoutes, ...articleRoutes, ...tagRoutes];
   console.log("Found routes to pre-render:", allRoutes);
 
   const outDir = path.resolve(root, "dist");
