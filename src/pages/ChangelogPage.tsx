@@ -12,6 +12,15 @@ interface ChangelogEntryData {
 // Фінальні дані чейнджлогу з новою версією v0.3.2
 const changelogData: ChangelogEntryData[] = [
   {
+    version: "v0.4.0 (Beta)",
+    date: "August 17, 2025",
+    changes: [
+      "<strong>PERFORMANCE:</strong> Integrated `vite-plugin-image-optimizer` into the build process. All static images (favicons, banners) and article images placed in the `/public` directory are now automatically compressed on build.",
+      '<strong>DEVELOPMENT:</strong> Created a custom `<OptimizedImage>` React component that automatically adds `loading="lazy"` and `decoding="async"` attributes for improved loading performance.',
+      "<strong>IMPROVED:</strong> All standard `<img>` tags within MDX articles are now automatically replaced with the new `<OptimizedImage>` component, ensuring performance best practices are applied consistently.",
+    ],
+  },
+  {
     version: "v0.3.9 (Beta)",
     date: "August 17, 2025",
     changes: [

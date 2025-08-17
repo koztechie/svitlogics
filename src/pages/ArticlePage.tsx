@@ -6,6 +6,7 @@ import { MDXRemote, MDXRemoteProps } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
+import OptimizedImage from "../components/OptimizedImage";
 
 /**
  * A utility function to convert a string into a URL-friendly slug.
@@ -51,6 +52,19 @@ const mdxComponents: MDXRemoteProps["components"] = {
   ),
   a: (props) => <a className="text-blue-accent hover:underline" {...props} />,
   strong: (props) => <strong className="font-bold" {...props} />,
+  // --- ВИПРАВЛЕННЯ ТУТ: Overriding the default img tag ---
+  img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
+    const { src, alt, ...rest } = props;
+    if (!src || !alt) {
+      // This is a content error. Log it and render nothing to avoid broken images.
+      console.warn(
+        "MDX Image is missing 'src' or 'alt' attribute and will not be rendered.",
+        { src }
+      );
+      return null;
+    }
+    return <OptimizedImage src={src} alt={alt} {...rest} />;
+  },
 };
 
 const ArticlePage: React.FC = () => {

@@ -6,6 +6,7 @@ import svgr from "vite-plugin-svgr";
 import mdx from "@mdx-js/rollup";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
+import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,6 +16,13 @@ export default defineConfig({
     mdx({
       remarkPlugins: [remarkGfm],
       rehypePlugins: [rehypeSlug],
+    }),
+    ViteImageOptimizer({
+      png: { quality: 80 },
+      jpeg: { quality: 80 },
+      jpg: { quality: 80 },
+      webp: { quality: 80 },
+      avif: { quality: 70 },
     }),
   ],
 
