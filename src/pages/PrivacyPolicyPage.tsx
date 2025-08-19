@@ -41,7 +41,7 @@ const content = {
     },
     {
       title: "7. Contact",
-      text: 'For questions about this policy, please use the <a href="/contact" class="text-blue-accent hover:underline">Contact page</a>.',
+      text: 'For questions about this policy, please use the <a href="/contact" class="text-blue-accent hover:underline">Contact page</a> or email me directly at <a href="mailto:hello@svitlogics.com" class="text-blue-accent hover:underline">hello@svitlogics.com</a>.',
     },
   ],
 };
