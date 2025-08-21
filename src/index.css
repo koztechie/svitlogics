@@ -121,14 +121,3 @@
     @apply opacity-100;
   }
 }
-
-/* --- Print-Specific Styles --- */
-/* Hides non-essential sections when the page is printed. */
-@media print {
-  header,
-  footer,
-  #analysis-form-section,
-  #methodology-section {
-    display: none;
-  }
-}
