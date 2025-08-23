@@ -1,0 +1,75 @@
+# ==============================================================================
+# SVITLOGICS SOFTWARE LICENSE AGREEMENT
+# VERSION 3.0 ("THE UNCOMPROMISING")
+# ==============================================================================
+
+## PREAMBLE: A MANIFESTO ON INTELLECTUAL SOVEREIGNTY AND ETHICAL USE
+
+This document is not a conventional software license. It is a binding legal and ethical contract that governs the use of the Software (as defined below). The Software was engineered in Kyiv, Ukraine, amidst an active information war, not as a commercial venture, but as an instrument of intellectual defense. Its purpose is to deconstruct manipulative narratives and thereby serve the cause of clarity and critical thinking.
+
+This license is designed with zero ambiguity to protect this core mission. It grants considerable freedoms under the condition of absolute adherence to its principles. By accessing, using, copying, modifying, or distributing any part of the Software, you irrevocably agree to all terms and conditions herein. Violation of any clause will result in the immediate, automatic, and permanent termination of all rights granted to you under this agreement. This is not negotiable.
+
+---
+
+## SECTION I: CORE PERMISSIONS (THE MIT LICENSE GRANT)
+
+Copyright © 2025 Eugene Kozlovsky
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice, this entire preamble, and the addendum below shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KINDD, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+## ADDENDUM: BINDING COVENANTS, RESTRICTIONS, AND DISCLAIMERS
+
+### ARTICLE A: DEFINITIONS
+
+A.1. **"The Software"**: Refers to the Svitlogics project in its totality: all source code (frontend and backend), proprietary system prompts, architectural design, the Svitlogics Design System, the Svitlogics Writing System, and all related assets within this repository.
+A.2. **"Generated Analysis"**: Refers to any and all output from the Software, irrespective of format.
+A.3. **"The Author"**: Refers to Eugene Kozlovsky.
+A.4. **"Derivative Work"**: Any software that incorporates, is based upon, or derives from any part of the Software.
+A.5. **"Malicious Use"**: Any use of the Software for purposes detailed in Article C.1.
+
+### ARTICLE B: ABSOLUTE DISCLAIMER OF WARRANTY AND LIABILITY
+
+B.1. **NO WARRANTY OF ANY KIND**: THE SOFTWARE IS PROVIDED "AS IS" AND "WITH ALL FAULTS". THE AUTHOR DISCLAIMS ALL WARRANTIES, EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, TO THE MAXIMUM EXTENT PERMITTED BY LAW. THIS INCLUDES, BUT IS NOT LIMITED TO, ANY WARRANTY OF PERFORMANCE, ACCURACY, RELIABILITY, SECURITY, OR NONINFRINGEMENT.
+
+B.2. **GENERATED ANALYSIS IS NOT FACT**: THE GENERATED ANALYSIS IS THE PROBABILISTIC OUTPUT OF A THIRD-PARTY LARGE LANGUAGE MODEL. IT IS NOT A STATEMENT OF FACT, A "TRUTH VERDICT," OR PROFESSIONAL ADVICE. IT IS AN EDUCATIONAL ARTIFACT FOR ANALYSIS. **RELIANCE ON THE GENERATED ANALYSIS FOR ANY DECISION-MAKING IS STRICTLY AND ENTIRELY AT YOUR OWN RISK.**
+
+B.3. **CATASTROPHIC RISK ASSUMPTION**: YOU, THE USER, ASSUME THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY OTHER PECUNIARY LOSS) ARISING OUT OF THE USE OR INABILITY TO USE THE SOFTWARE, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+B.4. **LIABILITY CAP**: NOTWITHSTANDING ANY DAMAGES THAT YOU MIGHT INCUR FOR ANY REASON WHATSOEVER, THE ENTIRE LIABILITY OF THE AUTHOR UNDER ANY PROVISION OF THIS LICENSE AND YOUR EXCLUSIVE REMEDY SHALL BE LIMITED TO THE GREATER OF THE AMOUNT ACTUALLY PAID BY YOU FOR THE SOFTWARE OR ONE HUNDRED UNITED STATES DOLLARS ($100.00 USD).
+
+### ARTICLE C: NON-NEGOTIABLE RESTRICTIONS ON USE
+
+Your right to use, modify, or distribute the Software is conditional upon your strict adherence to the following restrictions. Violation of any of these restrictions constitutes an act of bad faith and results in immediate termination of this license.
+
+C.1. **PROHIBITED USES**: The Software shall not be used, directly or indirectly, for any of the following purposes:
+    a) **State-Sponsored Disinformation**: Use by any state-level actor, intelligence agency, or state-affiliated entity for the purpose of creating, refining, or disseminating propaganda or disinformation.
+    b) **Suppression of Speech**: Integration into any system designed for the automated censorship, moderation, or suppression of lawful speech.
+    c) **Surveillance**: Use in any application related to mass surveillance, social scoring, or predictive policing.
+    d) **Military Application**: Use in any military, intelligence, or offensive cyberwarfare operations.
+    e) **Harassment**: Use to generate content intended to harass, defame, intimidate, or harm any individual or group.
+
+C.2. **BRANDING AND ATTRIBUTION**:
+    a) **No Use of Svitlogics Brand**: This license **DOES NOT** grant any right to use the name "Svitlogics," the Svitlogics logo, or any associated trademarks. Any public-facing Derivative Work **MUST** operate under a fundamentally different and non-confusing brand.
+    b) **Mandatory Attribution**: Any public-facing Derivative Work **MUST** include the following notice, clearly visible to end-users (e.g., in a footer or "About" section), with a direct, clickable link to the original repository:
+       > "This software is based on the open-source Svitlogics project, developed by Eugene Kozlovsky in Kyiv, Ukraine. The original project is available at https://github.com/koztechie/svitlogics and is licensed under the Svitlogics Software License Agreement."
+
+C.3. **DATA PRIVACY OBLIGATIONS FOR DERIVATIVE WORKS**:
+    a) **Stateless by Default**: You acknowledge that the canonical Software is stateless.
+    b) **Strict Liability for Data Storage**: If you modify the Software to store any user-submitted text or personally identifiable information, you assume **strict and total liability** for the security of that data and for compliance with all applicable data protection laws (e.g., GDPR, CCPA). You agree to indemnify and hold harmless the Author from any and all claims, damages, or legal actions arising from your decision to store user data.
+
+### ARTICLE D: GOVERNING LAW, JURISDICTION, AND ENFORCEMENT
+
+D.1. **GOVERNING LAW**: This Agreement shall be governed by and construed in accordance with the substantive laws of Ukraine.
+
+D.2. **EXCLUSIVE JURISDICTION**: The Parties irrevocably agree that the competent courts of Kyiv, Ukraine shall have exclusive jurisdiction to settle any dispute or claim that arises out of or in connection with this Agreement.
+
+D.3. **RIGHT TO ENFORCE**: The Author reserves the absolute right to seek injunctive relief or any other available legal remedy in any jurisdiction to enforce the restrictions outlined in Article C. You agree that a breach of these restrictions will cause irreparable harm to the Author and the mission of the Svitlogics project, for which monetary damages would be an inadequate remedy.
+
+---
+This license represents a contract between the Author and the user. Your continued use of the Software signifies your unequivocal acceptance of all terms herein.
