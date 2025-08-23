@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://svitlogics.com" title="Access the Instrument">
-    <img src="https://svitlogics.com/logo.svg" alt="Svitlogics Logo" width="140"/>
+    <img src="./assets/readme/SvitlogicsLogo.svg" alt="Svitlogics Logo" width="140"/>
   </a>
 </div>
 

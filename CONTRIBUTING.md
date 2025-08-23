@@ -6,7 +6,7 @@
 
 ## I. DECLARATION OF OPERATIONAL SOVEREIGNTY
 
-This is not a community document. This is an operational directive governing all interaction protocols with the Svitlogorics source code repository. Svitlogics is a sovereign, solo-developed instrument. It was forged—not merely "built"—in Kyiv, Ukraine, under the explicit duress of sustained information warfare. It has one function: to provide an instrument for the deconstruction of weaponized narratives. It serves no other purpose.
+This is not a community document. This is an operational directive governing all interaction protocols with the Svitlogics source code repository. Svitlogics is a sovereign, solo-developed instrument. It was forged—not merely "built"—in Kyiv, Ukraine, under the explicit duress of sustained information warfare. It has one function: to provide an instrument for the deconstruction of weaponized narratives. It serves no other purpose.
 
 Engagement with this project is not a right; it is a privilege granted only to those who demonstrate absolute comprehension of and adherence to its core axioms. This directive is designed to repel casual contributors and filter for professionals who understand that in this domain, imprecision is a catastrophic failure.
 
