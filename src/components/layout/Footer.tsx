@@ -2,22 +2,21 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Github, Mail } from "lucide-react";
 
-// --- Декларуємо глобальний об'єкт на верхньому рівні ---
-declare global {
-  interface Window {
-    cookieconsent?: {
-      openPreferencesCenter: () => void;
-    };
-  }
-}
+// --- Типізація та константи для підвищення надійності та DX ---
 
+/**
+ * @description Конфігурація даних для всіх секцій футера.
+ * Визначена як константа поза компонентом, щоб уникнути її повторного створення
+ * при кожному рендері. `as const` забезпечує глибоку незмінність.
+ * @type {readonly FooterSection[]}
+ */
 const footerSections = [
   {
     title: "PRODUCT",
     links: [
-      { to: "/how-it-works", label: "How It Works" },
+      { to: "/how-it-works", label: "How it works" },
       { to: "/faq", label: "FAQ" },
-      { to: "/pricing-limits", label: "Pricing & Limits" },
+      { to: "/pricing-limits", label: "Pricing & limits" },
     ],
   },
   {
@@ -37,45 +36,52 @@ const footerSections = [
   {
     title: "LEGAL",
     links: [
-      { to: "/privacy-policy", label: "Privacy Policy" },
-      { to: "/terms-of-use", label: "Terms of Use" },
-      { to: "/cookie-policy", label: "Cookie Policy" },
+      { to: "/privacy-policy", label: "Privacy policy" },
+      { to: "/terms-of-use", label: "Terms of use" },
+      { to: "/cookie-policy", label: "Cookie policy" },
       { to: "/disclaimer", label: "Disclaimer" },
     ],
   },
-];
+] as const;
 
+const GITHUB_URL = "https://github.com/koztechie/svitlogics";
+const CONTACT_EMAIL = "hello@svitlogics.com";
+
+/**
+ * @description
+ * `Footer` — це статичний компонент, що відображає підвал сайту.
+ * Він містить навігаційні посилання, інформацію про авторські права, версію
+ * та посилання на соціальні мережі. Компонент мемоїзовано для оптимальної
+ * продуктивності, оскільки він не залежить від пропсів і не повинен
+ * ре-рендеритися без потреби.
+ *
+ * @component
+ * @example
+ * <App>
+ *   <MainContent />
+ *   <Footer />
+ * </App>
+ */
 const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear();
-  const copyrightText = `© ${currentYear} SVITLOGICS BY EUGENE KOZLOVSKY. ALL RIGHTS RESERVED.`;
+  // `useMemo` використовується для обчислень, які не потрібно виконувати при кожному рендері.
+  // Оскільки `new Date()` може дати різний результат, краще зафіксувати його.
+  const copyrightText = React.useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    return `© ${currentYear} SVITLOGICS BY EUGENE KOZLOVSKY. ALL RIGHTS RESERVED.`;
+  }, []);
+
   const versionText = "SVITLOGICS V0.4.0 (BETA)";
 
-  const openCookiePreferences = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    if (
-      window.cookieconsent &&
-      typeof window.cookieconsent.openPreferencesCenter === "function"
-    ) {
-      window.cookieconsent.openPreferencesCenter();
-    } else {
-      alert(
-        "Cookie preferences can be managed on the deployed version of the site."
-      );
-    }
-  };
-
-  // --- ВИДАЛЕНО: Дублююча декларація ---
-
   return (
-    <footer className="bg-white border-t border-black px-4 py-8">
-      <div className="max-w-container mx-auto">
+    <footer className="border-t border-black bg-white px-4 py-8">
+      <div className="mx-auto max-w-container">
         <nav
-          className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-8"
-          aria-label="Footer Navigation"
+          className="mb-8 grid grid-cols-2 gap-8 md:grid-cols-4"
+          aria-label="Footer navigation"
         >
           {footerSections.map((section) => (
             <div key={section.title}>
-              <h3 className="font-mono font-bold text-ui-label uppercase text-black mb-4">
+              <h3 className="font-mono font-bold uppercase text-ui-label text-black mb-4">
                 {section.title}
               </h3>
               <ul className="space-y-3">
@@ -83,54 +89,43 @@ const Footer: React.FC = () => {
                   <li key={link.to}>
                     <Link
                       to={link.to}
-                      className="font-mono font-medium text-ui-label capitalize text-blue-accent no-underline hover:underline focus-visible:underline"
+                      className="font-mono font-medium capitalize text-ui-label text-blue-accent no-underline hover:underline focus-visible:underline"
                     >
                       {link.label}
                     </Link>
                   </li>
                 ))}
-                {section.title === "LEGAL" && (
-                  <li>
-                    <a
-                      href="#"
-                      onClick={openCookiePreferences}
-                      className="font-mono font-medium text-ui-label capitalize text-blue-accent no-underline hover:underline focus-visible:underline"
-                    >
-                      Cookie Preferences
-                    </a>
-                  </li>
-                )}
               </ul>
             </div>
           ))}
         </nav>
 
         {/* Bottom section: Copyright and social links */}
-        <div className="pt-8 border-t border-black">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-y-4">
-            <p className="font-mono text-ui-label text-black text-center sm:text-left uppercase">
+        <div className="border-t border-black pt-8">
+          <div className="flex flex-col gap-y-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-mono uppercase text-ui-label text-black text-center sm:text-left">
               {copyrightText}
             </p>
-            <div className="flex items-center justify-center sm:justify-end gap-x-6">
-              <p className="font-mono text-ui-label text-text-secondary uppercase">
+            <div className="flex items-center justify-center gap-x-6 sm:justify-end">
+              <p className="font-mono uppercase text-ui-label text-text-secondary">
                 {versionText}
               </p>
               <div className="flex items-center gap-x-4">
                 <a
-                  href="https://github.com/koztechie/svitlogics"
+                  href={GITHUB_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="View Svitlogics on GitHub"
                   title="View Svitlogics on GitHub"
-                  className="text-black hover:text-blue-accent transition-colors duration-100"
+                  className="text-black transition-colors duration-100 hover:text-blue-accent"
                 >
                   <Github size={24} strokeWidth={1.5} />
                 </a>
                 <a
-                  href="mailto:hello@svitlogics.com"
-                  aria-label="Contact via Email"
-                  title="Contact via Email"
-                  className="text-black hover:text-blue-accent transition-colors duration-100"
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  aria-label="Contact via email"
+                  title="Contact via email"
+                  className="text-black transition-colors duration-100 hover:text-blue-accent"
                 >
                   <Mail size={24} strokeWidth={1.5} />
                 </a>
@@ -143,4 +138,7 @@ const Footer: React.FC = () => {
   );
 };
 
-export default Footer;
+// Мемоїзація компонента є ключовою оптимізацією. Оскільки Footer не приймає
+// пропсів, React.memo гарантує, що він буде ре-рендеритися лише один раз
+// (або якщо зміниться його внутрішній стан, якого тут немає).
+export default React.memo(Footer);

@@ -1,19 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link, NavLink as RouterNavLink, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import SvitlogicsLogo from "../../assets/logo/SvitlogicsLogo.svg?react";
-// import { useTranslation } from 'react-i18next';
-// import InterfaceLanguageSwitcher from './InterfaceLanguageSwitcher';
 
-// Навігаційні елементи для десктопу
+// --- Типізація та Константи ---
+
+/**
+ * @description Конфігурація навігаційних елементів для десктопної версії.
+ * Визначена поза компонентом, щоб уникнути повторного створення.
+ * @type {readonly NavItem[]}
+ */
 const navItems = [
   { to: "/", label: "HOME" },
   { to: "/about", label: "ABOUT" },
   { to: "/how-it-works", label: "HOW IT WORKS" },
   { to: "/faq", label: "FAQ" },
   { to: "/blog", label: "BLOG" },
-];
-// Розширений набір для мобільного меню
+] as const;
+
+/**
+ * @description Розширений набір для мобільного меню.
+ * @type {readonly NavItem[]}
+ */
 const mobileNavItems = [
   ...navItems,
   { to: "/pricing-limits", label: "PRICING & LIMITS" },
@@ -21,33 +29,111 @@ const mobileNavItems = [
   { to: "/privacy-policy", label: "PRIVACY POLICY" },
   { to: "/terms-of-use", label: "TERMS OF USE" },
   { to: "/changelog", label: "CHANGELOG" },
-];
+  { to: "/cookie-policy", label: "COOKIE POLICY" },
+  { to: "/disclaimer", label: "DISCLAIMER" },
+] as const;
+
+// --- Допоміжні Компоненти (Оптимізовані) ---
+
 /**
- * Main application header.
- * Contains the logo, primary desktop navigation, and a collapsible mobile menu.
+ * @description Пропси для мемоїзованого компонента `CustomNavLink`.
+ */
+interface CustomNavLinkProps {
+  /** @description Шлях призначення. */
+  to: string;
+  /** @description Вміст посилання, зазвичай текст. */
+  children: React.ReactNode;
+  /** @description Прапорець для застосування стилів мобільної версії. */
+  mobile?: boolean;
+}
+
+/**
+ * @description
+ * Мемоїзований компонент-обгортка над `RouterNavLink` від `react-router-dom`.
+ * Використовує функціонал `NavLink` для автоматичного визначення активного стану
+ * замість ручного порівняння через `useLocation`, що є значно продуктивнішим.
+ *
+ * @component
+ */
+const CustomNavLink: React.FC<CustomNavLinkProps> = React.memo(
+  ({ to, children, mobile = false }) => {
+    // Класи обчислюються один раз і передаються `NavLink`
+    const getClassName = useCallback(
+      ({ isActive }: { isActive: boolean }): string => {
+        const baseClasses =
+          "font-mono font-medium text-ui-label uppercase text-blue-accent transition-colors duration-100 rounded-none";
+        const stateClasses = "hover:underline focus-visible:underline";
+        const activeClasses = isActive ? "underline" : "no-underline";
+        const mobileSpecificClasses = mobile
+          ? "block w-full py-2 text-left"
+          : "py-1";
+        return `${baseClasses} ${stateClasses} ${activeClasses} ${mobileSpecificClasses}`;
+      },
+      [mobile]
+    );
+
+    return (
+      <RouterNavLink to={to} className={getClassName} end>
+        {children}
+      </RouterNavLink>
+    );
+  }
+);
+
+CustomNavLink.displayName = "CustomNavLink"; // Для кращого дебагінгу
+
+/**
+ * @description
+ * Головний хедер застосунку.
+ * Містить логотип, основну навігацію для десктопу та мобільне меню, що розгортається.
+ * Компонент мемоїзовано для запобігання зайвим ре-рендерам.
+ * @component
  */
 const Header: React.FC = () => {
-  // const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Автоматично закриває мобільне меню при зміні сторінки
+  // Ефект для закриття меню при зміні маршруту.
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
+  // Ефект для керування доступністю (a11y): блокування скролу та повернення фокусу.
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = originalOverflow;
+    }
+
+    // Функція очищення, що виконується при розмонтуванні компонента або зміні `isMenuOpen`
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      // Повернення фокусу на кнопку меню після його закриття
+      if (!isMenuOpen) {
+        menuButtonRef.current?.focus();
+      }
+    };
+  }, [isMenuOpen]);
+
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen((prev) => !prev);
+  }, []);
+
   return (
-    <header className="relative bg-white border-b border-black">
-      <div className="max-w-container mx-auto px-4 flex justify-between items-center py-3">
+    <header className="relative border-b border-black bg-white">
+      <div className="mx-auto flex max-w-container items-center justify-between px-4 py-3">
         {/* Logo */}
         <Link
           to="/"
           className="flex items-baseline"
-          aria-label="Svitlogics Homepage"
+          aria-label="Svitlogics homepage"
         >
           <SvitlogicsLogo className="h-8 w-auto text-black" />
         </Link>
-        {/* Desktop Navigation & Controls */}
+        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-x-6">
           <nav aria-label="Main navigation">
             <ul className="flex items-center gap-x-6">
@@ -63,9 +149,10 @@ const Header: React.FC = () => {
         {/* Mobile Menu Button */}
         <div className="md:hidden">
           <button
+            ref={menuButtonRef}
             type="button"
-            className="flex items-center justify-center p-2 border border-black bg-white text-black hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white transition-colors duration-100 rounded-none"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex items-center justify-center rounded-none border border-black bg-white p-2 text-black transition-colors duration-100 hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white"
+            onClick={toggleMenu}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"
             aria-label={
@@ -82,61 +169,28 @@ const Header: React.FC = () => {
       </div>
 
       {/* Mobile Navigation Panel */}
-      <div
-        id="mobile-menu"
-        role="region"
-        className={`md:hidden absolute top-full left-0 right-0 w-full bg-white border-b border-x border-black ${
-          isMenuOpen ? "block" : "hidden"
-        }`}
-      >
-        <nav className="px-4 py-4" aria-label="Mobile navigation">
-          <ul className="flex flex-col gap-y-3">
-            {mobileNavItems.map((item) => (
-              <li key={item.to}>
-                <CustomNavLink to={item.to} mobile>
-                  {item.label}
-                </CustomNavLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+      {isMenuOpen && (
+        <div
+          id="mobile-menu"
+          role="dialog" // role="dialog" є більш семантичним для модальних вікон
+          aria-modal="true" // Повідомляє скрін-рідерам, що вміст поза цим меню неактивний
+          className="absolute left-0 top-full w-full border-b border-x border-black bg-white md:hidden"
+        >
+          <nav className="px-4 py-4" aria-label="Mobile navigation">
+            <ul className="flex flex-col gap-y-3">
+              {mobileNavItems.map((item) => (
+                <li key={item.to}>
+                  <CustomNavLink to={item.to} mobile>
+                    {item.label}
+                  </CustomNavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      )}
     </header>
   );
 };
 
-// Reusable NavLink component
-interface CustomNavLinkProps {
-  to: string;
-  children: React.ReactNode;
-  mobile?: boolean;
-}
-
-const CustomNavLink: React.FC<CustomNavLinkProps> = ({
-  to,
-  children,
-  mobile = false,
-}) => {
-  const location = useLocation();
-  const isActive = location.pathname === to;
-
-  const baseClasses =
-    "font-mono font-medium text-ui-label uppercase text-blue-accent transition-colors duration-100 rounded-none";
-  const stateClasses = "hover:underline focus-visible:underline";
-  // Умова тепер додає АБО 'underline', АБО 'no-underline', що виключає конфлікт
-  const activeClasses = isActive ? "underline" : "no-underline";
-
-  const mobileSpecificClasses = mobile ? "block w-full py-2 text-left" : "py-1";
-
-  return (
-    <RouterNavLink
-      to={to}
-      className={`${baseClasses} ${stateClasses} ${activeClasses} ${mobileSpecificClasses}`}
-      aria-current={isActive ? "page" : undefined}
-    >
-      {children}
-    </RouterNavLink>
-  );
-};
-
-export default Header;
+export default React.memo(Header);
