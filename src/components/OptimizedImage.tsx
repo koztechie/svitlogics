@@ -1,44 +1,78 @@
-// src/components/OptimizedImage.tsx
-
 import React from "react";
 
-// Визначаємо пропси, які приймає наш компонент.
-// Вони ідентичні стандартним пропсам тегу <img>.
+/**
+ * @description Визначає контракт пропсів для компонента `OptimizedImage`.
+ * Пропси є розширенням стандартних атрибутів `<img>`, що забезпечує
+ * повну сумісність та гнучкість.
+ */
 interface OptimizedImageProps
   extends React.ImgHTMLAttributes<HTMLImageElement> {
+  /**
+   * @description Шлях до файлу зображення. Цей пропс є обов'язковим.
+   */
   src: string;
+  /**
+   * @description Альтернативний текст для зображення. Критично важливий для
+   * доступності (a11y) та SEO. Описує вміст зображення для скрін-рідерів
+   * та у випадку, якщо зображення не завантажилося. Цей пропс є обов'язковим.
+   */
   alt: string;
 }
 
 /**
- * A simple wrapper component for images that ensures best practices are applied.
+ * @description
+ * Мемоїзований компонент-обгортка для зображень, що застосовує найкращі практики
+ * для продуктивності та доступності за замовчуванням.
  *
- * This component renders a standard <img> tag but adds `loading="lazy"` and
- * `decoding="async"` by default for optimal performance.
+ * Він рендерить стандартний тег `<img>`, додаючи `loading="lazy"` та
+ * `decoding="async"` для оптимізації завантаження. Компонент також виконує
+ * перевірку наявності обов'язкових пропсів `src` та `alt` під час розробки.
  *
- * The actual image optimization (compression, format conversion) is handled
- * automatically at build time by the `vite-plugin-image-optimizer`, which
- * scans the `dist` directory and processes all images found there.
+ * @component
+ * @param {OptimizedImageProps} props - Пропси компонента, ідентичні до атрибутів `<img>`.
+ * @returns {React.ReactElement | null} Повертає елемент `<img>` або `null`, якщо
+ * відсутні обов'язкові пропси `src` або `alt`.
  *
- * @param {OptimizedImageProps} props - The component props, including src and alt.
- * @returns {React.ReactElement | null} An <img> element or null if essential props are missing.
+ * @example
+ * <OptimizedImage
+ *   src="/images/my-awesome-picture.jpg"
+ *   alt="A detailed description of the awesome picture."
+ *   className="w-full h-auto rounded-lg"
+ *   width={800}
+ *   height={600}
+ * />
  */
 const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
   alt,
+  loading = "lazy",
+  decoding = "async",
   ...props
 }) => {
-  // Перевіряємо, чи є src та alt, щоб уникнути зламаних зображень та проблем з доступністю.
+  // --- Валідація пропсів на етапі розробки ---
+  // Раннє повернення, якщо критичні пропси відсутні, для запобігання
+  // рендерингу "зламаних" зображень та проблем з доступністю.
   if (!src || !alt) {
-    console.warn(
-      "OptimizedImage component is missing required 'src' or 'alt' props and will not be rendered."
-    );
+    // У середовищі розробки виводимо попередження в консоль,
+    // щоб допомогти розробникам швидко знайти проблему.
+    if (process.env.NODE_ENV === "development") {
+      console.warn(
+        `OptimizedImage component is missing required 'src' or 'alt' props and will not be rendered. Received: src="${src}", alt="${alt}"`
+      );
+    }
     return null;
   }
 
-  // Просто повертаємо стандартний тег <img> з доданими атрибутами для продуктивності.
-  // Vite і плагін оптимізації подбають про все інше на етапі збірки.
-  return <img src={src} alt={alt} loading="lazy" decoding="async" {...props} />;
+  // Рендеримо стандартний тег `<img>` з оптимізаціями та рештою пропсів.
+  // `loading="lazy"` та `decoding="async"` застосовуються за замовчуванням,
+  // але можуть бути перевизначені через пропси.
+  return (
+    <img src={src} alt={alt} loading={loading} decoding={decoding} {...props} />
+  );
 };
 
-export default OptimizedImage;
+// --- Мемоїзація ---
+// Оскільки зображення є "чистим" компонентом (його вигляд залежить лише від пропсів),
+// `React.memo` є ключовою оптимізацією. Вона запобігає зайвим ре-рендерам,
+// коли батьківський компонент оновлюється, але пропси зображення залишаються незмінними.
+export default React.memo(OptimizedImage);

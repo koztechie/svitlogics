@@ -1,84 +1,133 @@
-import React from "react";
-// import { useTranslation } from 'react-i18next';
+import React, { useCallback, useMemo } from "react";
 
-// Експортуємо тип, щоб його можна було використовувати в Home.tsx для стану
+// --- Типізація та Константи ---
+
+/**
+ * @description Визначає підтримувані мови для аналізу.
+ * Експортується для повторного використання в інших частинах додатку (напр., для стану в Home.tsx).
+ */
 export type AnalysisLanguage = "en" | "uk";
 
+/**
+ * @description Визначає контракт пропсів для компонента `LanguageSelector`.
+ */
 interface LanguageSelectorProps {
+  /** @description Поточна вибрана мова. */
   selectedLanguage: AnalysisLanguage;
+  /** @description Колбек-функція, що викликається при зміні мови. */
   onLanguageChange: (lang: AnalysisLanguage) => void;
 }
 
+// --- Константи для UI. Винесені за межі компонента для запобігання повторному створенню.
+const UI_TEXT = {
+  sectionTitle: "ANALYSIS LANGUAGE",
+  englishLabel: "ENGLISH",
+  ukrainianLabel: "UKRAINIAN",
+} as const;
+
+// --- Мемоїзовані Підкомпоненти та Хелпери ---
+
 /**
- * A component that allows the user to select the language of the text for analysis.
- * It presents two options (English/Ukrainian) and highlights the active selection.
- * The styling adheres to the "Pure Minimalist-Brutalist" design system.
+ * @description Пропси для мемоїзованого підкомпонента кнопки.
+ */
+interface LanguageButtonProps {
+  /** @description Мова, за яку відповідає ця кнопка. */
+  lang: AnalysisLanguage;
+  /** @description Чи є ця кнопка зараз вибраною. */
+  isActive: boolean;
+  /** @description Текст кнопки. */
+  children: React.ReactNode;
+  /** @description Колбек, що викликається при кліку. */
+  onClick: (lang: AnalysisLanguage) => void;
+}
+
+/**
+ * @description
+ * Мемоїзований підкомпонент для кнопки вибору мови.
+ * Декомпозиція дозволяє уникнути повторного обчислення класів та зайвих ре-рендерів.
+ * @component
+ */
+const LanguageButton: React.FC<LanguageButtonProps> = React.memo(
+  ({ lang, isActive, children, onClick }) => {
+    // Класи обчислюються лише якщо зміниться `isActive`.
+    const buttonClasses = useMemo(() => {
+      const base =
+        "w-full py-3 font-mono font-medium text-ui-label uppercase transition-colors duration-100 rounded-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-accent";
+      const active = "cursor-default bg-black text-white";
+      const inactive = "bg-white text-black hover:bg-black hover:text-white";
+      return `${base} ${isActive ? active : inactive}`;
+    }, [isActive]);
+
+    const handleClick = useCallback(() => {
+      onClick(lang);
+    }, [lang, onClick]);
+
+    return (
+      <button
+        type="button"
+        onClick={handleClick}
+        className={buttonClasses}
+        aria-pressed={isActive}
+        disabled={isActive}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+
+LanguageButton.displayName = "LanguageButton";
+
+/**
+ * @description
+ * Компонент, що дозволяє користувачу вибрати мову тексту для аналізу.
+ * Є контрольованим компонентом, стан якого керується ззовні через пропси.
+ *
+ * @component
+ * @param {LanguageSelectorProps} props - Пропси компонента.
+ * @example
+ * const [lang, setLang] = useState<AnalysisLanguage>('en');
+ * <LanguageSelector selectedLanguage={lang} onLanguageChange={setLang} />
  */
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   selectedLanguage,
   onLanguageChange,
 }) => {
-  // const { t } = useTranslation();
-
-  // Тексти для UI елементів
-  const sectionTitle = "ANALYSIS LANGUAGE";
-  const englishLabel = "ENGLISH";
-  const ukrainianLabel = "UKRAINIAN";
-
-  // Базові стилі, спільні для обох кнопок
-  const buttonBaseClasses =
-    "w-full py-3 font-mono font-medium text-ui-label uppercase transition-colors duration-100 rounded-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-accent";
-
-  // Стилі для активної (вибраної) кнопки
-  const activeClasses = "bg-black text-white cursor-default";
-
-  // Стилі для неактивної кнопки, без власної рамки, оскільки рамка-розділювач є на батьківському елементі
-  const inactiveClasses = "bg-white text-black hover:bg-black hover:text-white";
-
   return (
     <section aria-labelledby="language-selector-title">
-      <div className="border border-black rounded-none">
-        {/* Заголовок секції - без декоративної іконки */}
-        <div className="px-4 py-3 border-b border-black bg-white">
+      <div className="rounded-none border border-black">
+        <header className="border-b border-black bg-white px-4 py-3">
           <h2
             id="language-selector-title"
-            className="font-mono font-medium text-ui-label uppercase text-black"
+            className="font-mono font-medium uppercase text-ui-label text-black"
           >
-            {/* t('languageSelector.title', sectionTitle) */}
-            {sectionTitle}
+            {UI_TEXT.sectionTitle}
           </h2>
-        </div>
+        </header>
 
-        {/* Контейнер для кнопок, розділених лінією */}
-        <div className="grid grid-cols-2 divide-x divide-black">
-          <button
-            type="button"
-            onClick={() => onLanguageChange("en")}
-            className={`${buttonBaseClasses} ${
-              selectedLanguage === "en" ? activeClasses : inactiveClasses
-            }`}
-            aria-pressed={selectedLanguage === "en"}
-            disabled={selectedLanguage === "en"}
+        <div
+          className="grid grid-cols-2 divide-x divide-black"
+          role="group"
+          aria-label={UI_TEXT.sectionTitle}
+        >
+          <LanguageButton
+            lang="en"
+            isActive={selectedLanguage === "en"}
+            onClick={onLanguageChange}
           >
-            {/* t('languageSelector.english', englishLabel) */}
-            {englishLabel}
-          </button>
-          <button
-            type="button"
-            onClick={() => onLanguageChange("uk")}
-            className={`${buttonBaseClasses} ${
-              selectedLanguage === "uk" ? activeClasses : inactiveClasses
-            }`}
-            aria-pressed={selectedLanguage === "uk"}
-            disabled={selectedLanguage === "uk"}
+            {UI_TEXT.englishLabel}
+          </LanguageButton>
+          <LanguageButton
+            lang="uk"
+            isActive={selectedLanguage === "uk"}
+            onClick={onLanguageChange}
           >
-            {/* t('languageSelector.ukrainian', ukrainianLabel) */}
-            {ukrainianLabel}
-          </button>
+            {UI_TEXT.ukrainianLabel}
+          </LanguageButton>
         </div>
       </div>
     </section>
   );
 };
 
-export default LanguageSelector;
+export default React.memo(LanguageSelector);
