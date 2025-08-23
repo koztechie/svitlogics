@@ -14,11 +14,12 @@ const navLinks = [
   { to: "/terms-of-use", label: "TERMS OF USE" },
   { to: "/changelog", label: "CHANGELOG" },
 ];
+
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   const copyrightText = `© ${currentYear} SVITLOGICS BY EUGENE KOZLOVSKY. ALL RIGHTS RESERVED.`;
-  const versionText = "SVITLOGICS V0.4.0 (BETA)";
+  const versionText = "SVITLOGICS V0.4.0 (BETA)"; // Припускаємо, що версія оновлена
 
   return (
     <footer className="bg-white border-t border-black px-4 py-8">
@@ -36,10 +37,20 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
             ))}
+            {/* --- ЗМІНА ТУТ: Додано посилання для налаштувань cookie --- */}
+            <li>
+              <a
+                href="#"
+                id="open_preferences_center"
+                className="font-mono font-medium text-ui-label uppercase text-blue-accent no-underline hover:underline focus-visible:underline"
+              >
+                Cookie Preferences
+              </a>
+            </li>
           </ul>
         </nav>
 
-        {/* --- МОДИФІКАЦІЯ ТУТ: Оновлена нижня секція --- */}
+        {/* Bottom section: Copyright and social links */}
         <div className="pt-8 border-t border-black">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-y-4">
             {/* Ліва сторона: Копірайт */}

@@ -1,39 +1,27 @@
-# === Netlify Configuration File v3.2 (Final, Merged) ===
+# === Netlify Configuration File v3.0 (Final Merged) ===
 
 [build]
   command = "npm run build"
   publish = "dist"
 
-# --- Контекст для Production (гілка 'main') ---
+# Контексти залишаємо для майбутнього
 [context.production]
   [context.production.environment]
-    # VITE_GTM_ID = "GTM-XXXXXXX" 
 
-# --- Контекст для Branch Deploys (всі гілки, крім 'main') ---
 [context.branch-deploy]
   [context.branch-deploy.environment]
-    # VITE_GEMMA_API_KEY = "test_api_key_123"
 
-# --- Налаштування заголовків (застосовуються до всіх) ---
+# Налаштування заголовків
 [[headers]]
   for = "/*"
   [headers.values]
-    # Додано 'unsafe-eval' для роботи MDX на клієнті
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://challenges.cloudflare.com https://*.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com https://www.google-analytics.com https://*.google-analytics.com; frame-src https://challenges.cloudflare.com; object-src 'none';"
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
 
-# --- Налаштування редиректів ---
-# Це правило потрібне для SPA-роутингу, який Netlify очікує для SSG-сайтів
-# на випадок, якщо якийсь ресурс не знайдено.
-# [[redirects]]
-#  from = "/*"
-#  to = "/index.html"
-#  status = 200
-
-# Цей редирект перенаправляє зі старого домену на основний
+# Налаштування редиректів
 [[redirects]]
   from = "https://svitlogics.netlify.app/*"
   to = "https://svitlogics.com/:splat"

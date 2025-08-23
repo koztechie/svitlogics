@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "rimraf dist && vite build && vite-node scripts/pre-render.mjs",
+    "build": "rimraf dist && vite build && cp -r public/vendor dist/vendor && vite-node scripts/pre-render.mjs",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

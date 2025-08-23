@@ -4,7 +4,47 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Google Tag Manager -->
+    <!--
+      ==================================================================
+      STEP 1: Google Consent Mode v2 - Default Settings
+      This block MUST be placed BEFORE the GTM script.
+      ==================================================================
+    -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+
+      // Set default consent to 'denied' for all parameters
+      gtag("consent", "default", {
+        analytics_storage: "denied",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+      });
+
+      // Check localStorage for previously granted consent
+      try {
+        const consentValue = localStorage.getItem("svitlogics-cookie-consent");
+        if (consentValue) {
+          const isGranted = JSON.parse(consentValue);
+          if (isGranted === true) {
+            gtag("consent", "update", {
+              analytics_storage: "granted",
+            });
+          }
+        }
+      } catch (e) {
+        console.error("Could not parse cookie consent from localStorage", e);
+      }
+    </script>
+
+    <!--
+      ==================================================================
+      STEP 2: Google Tag Manager (GTM)
+      ==================================================================
+    -->
     <script>
       (function (w, d, s, l, i) {
         w[l] = w[l] || [];

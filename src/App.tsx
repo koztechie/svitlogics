@@ -1,11 +1,9 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import { usePageTracking } from "./hooks/usePageTracking";
 
-// Layout Components
 import Layout from "./components/layout/Layout";
+import CookieBanner from "./components/layout/CookieBanner";
 
-// Page Components
 import Home from "./pages/Home";
 import AboutPage from "./pages/AboutPage";
 import HowItWorksPage from "./pages/HowItWorksPage";
@@ -18,41 +16,29 @@ import ChangelogPage from "./pages/ChangelogPage";
 import BlogIndexPage from "./pages/BlogIndexPage";
 import ArticlePage from "./pages/ArticlePage";
 import CategoryPage from "./pages/CategoryPage";
-import TagPage from "./pages/TagPage"; // Додано імпорт з 'dev'
-import NotFoundPage from "./pages/NotFoundPage"; // Додано імпорт з 'main'
+import TagPage from "./pages/TagPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
-/**
- * The root component of the Svitlogics application.
- * It sets up the main layout and defines all the client-side routes.
- */
 const App: React.FC = () => {
-  usePageTracking();
-
   return (
     <Layout>
       <Routes>
-        {/* Core Pages */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/how-it-works" element={<HowItWorksPage />} />
         <Route path="/faq" element={<FAQPage />} />
-
-        {/* Blog Pages */}
         <Route path="/blog" element={<BlogIndexPage />} />
         <Route path="/blog/category/:categorySlug" element={<CategoryPage />} />
         <Route path="/blog/tag/:tagSlug" element={<TagPage />} />
         <Route path="/blog/:slug" element={<ArticlePage />} />
-
-        {/* Informational & Legal Pages */}
         <Route path="/pricing-limits" element={<PricingLimitsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/terms-of-use" element={<TermsOfUsePage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
-
-        {/* A catch-all route for 404 pages */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <CookieBanner />
     </Layout>
   );
 };

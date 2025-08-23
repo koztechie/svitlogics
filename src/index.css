@@ -106,7 +106,7 @@
    * A reusable container class to center content and apply consistent padding.
    */
   .container-main {
-    @apply max-w-container mx-auto px-4; /* max-w-container should be 1024px, px-4 is 16px */
+    @apply max-w-container mx-auto px-4;
   }
 
   /* --- MDX Components Styling --- */
