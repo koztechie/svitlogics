@@ -18,6 +18,8 @@ import ArticlePage from "./pages/ArticlePage";
 import CategoryPage from "./pages/CategoryPage";
 import TagPage from "./pages/TagPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import CookiePolicyPage from "./pages/CookiePolicyPage";
+import DisclaimerPage from "./pages/DisclaimerPage";
 
 const App: React.FC = () => {
   return (
@@ -37,6 +39,8 @@ const App: React.FC = () => {
         <Route path="/terms-of-use" element={<TermsOfUsePage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
         <Route path="*" element={<NotFoundPage />} />
+        <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+        <Route path="/disclaimer" element={<DisclaimerPage />} />
       </Routes>
       <CookieBanner />
     </Layout>

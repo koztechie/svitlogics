@@ -1,15 +1,14 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-// import { useTranslation } from 'react-i18next';
 
-// --- ОНОВЛЕНИЙ КОНТЕНТ ---
+// --- ОНОВЛЕНИЙ КОНТЕНТ, СИНХРОНІЗОВАНИЙ З "МАЙСТЕР-ПІТЧЕМ" ---
 const content = {
-  seoTitle: "About Svitlogics | Mission, Methodology, and Design",
+  seoTitle: "About Svitlogics | Mission, Methodology, and Technology",
   seoDescription:
-    "Discover the philosophy behind Svitlogics. Learn how this AI text analysis tool was built to combat disinformation and empower critical thinking.",
+    "Discover the philosophy behind Svitlogics. Learn how this AI text analysis tool was built in Kyiv, Ukraine to combat disinformation and empower critical thinking.",
   pageTitle: "ABOUT SVITLOGICS",
   introduction:
-    "Svitlogics was not built as an AI novelty. It was engineered for a singular purpose: to provide a tool for clarity in an environment saturated with informational chaos. This document outlines its mission, methodology, and design philosophy.",
+    "Svitlogics was not built as an AI novelty. It was engineered for a singular purpose: to provide a tool for clarity in an environment saturated with informational chaos. This document outlines its mission, methodology, and the technology that powers it.",
   sections: [
     {
       id: "mission",
@@ -28,15 +27,17 @@ const content = {
           title: "Analysis model",
           paragraphs: [
             'Svitlogics is designed as an <strong>auxiliary instrument for critical thinking</strong>, not a "truth machine." It does not deliver a simple "true" or "false" verdict, as effective manipulation often relies on a complex web of emotional appeals, logical fallacies, and carefully framed narratives rather than a single, verifiable lie.',
-            "Instead of a verdict, the tool provides a structured analysis across five core criteria: Manipulative Content, Propagandistic Content, Disinformation, Unbiased Presentation, and Emotional Tone. This approach provides data to help the user ask better questions and form their own, more informed conclusions.",
+            "Instead of a verdict, the tool provides a structured analysis across five core criteria: Manipulative Content, Propagandistic Content, Disinformation, Unbiased Presentation, and Emotional Tone. This approach provides data that helps the user ask better questions and form their own, more informed conclusions.",
           ],
         },
         {
           id: "tech-implementation",
           title: "Technical implementation",
           paragraphs: [
-            "Svitlogics is a modern web application built with a client-server architecture. The front-end, which you interact with, is built using React, TypeScript, and Vite for a fast and responsive experience.",
-            "The core analysis logic resides in a <strong>secure serverless back-end running on Netlify Functions.</strong> This service utilizes a high-availability cascade of <strong>premium Google Gemini 2.5 models</strong>. This architecture ensures that all complex processing and sensitive API key interactions are handled securely on the server, never exposing them to the user's browser, and guaranteeing both performance and privacy.",
+            // --- ОНОВЛЕНО ТЕКСТ ТУТ ---
+            "Svitlogics is a modern, high-performance web application. The front-end is built with React, TypeScript, and Vite, and all pages are pre-rendered into static HTML during the build process (Static Site Generation), ensuring near-instantaneous load times.",
+            "The core analysis logic resides in a <strong>secure, asynchronous back-end running on Netlify Functions.</strong> This service utilizes a high-availability cascade of <strong>premium Google Gemini 2.5 models</strong>. This architecture ensures that all complex processing is handled securely on the server, guaranteeing both performance and privacy.",
+            "<strong>Future Vision:</strong> The next major development milestone is to integrate **real-time, AI-driven web search** capabilities directly into the 'Disinformation' analysis. This will allow the model to cross-reference claims against external sources, transforming Svitlogics into a next-generation instrument for robust, context-aware analysis.",
           ],
         },
       ],
