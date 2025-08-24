@@ -1,82 +1,61 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Helmet } from "react-helmet-async";
-import DOMPurify from "dompurify";
+// import { useTranslation } from 'react-i18next';
 
-// --- Типізація та Константи ---
-
-/**
- * @description Визначає структуру даних для одного запису в журналі змін.
- */
+// Спрощена структура даних
 interface ChangelogEntryData {
-  /** @description Версія релізу, напр., "v0.4.0 (Beta)". */
-  readonly version: string;
-  /** @description Дата релізу у форматі "Month Day, Year". */
-  readonly date: string;
-  /** @description Масив змін, де кожна зміна є HTML-рядком. */
-  readonly changes: readonly string[];
+  version: string;
+  date: string;
+  changes: string[]; // Тепер це просто масив рядків
 }
 
-/**
- * @description Контент для SEO та заголовків сторінки.
- */
-const pageContent = {
-  seoTitle: "CHANGELOG | SVITLOGICS",
-  seoDescription:
-    "A complete record of application updates, performance enhancements, and feature releases for Svitlogics.",
-  canonicalUrl: "https://svitlogics.com/changelog",
-  pageTitle: "CHANGELOG",
-} as const;
-
-/**
- * @description Статичні дані для журналу змін. `as const` забезпечує глибоку незмінність.
- * @type {readonly ChangelogEntryData[]}
- */
-const changelogData: readonly ChangelogEntryData[] = [
+// Фінальні дані чейнджлогу з новою версією v0.3.2
+const changelogData: ChangelogEntryData[] = [
   {
     version: "v0.4.0 (Beta)",
     date: "August 17, 2025",
     changes: [
-      "<strong>OPTIMIZATION:</strong> Integrated `vite-plugin-image-optimizer`. All static and article images are now automatically compressed during the build process.",
-      '<strong>REFACTOR:</strong> Created a custom `<OptimizedImage>` React component that adds `loading="lazy"` and `decoding="async"` attributes to improve loading performance.',
-      "<strong>IMPROVEMENT:</strong> Standard `<img>` tags within MDX articles are now automatically replaced with the `<OptimizedImage>` component, ensuring consistent application of performance optimizations.",
+      "<strong>PERFORMANCE:</strong> Integrated `vite-plugin-image-optimizer` into the build process. All static images (favicons, banners) and article images placed in the `/public` directory are now automatically compressed on build.",
+      '<strong>DEVELOPMENT:</strong> Created a custom `<OptimizedImage>` React component that automatically adds `loading="lazy"` and `decoding="async"` attributes for improved loading performance.',
+      "<strong>IMPROVED:</strong> All standard `<img>` tags within MDX articles are now automatically replaced with the new `<OptimizedImage>` component, ensuring performance best practices are applied consistently.",
     ],
   },
   {
     version: "v0.3.9 (Beta)",
     date: "August 17, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Implemented a validation schema for article frontmatter to enforce a comprehensive set of required and optional metadata fields.",
-      "<strong>DEVELOPMENT:</strong> Integrated Zod schema validation into the build process. The build now fails if any article frontmatter is incomplete or malformed, preventing deployment of pages with incorrect SEO data.",
-      "<strong>IMPROVEMENT:</strong> Article pages now programmatically generate a full suite of SEO and Open Graph meta tags from the validated frontmatter.",
+      "<strong>SEO:</strong> Implemented a 'Golden Standard' for article frontmatter, enforcing a comprehensive set of required and optional fields for metadata.",
+      "<strong>DEVELOPMENT:</strong> Integrated Zod schema validation directly into the build process. The build now automatically fails if any article's frontmatter is incomplete or malformed, preventing the deployment of pages with poor SEO data.",
+      "<strong>IMPROVED:</strong> Article pages now programmatically generate a full suite of SEO and Open Graph meta tags (`og:image`, `canonical`, `robots`, etc.) directly from the validated frontmatter.",
     ],
   },
   {
     version: "v0.3.8 (Beta)",
     date: "August 16, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Implemented strict schema validation for article frontmatter using Zod. The build process now fails if an article is missing critical metadata.",
-      "<strong>IMPROVEMENT:</strong> Enhanced the reliability of the content pipeline by adding a data validation step, ensuring all published articles meet quality and SEO standards.",
-      "<strong>IMPROVEMENT:</strong> The build script now provides detailed error messages upon validation failure, pinpointing the exact file and issue.",
+      "<strong>ADDED:</strong> Implemented strict schema validation for article frontmatter using Zod. The build process will now fail if an article is missing critical metadata (like `title` or `summary`) or if the data is malformed.",
+      "<strong>IMPROVED:</strong> Enhanced the reliability of the content pipeline by adding a data validation step, ensuring that all published articles meet predefined quality and SEO standards.",
+      "<strong>IMPROVED:</strong> The build script now provides detailed, user-friendly error messages if validation fails, pinpointing the exact file and issue that needs to be fixed.",
     ],
   },
   {
     version: "v0.3.7 (Beta)",
     date: "August 15, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Implemented a category system for the blog, including a dedicated category index and individual category pages.",
-      "<strong>REFACTOR:</strong> Migrated all blog articles from Markdown (`.md`) to MDX (`.mdx`) to support interactive React components within articles.",
-      "<strong>ADDITION:</strong> Integrated and configured the `@mdx-js/rollup` plugin to process MDX files during the build.",
-      "<strong>IMPROVEMENT:</strong> Updated the Static Site Generation (SSG) script to automatically discover and pre-render all category pages.",
+      "<strong>ADDED:</strong> Implemented a full-featured category system for the blog, including a dedicated category index and individual category pages.",
+      "<strong>IMPROVED:</strong> Migrated all blog articles from Markdown (`.md`) to MDX (`.mdx`) to allow for future use of interactive React components within articles.",
+      "<strong>ADDED:</strong> Integrated and configured the `@mdx-js/rollup` plugin to process MDX files during the build.",
+      "<strong>IMPROVED:</strong> Updated the Static Site Generation (SSG) script to automatically discover and pre-render all category pages, ensuring they are fast and SEO-friendly.",
     ],
   },
   {
     version: "v0.3.6 (Beta)",
     date: "August 15, 2025",
     changes: [
-      "<strong>ARCHITECTURE:</strong> Migrated the core analysis engine to an asynchronous architecture using Netlify Background Functions, removing the previous 10-second execution limit.",
-      "<strong>IMPROVEMENT:</strong> The application can now process analysis tasks for up to 15 minutes, allowing for the use of more powerful AI models without timeouts.",
-      "<strong>IMPROVEMENT:</strong> The interface now polls for results in the background, creating a more robust and stable process.",
-      "<strong>SECURITY:</strong> Re-architected the backend with a dedicated trigger function and a background worker to isolate processes and improve security posture.",
+      "<strong>ARCHITECTURE:</strong> Migrated the core analysis engine to a fully asynchronous architecture using Netlify Background Functions. This completely removes the previous 10-second execution limit.",
+      "<strong>IMPROVED:</strong> The application can now handle complex and lengthy analysis tasks (up to 15 minutes), allowing the use of the most powerful AI models without timeouts.",
+      "<strong>IMPROVED:</strong> User experience during analysis has been enhanced. The interface now polls for results in the background, providing a more robust and stable process for the user.",
+      "<strong>SECURITY:</strong> Re-architected the backend with a dedicated trigger function and a background worker, further isolating processes and improving the security posture.",
     ],
   },
   {
@@ -84,231 +63,199 @@ const changelogData: readonly ChangelogEntryData[] = [
     date: "August 14, 2025",
     changes: [
       "<strong>PERFORMANCE:</strong> Implemented Static Site Generation (SSG) for the entire application. All pages are now pre-rendered into static HTML files during the build process.",
-      "<strong>SEO:</strong> SSG implementation ensures all content is immediately available to search engine crawlers, improving indexing.",
-      "<strong>PERFORMANCE:</strong> This change results in faster page loads and an improved Largest Contentful Paint (LCP) score.",
+      "<strong>SEO:</strong> The move to SSG ensures that all content is immediately available to search engine crawlers, significantly improving indexing and SEO potential.",
+      "<strong>PERFORMANCE:</strong> Achieved near-instantaneous page loads and a dramatically improved Largest Contentful Paint (LCP) score, providing a much faster user experience.",
     ],
   },
   {
     version: "v0.3.4 (Beta)",
     date: "August 14, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Introduced a 'Blog' section for articles, project updates, and text analysis research.",
-      "<strong>ADDITION:</strong> Implemented a lightweight, Markdown-based content system for article management.",
-      "<strong>ADDITION:</strong> Created new page templates for the blog index and individual article views, integrated with the existing design system.",
+      "<strong>ADDED:</strong> Introduced a new 'Blog' section to the website, creating a platform for articles, updates, and deeper insights into text analysis.",
+      "<strong>ADDED:</strong> Implemented a lightweight, Markdown-based content system, allowing for easy creation and management of new articles without complex CMS dependencies.",
+      "<strong>ADDED:</strong> Created new page templates for the blog index and individual article views, fully integrated with the Svitlogics design system.",
     ],
   },
   {
     version: "v0.3.3 (Beta)",
     date: "August 13, 2025",
     changes: [
-      "<strong>PERFORMANCE:</strong> Improved Largest Contentful Paint (LCP) by adding `preconnect` links for Google Fonts.",
-      "<strong>IMPROVEMENT:</strong> Added print-specific styles (`@media print`) that hide the UI, allowing users to print or save a clean, report-only version of the analysis.",
-      "<strong>ACCESSIBILITY:</strong> Added `title` attributes to all icon-based links to provide descriptive tooltips.",
+      "<strong>PERFORMANCE:</strong> Improved the Largest Contentful Paint (LCP) metric by adding `preconnect` links for Google Fonts, accelerating font loading times.",
+      "<strong>IMPROVED:</strong> Added print-specific styles (`@media print`) that hide the interface, allowing users to print or save a clean, report-only version of the analysis results.",
+      "<strong>ACCESSIBILITY:</strong> Enhanced accessibility by adding `title` attributes to all icon-based links, providing tooltips for better user guidance.",
     ],
   },
   {
     version: "v0.3.2 (Beta)",
     date: "August 13, 2025",
     changes: [
-      "<strong>IMPROVEMENT:</strong> The application now persists the last selected language to `localStorage`.",
-      "<strong>IMPROVEMENT:</strong> The 'Clear' button now clears both the text input and the analysis results, fully resetting the interface.",
-      "<strong>ADDITION:</strong> A 'Copy' button was added to the analysis results card to copy the full report to the clipboard.",
-      "<strong>IMPROVEMENT:</strong> The character counter now changes color to red when the input limit is exceeded, providing direct visual feedback.",
-      "<strong>ADDITION:</strong> The site footer was updated with clickable icons for GitHub and email.",
-      '<strong>SECURITY:</strong> Added `autoComplete="off"` to the text input field to prevent browser suggestions of previously analyzed text.',
+      "<strong>IMPROVED:</strong> The application now remembers the last selected language using `localStorage`, improving convenience for returning users.",
+      "<strong>IMPROVED:</strong> The 'Clear' button in the text input area now clears both the input field and the analysis results, providing a complete reset of the interface.",
+      "<strong>ADDED:</strong> A 'Copy' button has been added to the analysis results card, allowing users to easily copy the full report to their clipboard.",
+      "<strong>IMPROVED:</strong> The character counter now turns red when the input limit is exceeded, providing clear visual feedback to the user.",
+      "<strong>ADDED:</strong> The site footer has been updated to include clickable icons for GitHub and email, improving accessibility and contact options.",
+      '<strong>SECURITY:</strong> Added `autoComplete="off"` to the text input field to prevent browsers from suggesting previously analyzed (and potentially sensitive) text.',
     ],
   },
   {
     version: "v0.3.1 (Beta)",
     date: "August 12, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Implemented the official Svitlogics brand identity, replacing the text-based title with a new SVG logo.",
-      "<strong>ADDITION:</strong> Integrated a comprehensive set of high-resolution favicons for consistent appearance across all platforms.",
-      "<strong>IMPROVEMENT:</strong> Updated Open Graph meta tags to include a custom social media banner (`og:image`).",
+      "<strong>ADDED:</strong> Implemented the official Svitlogics brand identity, replacing the text-based title with a new SVG logo for a crisp, professional look.",
+      "<strong>ADDED:</strong> Integrated a comprehensive set of high-resolution favicons for a consistent appearance across all browsers, devices, and platforms.",
+      "<strong>IMPROVED:</strong> Updated Open Graph meta tags to include a custom social media banner (`og:image`), ensuring proper branding when sharing links.",
     ],
   },
   {
     version: "v0.3.0 (Beta)",
     date: "August 12, 2025",
     changes: [
-      "<strong>IMPROVEMENT:</strong> Upgraded the core AI engine to a new cascade of Google Gemini 2.5 Pro models to enhance analysis accuracy and depth.",
-      "<strong>SECURITY:</strong> Migrated all AI processing to a secure, server-side API gateway. This architecture protects the core logic and prevents user API key exposure.",
-      "<strong>SECURITY:</strong> Implemented IP-based rate limiting to protect the service from automated abuse.",
-      "<strong>IMPROVEMENT:</strong> Moved complex computations from client-side to server-side, enhancing application stability and performance.",
+      "<strong>IMPROVED:</strong> Upgraded the core AI engine to a new cascade of premium Google Gemini 2.5 models, significantly enhancing the accuracy and depth of text analysis.",
+      "<strong>SECURITY:</strong> Migrated all AI processing to a secure server-side API gateway. This architecture protects the core logic of the service and ensures user API keys are never exposed in the browser.",
+      "<strong>SECURITY:</strong> Implemented IP-based rate limiting to protect the service from automated abuse and ensure fair access for all users.",
+      "<strong>IMPROVED:</strong> Enhanced overall application stability and performance by moving complex computations from the user's browser to the server.",
     ],
   },
   {
     version: "v0.1.0 (Public Beta)",
     date: "June 29, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Configured and launched the custom domain `svitlogics.com`.",
-      "<strong>IMPROVEMENT:</strong> Refined system prompts for Google AI models to improve analysis consistency.",
-      "<strong>FIX:</strong> Completed UI adjustments and bug fixes based on multi-device and cross-browser testing.",
+      "<strong>ADDED:</strong> Configured and launched the custom domain `svitlogics.com`.",
+      "<strong>IMPROVED:</strong> Refined system prompts for Google AI models to improve analysis consistency.",
+      "<strong>IMPROVED:</strong> Completed UI adjustments and bug fixes based on multi-device and cross-browser testing.",
     ],
   },
   {
     version: "v0.0.9 (Alpha)",
     date: "June 28, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Integrated a favicon set and a Web App Manifest.",
-      "<strong>IMPROVEMENT:</strong> Implemented a fully responsive UI for mobile, tablet, and desktop devices.",
+      "<strong>ADDED:</strong> Integrated a favicon set and a Web App Manifest for browser and home screen identification.",
+      "<strong>IMPROVED:</strong> Implemented a fully responsive UI for mobile, tablet, and desktop devices.",
     ],
   },
   {
     version: "v0.0.8 (Alpha)",
     date: "June 25, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Implemented on-page and technical SEO, including meta tags, JSON-LD structured data, and a sitemap.",
+      "<strong>ADDED:</strong> Implemented on-page and technical SEO, including meta tags, JSON-LD structured data, and a sitemap.",
     ],
   },
   {
     version: "v0.0.7 (Alpha)",
     date: "June 22, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Implemented a high-availability model fallback cascade using seven Google AI models.",
-      "<strong>ADDITION:</strong> Implemented dynamic character limits based on language and model capacity.",
+      "<strong>ADDED:</strong> Implemented a high-availability model fallback cascade using seven Google AI models to ensure service reliability.",
+      "<strong>ADDED:</strong> Implemented dynamic character limits based on language and model capacity to manage API token usage.",
     ],
   },
   {
     version: "v0.0.6 (Alpha)",
     date: "June 19, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Added English content to all informational and legal pages.",
-      "<strong>FIX:</strong> Corrected a client-side routing issue on Netlify that prevented direct URL access.",
+      "<strong>ADDED:</strong> Added English content to all informational and legal pages (About, How It Works, FAQ, Privacy, Terms).",
+      "<strong>FIXED:</strong> Corrected a client-side routing issue on Netlify that prevented direct URL access.",
     ],
   },
   {
     version: "v0.0.5 (Alpha)",
     date: "June 17, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Deployed the application to Netlify with a continuous integration and delivery (CI/CD) pipeline.",
+      "<strong>ADDED:</strong> Deployed the application to Netlify with a continuous integration and delivery (CI/CD) pipeline.",
     ],
   },
   {
     version: "v0.0.4 (Alpha)",
     date: "June 15, 2025",
     changes: [
-      "<strong>IMPROVEMENT:</strong> Redesigned the user interface to align with the 'Pure Minimalist-Brutalist' design system.",
+      "<strong>IMPROVED:</strong> Redesigned the user interface to align with the 'Pure Minimalist-Brutalist' design system.",
     ],
   },
   {
     version: "v0.0.3 (Alpha)",
     date: "June 14, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Established the 'Pure Minimalist-Brutalist' design system and the Svitlogics Writing System.",
+      "<strong>ADDED:</strong> Established the 'Pure Minimalist-Brutalist' design system and the Svitlogics Writing System.",
     ],
   },
   {
     version: "v0.0.2 (Alpha)",
     date: "June 8, 2025",
     changes: [
-      "<strong>IMPROVEMENT:</strong> Replaced automatic language detection with a manual language selector to ensure correct system prompt utilization.",
+      "<strong>IMPROVED:</strong> Replaced automatic language detection with a manual language selector to ensure the correct system prompt is used for analysis.",
     ],
   },
   {
     version: "v0.0.1 (Alpha)",
     date: "May 31, 2025",
     changes: [
-      "<strong>ADDITION:</strong> Implemented initial project setup and core text analysis functionality with Google AI models.",
+      "<strong>ADDED:</strong> Implemented initial project setup and core text analysis functionality with Google AI models.",
     ],
   },
-] as const;
+];
 
-// --- Мемоїзовані та Безпечні Підкомпоненти ---
-
-/**
- * @description Безпечно рендерить HTML-рядок, попередньо очистивши його.
- * @param {string} rawHtml - Необроблений HTML-рядок.
- * @returns {{ __html: string }} Об'єкт, сумісний з `dangerouslySetInnerHTML`.
- */
-const createSanitizedHtml = (rawHtml: string): { __html: string } => {
-  const sanitizedHtml = DOMPurify.sanitize(rawHtml, {
-    USE_PROFILES: { html: true },
-    ALLOWED_TAGS: ["strong", "em"],
-  });
-  return { __html: sanitizedHtml };
-};
-
-/**
- * @description Пропси для мемоїзованого підкомпонента `ChangelogEntry`.
- */
-interface ChangelogEntryProps {
-  entry: ChangelogEntryData;
-}
-
-/**
- * @description Мемоїзований компонент для відображення одного запису в журналі змін.
- * @component
- */
-const ChangelogEntry: React.FC<ChangelogEntryProps> = React.memo(
-  ({ entry }) => {
-    const headingId = useMemo(
-      () => `version-${entry.version.replace(/[\s()]/g, "-")}`,
-      [entry.version]
-    );
-
-    return (
-      <section key={entry.version} aria-labelledby={headingId}>
-        <header className="mb-6 border-b-1 border-black pb-4">
-          <h2
-            id={headingId}
-            className="mb-1 font-semibold text-black text-h2-mobile lg:text-h2-desktop"
-          >
-            {entry.version}
-          </h2>
-          <p className="text-text-secondary text-ui-label">{entry.date}</p>
-        </header>
-        <ul className="ml-6 list-disc space-y-4">
-          {entry.changes.map((change, index) => (
-            <li
-              key={index}
-              className="text-body-main text-black"
-              dangerouslySetInnerHTML={createSanitizedHtml(change)}
-            />
-          ))}
-        </ul>
-      </section>
-    );
-  }
-);
-ChangelogEntry.displayName = "ChangelogEntry";
-
-/**
- * @description Статична сторінка "Changelog".
- * @component
- */
 const ChangelogPage: React.FC = () => {
-  const renderedEntries = useMemo(
-    () =>
-      changelogData.map((entry) => (
-        <ChangelogEntry key={entry.version} entry={entry} />
-      )),
-    []
-  );
+  // const { t } = useTranslation();
+  const pageTitle = "CHANGELOG";
 
   return (
     <>
       <Helmet>
-        <title>{pageContent.seoTitle}</title>
-        <meta name="description" content={pageContent.seoDescription} />
-        <link rel="canonical" href={pageContent.canonicalUrl} />
-        <meta property="og:title" content={pageContent.seoTitle} />
-        <meta property="og:description" content={pageContent.seoDescription} />
-        <meta property="og:url" content={pageContent.canonicalUrl} />
+        <title>Changelog | Svitlogics Version History</title>
+        <meta
+          name="description"
+          content="See the development history and updates for the Svitlogics application, from its initial alpha release to the latest version."
+        />
+        <link rel="canonical" href="https://svitlogics.com/changelog" />
+        <meta
+          property="og:title"
+          content="Changelog | Svitlogics Version History"
+        />
+        <meta
+          property="og:description"
+          content="See the development history and updates for the Svitlogics application, from its initial alpha release to the latest version."
+        />
+        <meta property="og:url" content="https://svitlogics.com/changelog" />
         <meta property="og:type" content="article" />
       </Helmet>
 
-      <div className="container-main">
-        <header>
-          <h1 className="mb-16 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
-            {pageContent.pageTitle}
-          </h1>
-        </header>
+      <div className="container-main pt-16 pb-16">
+        <h1 className="font-mono font-bold text-h1-mobile normal-case md:uppercase lg:text-h1-desktop text-black mb-16 text-left">
+          {pageTitle}
+        </h1>
 
-        <main className="max-w-3xl space-y-16">{renderedEntries}</main>
+        <div className="max-w-3xl space-y-12">
+          {changelogData.map((entry) => (
+            <section
+              key={entry.version}
+              aria-labelledby={`version-${entry.version.replace(/\s+/g, "-")}`}
+            >
+              <div className="pb-4 mb-6 border-b border-black">
+                <h2
+                  id={`version-${entry.version.replace(/\s+/g, "-")}`}
+                  className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-1 normal-case"
+                >
+                  {entry.version}
+                </h2>
+                <p className="font-mono text-ui-label text-text-secondary normal-case">
+                  {entry.date}
+                </p>
+              </div>
+
+              <ul className="space-y-4 list-disc ml-6">
+                {entry.changes.map((change, index) => (
+                  <li
+                    key={index}
+                    className="font-mono text-body-main leading-body text-black"
+                    dangerouslySetInnerHTML={{ __html: change }}
+                  />
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
       </div>
     </>
   );
 };
 
-export default React.memo(ChangelogPage);
+export default ChangelogPage;

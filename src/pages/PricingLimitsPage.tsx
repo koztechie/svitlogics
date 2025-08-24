@@ -1,54 +1,41 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Helmet } from "react-helmet-async";
-import DOMPurify from "dompurify";
+// import { useTranslation } from 'react-i18next';
 
-// --- Типізація та Константи ---
-
-/** @description Визначає структуру однієї інформаційної секції. */
-interface InfoSectionData {
-  readonly title: string;
-  readonly paragraphs: readonly string[];
-  readonly listTitle?: string;
-  readonly list?: readonly string[];
-}
-
-/**
- * @description Статичний контент сторінки. `as const` забезпечує глибоку незмінність.
- */
+// --- ОНОВЛЕНИЙ КОНТЕНТ ---
 const content = {
-  seoTitle: "PRICING AND LIMITS | SVITLOGICS",
+  seoTitle: "Pricing and Limits | Svitlogics",
   seoDescription:
-    "An overview of the Svitlogics service status, including character limits, rate limiting, and the system architecture for managing Google AI API usage.",
-  canonicalUrl: "https://svitlogics.com/pricing-limits",
+    "Svitlogics is currently a free service. Learn about character limits and the system architecture designed to manage Google AI API usage.",
   pageTitle: "PRICING AND LIMITS",
   sections: [
     {
-      title: "Current status: Free (public beta)",
+      title: "Current status: free (public beta)",
       paragraphs: [
-        "Svitlogics is in a public beta phase and is currently provided without cost. This allows for system functionality testing and performance data collection.",
+        "Svitlogics is currently in public beta and is free to use. The service is provided without cost during this development phase to test system functionality and gather performance data.",
       ],
     },
     {
       title: "Input character limits",
       paragraphs: [
         "To ensure system stability and manage API costs, Svitlogics enforces a character limit for each analysis. This limit is determined by the token capacity of the underlying AI models.",
-        "The current maximum character limit for the selected language is displayed on the main page below the text input field.",
+        "The current maximum character limit for the selected language is always displayed on the main page below the text input field.",
       ],
     },
     {
       title: "API usage and system limits",
       paragraphs: [
         "The Svitlogics back-end service includes several mechanisms to ensure stability and fair use:",
-        "<strong>Rate Limiting:</strong> To prevent automated abuse, the system limits the number of requests a single IP address can make (currently 20 requests per hour).",
-        "<strong>High-Availability Cascade:</strong> The service utilizes a cascade of Google Gemini 2.5 Pro models. If a primary model is experiencing high traffic or is at its capacity, requests are automatically rerouted to an alternative model. This may result in processing delays during peak hours.",
+        "<strong>Rate Limiting:</strong> To prevent automated abuse, the system limits the number of requests that can be made from a single IP address (currently 20 requests per hour).",
+        "<strong>High-Availability Cascade:</strong> The service relies on a cascade of premium Google Gemini 2.5 models. If a primary model is experiencing high traffic or is at its capacity, requests are automatically rerouted to an alternative model. This may result in a brief processing delay during peak hours.",
       ],
     },
     {
-      title: "Future development",
+      title: "Future plans",
       paragraphs: [
-        "To ensure long-term project sustainability, subscription plans are a consideration for future development.",
+        "To ensure the long-term sustainability of the project, premium subscription plans are being considered for the future.",
       ],
-      listTitle: "Proposed features for future subscription plans include:",
+      listTitle: "Potential premium features may include:",
       list: [
         "Higher personal analysis limits",
         "Access to more advanced AI models",
@@ -57,98 +44,69 @@ const content = {
       ],
     },
   ],
-} as const;
-
-// --- Мемоїзовані та Безпечні Підкомпоненти ---
-
-/**
- * @description Безпечно рендерить HTML-рядок, попередньо очистивши його.
- * @param {string} rawHtml - Необроблений HTML-рядок.
- * @returns {{ __html: string }} Об'єкт, сумісний з `dangerouslySetInnerHTML`.
- */
-const createSanitizedHtml = (rawHtml: string): { __html: string } => {
-  const sanitizedHtml = DOMPurify.sanitize(rawHtml, {
-    USE_PROFILES: { html: true },
-    ALLOWED_TAGS: ["strong", "em"],
-  });
-  return { __html: sanitizedHtml };
 };
 
-/** @description Утиліта для генерації валідного HTML id з рядка. */
-const generateId = (text: string): string =>
-  text.toLowerCase().replace(/[\s:]/g, "-").replace(/[/()]/g, "");
+// Підкомпонент для однієї секції
+const InfoSection: React.FC<{ section: (typeof content.sections)[0] }> = ({
+  section,
+}) => (
+  <section
+    aria-labelledby={`section-title-${section.title.replace(/\s+/g, "-")}`}
+  >
+    <h2
+      id={`section-title-${section.title.replace(/\s+/g, "-")}`}
+      className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-6 normal-case"
+    >
+      {section.title}
+    </h2>
+    <div className="space-y-4 font-mono font-normal text-body-main leading-body text-black">
+      {section.paragraphs?.map((p, pIndex) => (
+        <p key={pIndex} dangerouslySetInnerHTML={{ __html: p }} />
+      ))}
+      {section.listTitle && <p className="pt-2">{section.listTitle}</p>}
+      {section.list && (
+        <ul className="list-disc ml-6 space-y-2">
+          {section.list.map((item, itemIndex) => (
+            <li key={itemIndex}>{item}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+);
 
-/** @description Пропси для підкомпонента `InfoSection`. */
-interface InfoSectionProps {
-  section: InfoSectionData;
-}
-
-const InfoSection: React.FC<InfoSectionProps> = React.memo(({ section }) => {
-  const headingId = useMemo(() => generateId(section.title), [section.title]);
-
-  return (
-    <section aria-labelledby={headingId}>
-      <h2
-        id={headingId}
-        className="mb-6 font-semibold text-black text-h2-mobile lg:text-h2-desktop"
-      >
-        {section.title}
-      </h2>
-      <div className="space-y-4 text-body-main text-black">
-        {section.paragraphs.map((p, pIndex) => (
-          <p key={pIndex} dangerouslySetInnerHTML={createSanitizedHtml(p)} />
-        ))}
-        {section.listTitle && <p className="pt-2">{section.listTitle}</p>}
-        {section.list && (
-          <ul className="ml-6 list-disc space-y-2">
-            {section.list.map((item, itemIndex) => (
-              <li key={itemIndex}>{item}</li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </section>
-  );
-});
-InfoSection.displayName = "InfoSection";
-
-/**
- * @description Статична сторінка "Pricing and Limits".
- * @component
- */
 const PricingLimitsPage: React.FC = () => {
-  const renderedSections = useMemo(
-    () =>
-      content.sections.map((section) => (
-        <InfoSection key={section.title} section={section} />
-      )),
-    []
-  );
+  // const { t } = useTranslation();
 
   return (
     <>
       <Helmet>
         <title>{content.seoTitle}</title>
         <meta name="description" content={content.seoDescription} />
-        <link rel="canonical" href={content.canonicalUrl} />
+        <link rel="canonical" href="https://svitlogics.com/pricing-limits" />
         <meta property="og:title" content={content.seoTitle} />
         <meta property="og:description" content={content.seoDescription} />
-        <meta property="og:url" content={content.canonicalUrl} />
+        <meta
+          property="og:url"
+          content="https://svitlogics.com/pricing-limits"
+        />
       </Helmet>
 
-      <div className="container-main">
-        <header>
-          <h1 className="mb-16 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
-            {content.pageTitle}
-          </h1>
-        </header>
+      <div className="container-main pt-16 pb-16">
+        <h1 className="font-mono font-bold text-h1-mobile normal-case md:uppercase lg:text-h1-desktop text-black mb-12 lg:mb-16 text-left">
+          {content.pageTitle}
+        </h1>
 
-        <main className="max-w-3xl">
-          <div className="space-y-16">{renderedSections}</div>
-        </main>
+        <div className="max-w-3xl">
+          <div className="space-y-12">
+            {content.sections.map((section) => (
+              <InfoSection key={section.title} section={section} />
+            ))}
+          </div>
+        </div>
       </div>
     </>
   );
 };
 
-export default React.memo(PricingLimitsPage);
+export default PricingLimitsPage;
