@@ -1,37 +1,80 @@
-// src/types.ts
+/**
+ * @fileoverview Цей файл є єдиним джерелом істини для ключових типів даних у застосунку.
+ * Він визначає контракти для результатів аналізу, відповідей API та інших
+ * спільних структур, забезпечуючи консистентність та типову безпеку.
+ * @version 1.1.0
+ */
+
+// --- Типи для Внутрішньої Моделі Даних Застосунку ---
 
 /**
- * Defines the structure for a single analysis category result.
- * This is the primary data structure used throughout the application,
- * from the API service response to the UI components.
+ * @description Визначає структуру для результату аналізу однієї категорії.
+ * Це основна модель даних, що використовується в UI-компонентах.
+ * Властивості є `readonly` для забезпечення незмінності (immutability).
  */
 export interface AnalysisCategory {
-  /** The name of the category (e.g., "Manipulative Content"). */
-  name: string;
+  /**
+   * @description Назва категорії (напр., "Manipulative Content").
+   * @readonly
+   */
+  readonly name: string;
 
-  /** The assessed score for this category, from 0 to 100, or null if not yet analyzed. */
-  percentage: number | null;
+  /**
+   * @description Оцінка для цієї категорії (0-100) або `null`, якщо аналіз не проведено.
+   * @readonly
+   */
+  readonly percentage: number | null;
 
-  /** A brief textual justification for the assigned score, or null if not yet analyzed. */
-  explanation: string | null;
+  /**
+   * @description Текстове обґрунтування оцінки або `null`, якщо аналіз не проведено.
+   * @readonly
+   */
+  readonly explanation: string | null;
+}
+
+// --- Типи для Контракту API ---
+
+/**
+ * @description Визначає структуру одного елемента аналізу в сирій відповіді від API.
+ * Використовує `snake_case` відповідно до JSON-контракту.
+ * @private
+ */
+interface ApiAnalysisResultItem {
+  readonly category_name: string;
+  readonly percentage_score: number;
+  readonly justification: string;
 }
 
 /**
- * Defines the structure for the complete, successful analysis response from the Svitlogics AI service.
+ * @description Визначає структуру повної, успішної відповіді від Svitlogics AI API.
+ * Властивості є `readonly` для забезпечення незмінності.
  */
 export interface SvitlogicsAnalysisResponse {
-  analysis_results: {
-    category_name: string;
-    percentage_score: number;
-    justification: string;
-  }[];
-  overall_summary: string;
-  usedModelName: string;
+  /**
+   * @description Масив результатів аналізу для кожної категорії.
+   * @readonly
+   */
+  readonly analysis_results: readonly ApiAnalysisResultItem[];
+  /**
+   * @description Загальний підсумок аналізу.
+   * @readonly
+   */
+  readonly overall_summary: string;
+  /**
+   * @description Назва моделі AI, що була використана для аналізу.
+   * @readonly
+   */
+  readonly usedModelName: string;
 }
 
 /**
- * Defines the structure for an error response from the Svitlogics AI service.
+ * @description Визначає структуру відповіді з помилкою від Svitlogics AI API.
+ * Властивості є `readonly` для забезпечення незмінності.
  */
 export interface SvitlogicsErrorResponse {
-  error: string;
+  /**
+   * @description Текстове повідомлення про помилку.
+   * @readonly
+   */
+  readonly error: string;
 }

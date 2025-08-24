@@ -61,12 +61,12 @@ const CustomNavLink: React.FC<CustomNavLinkProps> = React.memo(
     const getClassName = useCallback(
       ({ isActive }: { isActive: boolean }): string => {
         const baseClasses =
-          "font-mono font-medium text-ui-label uppercase text-blue-accent transition-colors duration-100 rounded-none";
+          "font-medium uppercase text-blue-accent text-ui-label transition-colors duration-100";
         const stateClasses = "hover:underline focus-visible:underline";
         const activeClasses = isActive ? "underline" : "no-underline";
         const mobileSpecificClasses = mobile
           ? "block w-full py-2 text-left"
-          : "py-1";
+          : "py-2";
         return `${baseClasses} ${stateClasses} ${activeClasses} ${mobileSpecificClasses}`;
       },
       [mobile]
@@ -123,8 +123,8 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <header className="relative border-b border-black bg-white">
-      <div className="mx-auto flex max-w-container items-center justify-between px-4 py-3">
+    <header className="relative border-b-1 border-black bg-white">
+      <div className="container-main flex items-center justify-between px-4 py-2">
         {/* Logo */}
         <Link
           to="/"
@@ -151,7 +151,7 @@ const Header: React.FC = () => {
           <button
             ref={menuButtonRef}
             type="button"
-            className="flex items-center justify-center rounded-none border border-black bg-white p-2 text-black transition-colors duration-100 hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white"
+            className="flex items-center justify-center border-1 border-black bg-white p-2 text-black transition-colors duration-100 hover:bg-black hover:text-white"
             onClick={toggleMenu}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"
@@ -174,10 +174,10 @@ const Header: React.FC = () => {
           id="mobile-menu"
           role="dialog" // role="dialog" є більш семантичним для модальних вікон
           aria-modal="true" // Повідомляє скрін-рідерам, що вміст поза цим меню неактивний
-          className="absolute left-0 top-full w-full border-b border-x border-black bg-white md:hidden"
+          className="absolute left-0 top-full w-full border-b-1 border-x-1 border-black bg-white md:hidden"
         >
-          <nav className="px-4 py-4" aria-label="Mobile navigation">
-            <ul className="flex flex-col gap-y-3">
+          <nav className="p-4" aria-label="Mobile navigation">
+            <ul className="flex flex-col gap-y-2">
               {mobileNavItems.map((item) => (
                 <li key={item.to}>
                   <CustomNavLink to={item.to} mobile>

@@ -34,10 +34,12 @@ interface OptimizedImageProps
  * відсутні обов'язкові пропси `src` або `alt`.
  *
  * @example
+ * // Класи `w-full` та `h-auto` є контекстуальними для layout,
+ * // що є правильним використанням утилітарних класів.
  * <OptimizedImage
  *   src="/images/my-awesome-picture.jpg"
  *   alt="A detailed description of the awesome picture."
- *   className="w-full h-auto rounded-lg"
+ *   className="w-full h-auto"
  *   width={800}
  *   height={600}
  * />

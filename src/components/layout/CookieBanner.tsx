@@ -27,7 +27,7 @@ const CookieBanner: React.FC = () => {
 
   return (
     <section
-      className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-black bg-white p-4"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t-1 border-black bg-white p-4"
       aria-labelledby="cookie-banner-heading"
       aria-live="polite"
       role="region"
@@ -36,7 +36,7 @@ const CookieBanner: React.FC = () => {
         <h2 id="cookie-banner-heading" className="sr-only">
           Cookie Consent
         </h2>
-        <p className="flex-grow font-mono text-body-main text-center sm:text-left">
+        <p className="flex-grow text-body-main text-center sm:text-left">
           This application uses analytics cookies for service improvement. Your
           choice is stored for one year.
         </p>
@@ -45,17 +45,19 @@ const CookieBanner: React.FC = () => {
           role="group"
           aria-label="Cookie consent options"
         >
+          {/* Secondary Button */}
           <button
             type="button"
             onClick={() => giveConsent(false)}
-            className="font-mono uppercase text-ui-label rounded-none border border-black bg-white px-4 py-2 text-black transition-colors duration-100 hover:bg-black hover:text-white"
+            className="border-1 border-black bg-white px-4 py-2 font-medium uppercase text-black text-ui-label transition-colors duration-100 hover:bg-black hover:text-white"
           >
             REJECT
           </button>
+          {/* Primary Button */}
           <button
             type="button"
             onClick={() => giveConsent(true)}
-            className="font-mono uppercase text-ui-label rounded-none border border-blue-accent bg-blue-accent px-4 py-2 text-white transition-colors duration-100 hover:border-blue-accent-hover hover:bg-blue-accent-hover"
+            className="border-1 border-blue-accent bg-blue-accent px-4 py-2 font-medium uppercase text-ui-label text-white transition-colors duration-100 hover:bg-blue-accent-hover active:bg-blue-accent-active"
           >
             ACCEPT
           </button>

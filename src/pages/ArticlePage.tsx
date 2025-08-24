@@ -33,15 +33,12 @@ const useArticleData = (slug?: string): ArticleState => {
   });
 
   useEffect(() => {
-    // Раннє повернення, якщо slug ще не визначено (напр., при першому рендері).
     if (!slug) {
       setState({ status: "loading", article: null, mdxSource: null });
       return;
     }
 
     const findAndSerializeArticle = async () => {
-      // Обгортаємо в try/catch для обробки будь-яких помилок,
-      // включаючи помилки читання з `getArticles`.
       try {
         const allArticles = getArticles();
         const foundArticle = allArticles.find((a) => a.slug === slug);
@@ -66,7 +63,7 @@ const useArticleData = (slug?: string): ArticleState => {
     };
 
     findAndSerializeArticle();
-  }, [slug]); // Ефект залежить лише від `slug`.
+  }, [slug]);
 
   return state;
 };
@@ -87,36 +84,30 @@ const slugify = (text: string): string => {
 
 /**
  * @description Об'єкт з кастомними компонентами для рендерингу MDX.
- * Винесено за межі компонента для запобігання повторному створенню.
  * @type {MDXRemoteProps['components']}
  */
 const mdxComponents: MDXRemoteProps["components"] = {
   h2: (props) => (
     <h2
-      className="font-mono font-semibold text-h2-mobile normal-case text-black mt-10 mb-4 lg:text-h2-desktop"
+      className="mb-4 mt-8 font-semibold text-black text-h2-mobile lg:text-h2-desktop"
       {...props}
     />
   ),
   h3: (props) => (
     <h3
-      className="font-mono font-medium text-h3-desktop normal-case text-black mt-8 mb-4"
+      className="mb-4 mt-6 font-medium text-black text-h3-mobile lg:text-h3-desktop"
       {...props}
     />
   ),
-  p: (props) => (
-    <p
-      className="font-mono font-normal text-body-main leading-body text-black mb-6"
+  p: (props) => <p className="mb-4 text-body-main text-black" {...props} />,
+  ul: (props) => <ul className="mb-4 ml-6 list-disc space-y-2" {...props} />,
+  li: (props) => <li className="text-body-main text-black" {...props} />,
+  a: (props) => (
+    <a
+      className="text-blue-accent no-underline hover:underline focus-visible:underline"
       {...props}
     />
   ),
-  ul: (props) => <ul className="list-disc space-y-2 ml-6 mb-6" {...props} />,
-  li: (props) => (
-    <li
-      className="font-mono font-normal text-body-main leading-body text-black"
-      {...props}
-    />
-  ),
-  a: (props) => <a className="text-blue-accent hover:underline" {...props} />,
   strong: (props) => <strong className="font-bold" {...props} />,
   img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
     if (!props.src || !props.alt) {
@@ -132,8 +123,8 @@ const mdxComponents: MDXRemoteProps["components"] = {
 // --- Мемоїзовані Підкомпоненти для станів сторінки ---
 
 const LoadingState: React.FC = React.memo(() => (
-  <div className="container-main pt-16 pb-16 text-center">
-    <p className="font-mono text-body-main">LOADING ARTICLE...</p>
+  <div className="container-main text-center">
+    <p className="text-body-main">LOADING ARTICLE...</p>
   </div>
 ));
 LoadingState.displayName = "LoadingState";
@@ -144,16 +135,16 @@ const NotFoundState: React.FC = React.memo(() => (
       <title>404: ARTICLE NOT FOUND | SVITLOGICS</title>
       <meta name="robots" content="noindex" />
     </Helmet>
-    <div className="container-main pt-16 pb-16 text-center">
-      <h1 className="font-mono font-bold text-h1-mobile normal-case text-black mb-4 md:uppercase lg:text-h1-desktop">
+    <div className="container-main text-center">
+      <h1 className="mb-4 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
         404: Article Not Found
       </h1>
-      <p className="font-mono text-body-main mb-8">
+      <p className="mb-8 text-body-main">
         The requested article does not exist.
       </p>
       <Link
         to="/blog"
-        className="font-mono font-medium uppercase text-ui-label text-blue-accent no-underline hover:underline"
+        className="font-medium uppercase text-blue-accent text-ui-label no-underline hover:underline focus-visible:underline"
       >
         ← RETURN TO BLOG INDEX
       </Link>
@@ -163,11 +154,11 @@ const NotFoundState: React.FC = React.memo(() => (
 NotFoundState.displayName = "NotFoundState";
 
 const ErrorState: React.FC = React.memo(() => (
-  <div className="container-main pt-16 pb-16 text-center">
-    <h1 className="font-mono font-bold text-h1-mobile normal-case text-black mb-4 md:uppercase lg:text-h1-desktop">
+  <div className="container-main text-center">
+    <h1 className="mb-4 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
       Error Loading Article
     </h1>
-    <p className="font-mono text-body-main">
+    <p className="text-body-main">
       There was an error loading the article. Please try again later.
     </p>
   </div>
@@ -176,7 +167,6 @@ ErrorState.displayName = "ErrorState";
 
 /**
  * @description Сторінка для відображення однієї статті блогу.
- * Керує завантаженням, серіалізацією та рендерингом MDX-контенту.
  * @component
  */
 const ArticlePage: React.FC = () => {
@@ -195,11 +185,9 @@ const ArticlePage: React.FC = () => {
   if (status === "loading") {
     return <LoadingState />;
   }
-
   if (status === "not-found") {
     return <NotFoundState />;
   }
-
   if (status === "error" || !article) {
     return <ErrorState />;
   }
@@ -230,19 +218,19 @@ const ArticlePage: React.FC = () => {
         )}
       </Helmet>
 
-      <div className="container-main pt-16 pb-16">
+      <div className="container-main">
         <article className="mx-auto max-w-3xl">
-          <header className="border-b border-black pb-8 mb-8">
+          <header className="mb-8 border-b-1 border-black pb-8">
             <Link
               to="/blog"
-              className="block font-mono font-medium uppercase text-ui-label text-blue-accent no-underline hover:underline mb-8"
+              className="mb-8 block font-medium uppercase text-blue-accent text-ui-label no-underline hover:underline focus-visible:underline"
             >
               ← RETURN TO BLOG INDEX
             </Link>
-            <h1 className="font-mono font-bold text-h1-mobile normal-case text-black mb-4 md:uppercase lg:text-h1-desktop">
+            <h1 className="mb-4 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
               {article.title}
             </h1>
-            <div className="flex flex-wrap items-center gap-x-3 font-mono normal-case text-ui-label text-text-secondary">
+            <div className="flex flex-wrap items-center gap-x-3 text-text-secondary text-ui-label">
               <time dateTime={article.createdAt}>{formattedDate}</time>
               <span aria-hidden="true">•</span>
               <span>{article.author}</span>
@@ -252,12 +240,12 @@ const ArticlePage: React.FC = () => {
           {mdxSource ? (
             <MDXRemote {...mdxSource} components={mdxComponents} />
           ) : (
-            <p>Rendering content...</p>
+            <p className="text-body-main">Rendering content...</p>
           )}
 
           {article.tags && article.tags.length > 0 && (
-            <footer className="border-t border-black pt-8 mt-8">
-              <h2 className="font-mono uppercase text-ui-label text-black mb-4">
+            <footer className="mt-8 border-t-1 border-black pt-8">
+              <h2 className="mb-4 font-medium uppercase text-black text-ui-label">
                 TAGS
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -265,7 +253,7 @@ const ArticlePage: React.FC = () => {
                   <Link
                     key={tag}
                     to={`/blog/tag/${slugify(tag)}`}
-                    className="block rounded-none border border-black bg-white px-3 py-1 font-mono text-black text-ui-label transition-colors duration-100 hover:border-blue-accent hover:text-blue-accent"
+                    className="block border-1 border-black bg-white px-3 py-1 text-black text-ui-label transition-colors duration-100 hover:text-blue-accent"
                   >
                     {tag}
                   </Link>

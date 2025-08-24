@@ -44,7 +44,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     // Головна обгортка:
     // - `flex flex-col`: Вертикальне розташування хедера, main та футера.
     // - `min-h-screen`: Гарантує, що layout займає мінімум висоту екрана.
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col">
       <Helmet>
         {/* Глобальні OG-теги для всього сайту */}
         <meta property="og:site_name" content="Svitlogics" />
@@ -66,7 +66,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Основна контентна частина */}
       {/* - `flex-grow`: Дозволяє цьому елементу розширюватися, притискаючи футер донизу. */}
       {/* - `w-full`: Гарантує повну ширину. */}
-      <main className="w-full flex-grow">{children}</main>
+      {/* - `py-16`: Застосовує системний вертикальний відступ у 64px. */}
+      <main className="w-full flex-grow py-16">{children}</main>
 
       {memoizedFooter}
       {memoizedCookieBanner}

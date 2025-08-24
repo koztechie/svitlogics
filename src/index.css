@@ -1,11 +1,13 @@
 /**
- * Svitlogics Global Stylesheet
- * 
- * This file serves three main purposes:
- * 1. Imports Tailwind CSS's base, components, and utility layers.
- * 2. Defines global base styles for the entire application to ensure
- *    consistency and adherence to the "Pure Minimalist-Brutalist" design system.
- * 3. Defines reusable component classes like `.container-main`.
+ * @fileoverview Глобальний файл стилів Svitlogics.
+ *
+ * Цей файл виконує три основні задачі:
+ * 1. Імпортує базові шари Tailwind CSS.
+ * 2. Визначає глобальні базові стилі для всього застосунку, забезпечуючи
+ *    візуальну консистентність та відповідність дизайн-системі
+ *    "Pure Minimalist-Brutalist".
+ * 3. Визначає перевикористовувані компонентні класи.
+ * @version 1.1.0
  */
 
 @tailwind base;
@@ -13,41 +15,64 @@
 @tailwind utilities;
 
 /*
- * We use @layer base to define our own base styles.
- * IMPORTANT: We use pure CSS with the theme() function instead of @apply
- * to avoid specificity conflicts with Tailwind's utility classes.
+ * =============================================================================
+ * # Root & Custom Properties
+ * =============================================================================
+ * Визначаємо глобальні CSS-змінні для значень, які не є частиною теми
+ * Tailwind CSS або використовуються в кількох місцях для забезпечення
+ * консистентності (DRY).
+ */
+:root {
+  --focus-outline-width: 2px;
+  --focus-outline-offset: 2px;
+  --focus-outline-color: theme("colors.blue-accent");
+  --selection-bg-color: theme("colors.blue-accent");
+  --selection-text-color: theme("colors.white");
+}
+
+/*
+ * =============================================================================
+ * # Base Layer Styles
+ * =============================================================================
+ * Використовуємо `@layer base` для визначення власних базових стилів.
+ * Перевага надається функції `theme()` замість `@apply`, щоб уникнути
+ * конфліктів специфічності з утилітарними класами Tailwind.
  */
 @layer base {
-  /* --- Global Reset & Document Setup --- */
-  html,
-  body,
-  #root {
-    font-family: theme("fontFamily.mono");
-    color: theme("colors.black");
-    background-color: theme("colors.white");
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  /* --- Глобальні налаштування документа --- */
+  html {
+    /* `scroll-behavior: smooth` забезпечує плавну прокрутку для посилань-якорів. */
     scroll-behavior: smooth;
+    /* Використовуємо системні шрифти як fallback для надійності. */
+    font-family: theme("fontFamily.mono"), ui-monospace, SFMono-Regular, Menlo,
+      Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
 
-  /* --- Typographic Resets & Defaults --- */
+  body {
+    /* `min-height` на `body` дозволяє дочірнім елементам використовувати `100vh`. */
+    min-height: 100vh;
+    color: theme("colors.black");
+    background-color: theme("colors.white");
+    /* Покращене згладжування шрифтів для кращої читабельності. */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* --- Скидання стилів для типографіки --- */
   h1,
   h2,
   h3,
   h4,
   h5,
-  h6 {
-    font-family: theme("fontFamily.mono");
+  h6,
+  p,
+  ul,
+  ol {
     margin: 0;
     padding: 0;
   }
 
   p {
-    margin: 0;
-    padding: 0;
     line-height: theme("lineHeight.body");
   }
 
@@ -61,63 +86,48 @@
     font-weight: theme("fontWeight.bold");
   }
 
-  /* --- Global Interactive Element Styles --- */
+  /* --- Глобальні стилі для інтерактивних елементів --- */
 
-  /* Universal focus indicator for keyboard navigation */
+  /* Універсальний індикатор фокусу для навігації з клавіатури. */
   *:focus-visible {
-    outline: 2px solid theme("colors.blue-accent");
-    outline-offset: 2px;
+    outline: var(--focus-outline-width) solid var(--focus-outline-color);
+    outline-offset: var(--focus-outline-offset);
+    border-radius: 0; /* Гарантуємо, що outline також буде гострим. */
   }
 
-  /* Brutalist Reset: Enforce sharp corners on all interactive elements */
-  button,
-  input,
-  textarea,
-  select {
+  /* Бруталістський ресет: забезпечуємо гострі кути для всіх елементів. */
+  *,
+  *::before,
+  *::after {
     border-radius: 0 !important;
   }
 
-  /* --- List Resets --- */
-  ul,
-  ol {
-    margin: 0;
-    padding: 0;
-  }
-
-  /* --- Selection Styles --- */
-  /* Customizes the appearance of selected text */
+  /* --- Стилі для виділення тексту --- */
   ::selection {
-    background-color: theme("colors.blue-accent");
-    color: theme("colors.white");
+    background-color: var(--selection-bg-color);
+    color: var(--selection-text-color);
   }
   ::-moz-selection {
-    /* Firefox specific */
-    background-color: theme("colors.blue-accent");
-    color: theme("colors.white");
+    /* Специфічно для Firefox */
+    background-color: var(--selection-bg-color);
+    color: var(--selection-text-color);
   }
 }
 
 /*
- * Component classes: @apply is appropriate here.
+ * =============================================================================
+ * # Components Layer
+ * =============================================================================
+ * Визначаємо перевикористовувані, компонентні класи.
+ * Тут використання `@apply` є доречним.
  */
 @layer components {
   /**
    * .container-main
-   * A reusable container class to center content and apply consistent padding.
+   * Головний контейнер для центрування контенту та застосування
+   * консистентних горизонтальних відступів.
    */
   .container-main {
-    @apply max-w-container mx-auto px-4;
-  }
-
-  /* --- MDX Components Styling --- */
-  h2 > a.autolink-anchor,
-  h3 > a.autolink-anchor {
-    @apply text-black no-underline opacity-0 group-hover:opacity-100 transition-opacity;
-    margin-left: 8px;
-  }
-
-  h2:hover .autolink-anchor,
-  h3:hover .autolink-anchor {
-    @apply opacity-100;
+    @apply mx-auto max-w-container px-4;
   }
 }

@@ -1,13 +1,39 @@
-import React from "react";
-// --- ВИДАЛЕНО: непотрібний імпорт 'Link' ---
-// import { Link } from "react-router-dom";
+import React, { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
+import DOMPurify from "dompurify";
 
-// --- НОВИЙ, РОЗШИРЕНИЙ КОНТЕНТ УМОВ ВИКОРИСТАННЯ ---
-const content = {
+// --- Типізація та Константи ---
+
+/** @description Визначає структуру підсекції. */
+interface TermsSubSectionData {
+  readonly subTitle: string;
+  readonly text: string;
+}
+
+/** @description Визначає структуру основної секції. */
+interface TermsSectionData {
+  readonly id: string;
+  readonly title: string;
+  readonly paragraphs?: readonly string[];
+  readonly list?: readonly string[];
+  readonly subSections?: readonly TermsSubSectionData[];
+}
+
+/**
+ * @description Статичний контент сторінки. `as const` забезпечує глибоку незмінність.
+ */
+const content: {
+  readonly seoTitle: string;
+  readonly seoDescription: string;
+  readonly canonicalUrl: string;
+  readonly pageTitle: string;
+  readonly lastUpdated: string;
+  readonly sections: readonly TermsSectionData[];
+} = {
   seoTitle: "Terms of Use | Svitlogics",
   seoDescription:
-    "Review the official Terms of Use for the Svitlogics web application. This document governs your access to and use of the Service, outlining user responsibilities, intellectual property rights, and limitations of liability.",
+    "Review the official Terms of Use for the Svitlogics web application. This document governs user access, responsibilities, intellectual property rights, and limitations of liability.",
+  canonicalUrl: "https://svitlogics.com/terms-of-use",
   pageTitle: "TERMS OF USE",
   lastUpdated: "August 22, 2025",
   sections: [
@@ -15,45 +41,47 @@ const content = {
       id: "agreement-to-terms",
       title: "1. Agreement to Terms",
       paragraphs: [
-        'These Terms of Use constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and Svitlogics by Eugene Kozlovsky ("we," "us," or "our"), concerning your access to and use of the Svitlogics website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, "the Service").',
-        "You agree that by accessing the Service, you have read, understood, and agree to be bound by all of these Terms of Use. **If you do not agree with all of these Terms of Use, then you are expressly prohibited from using the Service and you must discontinue use immediately.**",
-        "Supplemental terms and conditions or documents that may be posted on the Service from time to time are hereby expressly incorporated herein by reference. We reserve the right, in our sole discretion, to make changes or modifications to these Terms of Use at any time and for any reason. We will alert you about any changes by updating the “Last Updated” date of these Terms of Use, and you waive any right to receive specific notice of each such change. It is your responsibility to periodically review these Terms of Use to stay informed of updates. Your continued use of the Service after the date such revised Terms of Use are posted will be deemed to be your acceptance of such changes.",
+        'These Terms of Use constitute a legally binding agreement made between the user, whether personally or on behalf of an entity ("the user") and Svitlogics by Eugene Kozlovsky ("the Service," "us," or "our"), concerning user access to and use of the Svitlogics website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, "the Service").',
+        "The user agrees that by accessing the Service, they have read, understood, and agree to be bound by all of these Terms of Use. <strong>If the user does not agree with all of these Terms of Use, then they are expressly prohibited from using the Service and must discontinue use immediately.</strong>",
+        'Supplemental terms and conditions or documents that may be posted on the Service from time to time are hereby expressly incorporated herein by reference. The Service reserves the right, in our sole discretion, to make changes or modifications to these Terms of Use at any time and for any reason. Users will be alerted about any changes by updating the "Last Updated" date of these Terms of Use, and the user waives any right to receive specific notice of each such change. It is the user\'s responsibility to periodically review these Terms of Use to stay informed of updates. Continued use of the Service by the user after the date such revised Terms of Use are posted will be deemed to be an acceptance of such changes.',
       ],
     },
     {
       id: "service-description",
       title: "2. Description of Service",
       paragraphs: [
-        "Svitlogics is an AI-powered tool that provides automated analysis of textual content for propaganda, bias, and manipulation. The Service is intended as an **auxiliary instrument to aid critical thinking** and is not a substitute for professional, legal, financial, or medical advice, nor is it a substitute for independent fact-checking.",
-        "The Service is currently offered in a public beta stage. This means that functionality may change, and the service may contain errors or inaccuracies. We reserve the right to modify, suspend, or discontinue the Service at any time without notice.",
+        "Svitlogics is an AI-powered tool that provides automated analysis of textual content for propaganda, bias, and manipulation. The Service is intended as an <strong>auxiliary instrument to aid critical thinking</strong> and is not a substitute for professional, legal, financial, or medical advice, nor is it a substitute for independent fact-checking.",
+        "The Service is currently offered in a public beta stage. This means that functionality may change, and the service may contain errors or inaccuracies. The Service reserves the right to modify, suspend, or discontinue its operations at any time without notice.",
       ],
     },
     {
       id: "intellectual-property",
       title: "3. Intellectual Property Rights",
       paragraphs: [
-        "Unless otherwise indicated, the Service is our proprietary property. All source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics on the Service (collectively, the “Content”) and the trademarks, service marks, and logos contained therein (the “Marks”) are owned or controlled by us or licensed to us, and are protected by copyright and trademark laws and various other intellectual property rights and unfair competition laws of Ukraine, the United States, foreign jurisdictions, and international conventions.",
-        "The Content and the Marks are provided on the Service “AS IS” for your information and personal, non-commercial use only. Except as expressly provided in these Terms of Use, no part of the Service and no Content or Marks may be copied, reproduced, aggregated, republished, uploaded, posted, publicly displayed, encoded, translated, transmitted, distributed, sold, licensed, or otherwise exploited for any commercial purpose whatsoever, without our express prior written permission.",
-        "Provided that you are eligible to use the Service, you are granted a limited license to access and use the Service. We reserve all rights not expressly granted to you in and to the Service, the Content, and the Marks.",
+        "Unless otherwise indicated, the Service is the proprietary property of Svitlogics. All source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics on the Service (collectively, the “Content”) and the trademarks, service marks, and logos contained therein (the “Marks”) are owned or controlled by us or licensed to us, and are protected by copyright and trademark laws and various other intellectual property rights and unfair competition laws of Ukraine, the United States, foreign jurisdictions, and international conventions.",
+        "The Content and the Marks are provided on the Service “AS IS” for information and personal, non-commercial use only. Except as expressly provided in these Terms of Use, no part of the Service and no Content or Marks may be copied, reproduced, aggregated, republished, uploaded, posted, publicly displayed, encoded, translated, transmitted, distributed, sold, licensed, or otherwise exploited for any commercial purpose whatsoever, without our express prior written permission.",
+        "Provided that the user is eligible to use the Service, they are granted a limited license to access and use the Service. All rights not expressly granted to the user in and to the Service, the Content, and the Marks are reserved.",
       ],
     },
     {
       id: "user-representations",
       title: "4. User Representations and Conduct",
-      paragraphs: ["By using the Service, you represent and warrant that:"],
+      paragraphs: [
+        "By using the Service, the user represents and warrants that:",
+      ],
       list: [
-        "You are not a minor in the jurisdiction in which you reside; you are at least 18 years of age.",
-        "You have the legal capacity and you agree to comply with these Terms of Use.",
-        "You will not access the Service through automated or non-human means, whether through a bot, script, or otherwise, except as may be the result of standard search engine or browser usage.",
-        "You will not use the Service for any illegal or unauthorized purpose.",
-        "Your use of the Service will not violate any applicable law or regulation.",
+        "The user is not a minor in the jurisdiction in which they reside; they are at least 18 years of age.",
+        "The user has the legal capacity and agrees to comply with these Terms of Use.",
+        "The user will not access the Service through automated or non-human means, whether through a bot, script, or otherwise, except as may be the result of standard search engine or browser usage.",
+        "The user will not use the Service for any illegal or unauthorized purpose.",
+        "Use of the Service will not violate any applicable law or regulation.",
       ],
     },
     {
       id: "prohibited-activities",
       title: "5. Prohibited Activities",
       paragraphs: [
-        "You may not access or use the Service for any purpose other than that for which we make the Service available. The Service may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us.",
+        "The Service may not be accessed or used for any purpose other than that for which it is made available. The Service may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us.",
         "As a user of the Service, you agree not to:",
       ],
       list: [
@@ -82,15 +110,15 @@ const content = {
       id: "submissions",
       title: "6. Submissions",
       paragraphs: [
-        'You acknowledge and agree that any questions, comments, suggestions, ideas, feedback, or other information regarding the Service ("Submissions") you provide to us are non-confidential and shall become our sole property. We shall own exclusive rights, including all intellectual property rights, and shall be entitled to the unrestricted use and dissemination of these Submissions for any lawful purpose, commercial or otherwise, without acknowledgment or compensation to you.',
-        "You hereby waive all moral rights to any such Submissions, and you hereby warrant that any such Submissions are original with you or that you have the right to submit such Submissions. You agree there shall be no recourse against us for any alleged or actual infringement or misappropriation of any proprietary right in your Submissions.",
+        'The user acknowledges and agrees that any questions, comments, suggestions, ideas, feedback, or other information regarding the Service ("Submissions") provided to us are non-confidential and shall become our sole property. We shall own exclusive rights, including all intellectual property rights, and shall be entitled to the unrestricted use and dissemination of these Submissions for any lawful purpose, commercial or otherwise, without acknowledgment or compensation to the user.',
+        "The user hereby waives all moral rights to any such Submissions, and warrants that any such Submissions are original or that they have the right to submit such Submissions. The user agrees there shall be no recourse against us for any alleged or actual infringement or misappropriation of any proprietary right in their Submissions.",
       ],
     },
     {
       id: "third-party-websites",
       title: "7. Third-Party Websites and Content",
       paragraphs: [
-        'The Service may contain (or you may be sent via the Service) links to other websites ("Third-Party Websites") as well as articles, photographs, text, graphics, pictures, designs, music, sound, video, information, applications, software, and other content or items belonging to or originating from third parties ("Third-Party Content").',
+        'The Service may contain (or users may be sent via the Service) links to other websites ("Third-Party Websites") as well as articles, photographs, text, graphics, pictures, designs, music, sound, video, information, applications, software, and other content or items belonging to or originating from third parties ("Third-Party Content").',
         "Such Third-Party Websites and Third-Party Content are not investigated, monitored, or checked for accuracy, appropriateness, or completeness by us, and we are not responsible for any Third-Party Websites accessed through the Service or any Third-Party Content posted on, available through, or installed from the Service, including the content, accuracy, offensiveness, opinions, reliability, privacy practices, or other policies of or contained in the Third-Party Websites or the Third-Party Content. Inclusion of, linking to, or permitting the use or installation of any Third-Party Websites or any Third-Party Content does not imply approval or endorsement thereof by us.",
       ],
     },
@@ -98,24 +126,24 @@ const content = {
       id: "term-and-termination",
       title: "8. Term and Termination",
       paragraphs: [
-        "These Terms of Use shall remain in full force and effect while you use the Service. WITHOUT LIMITING ANY OTHER PROVISION OF THESE TERMS OF USE, WE RESERVE THE RIGHT TO, IN OUR SOLE DISCRETION AND WITHOUT NOTICE OR LIABILITY, DENY ACCESS TO AND USE OF THE SERVICE (INCLUDING BLOCKING CERTAIN IP ADDRESSES), TO ANY PERSON FOR ANY REASON OR FOR NO REASON, INCLUDING WITHOUT LIMITATION FOR BREACH OF ANY REPRESENTATION, WARRANTY, OR COVENANT CONTAINED IN THESE TERMS OF USE OR OF ANY APPLICABLE LAW OR REGULATION.",
-        "We may terminate your use or participation in the Service or delete any content or information that you posted at any time, without warning, in our sole discretion.",
+        "These Terms of Use shall remain in full force and effect while the Service is in use. WITHOUT LIMITING ANY OTHER PROVISION OF THESE TERMS OF USE, WE RESERVE THE RIGHT TO, IN OUR SOLE DISCRETION AND WITHOUT NOTICE OR LIABILITY, DENY ACCESS TO AND USE OF THE SERVICE (INCLUDING BLOCKING CERTAIN IP ADDRESSES), TO ANY PERSON FOR ANY REASON OR FOR NO REASON, INCLUDING WITHOUT LIMITATION FOR BREACH OF ANY REPRESENTATION, WARRANTY, OR COVENANT CONTAINED IN THESE TERMS OF USE OR OF ANY APPLICABLE LAW OR REGULATION.",
+        "We may terminate a user's use or participation in the Service or delete any posted content or information at any time, without warning, in our sole discretion.",
       ],
     },
     {
       id: "modifications",
       title: "9. Modifications and Interruptions",
       paragraphs: [
-        "We reserve the right to change, modify, or remove the contents of the Service at any time or for any reason at our sole discretion without notice. However, we have no obligation to update any information on our Service. We also reserve the right to modify or discontinue all or part of the Service without notice at any time.",
-        "We will not be liable to you or any third party for any modification, price change, suspension, or discontinuance of the Service.",
-        "We cannot guarantee the Service will be available at all times. We may experience hardware, software, or other problems or need to perform maintenance related to the Service, resulting in interruptions, delays, or errors. We reserve the right to change, revise, update, suspend, discontinue, or otherwise modify the Service at any time or for any reason without notice to you. You agree that we have no liability whatsoever for any loss, damage, or inconvenience caused by your inability to access or use the Service during any downtime or discontinuance of the Service.",
+        "We reserve the right to change, modify, or remove the contents of the Service at any time or for any reason at our sole discretion without notice. However, we have no obligation to update any information on the Service. We also reserve the right to modify or discontinue all or part of the Service without notice at any time.",
+        "We will not be liable to the user or any third party for any modification, price change, suspension, or discontinuance of the Service.",
+        "The availability of the Service is not guaranteed. We may experience hardware, software, or other problems or need to perform maintenance related to the Service, resulting in interruptions, delays, or errors. We reserve the right to change, revise, update, suspend, discontinue, or otherwise modify the Service at any time or for any reason without notice. The user agrees that we have no liability whatsoever for any loss, damage, or inconvenience caused by their inability to access or use the Service during any downtime or discontinuance of the Service.",
       ],
     },
     {
       id: "governing-law",
       title: "10. Governing Law",
       paragraphs: [
-        "These Terms of Use and your use of the Service are governed by and construed in accordance with the laws of Ukraine applicable to agreements made and to be entirely performed within Ukraine, without regard to its conflict of law principles.",
+        "These Terms of Use and the use of the Service are governed by and construed in accordance with the laws of Ukraine applicable to agreements made and to be entirely performed within Ukraine, without regard to its conflict of law principles.",
       ],
     },
     {
@@ -124,7 +152,7 @@ const content = {
       subSections: [
         {
           subTitle: "Informal Negotiations",
-          text: 'To expedite resolution and control the cost of any dispute, controversy, or claim related to these Terms of Use (each a "Dispute" and collectively, the “Disputes”) brought by either you or us, the Parties agree to first attempt to negotiate any Dispute informally for at least thirty (30) days before initiating arbitration. Such informal negotiations commence upon written notice from one Party to the other Party.',
+          text: 'To expedite resolution and control the cost of any dispute, controversy, or claim related to these Terms of Use (each a "Dispute" and collectively, the “Disputes”) brought by either the user or us, the Parties agree to first attempt to negotiate any Dispute informally for at least thirty (30) days before initiating arbitration. Such informal negotiations commence upon written notice from one Party to the other Party.',
         },
         {
           subTitle: "Binding Arbitration",
@@ -151,102 +179,136 @@ const content = {
       id: "indemnification",
       title: "14. Indemnification",
       paragraphs: [
-        "You agree to defend, indemnify, and hold us harmless, including our subsidiaries, affiliates, and all of our respective officers, agents, partners, and employees, from and against any loss, damage, liability, claim, or demand, including reasonable attorneys’ fees and expenses, made by any third party due to or arising out of: (1) your use of the Service; (2) your breach of these Terms of Use; (3) any breach of your representations and warranties set forth in these Terms of Use; or (4) your violation of the rights of a third party, including but not to intellectual property rights.",
+        "The user agrees to defend, indemnify, and hold us harmless, including our subsidiaries, affiliates, and all of our respective officers, agents, partners, and employees, from and against any loss, damage, liability, claim, or demand, including reasonable attorneys’ fees and expenses, made by any third party due to or arising out of: (1) use of the Service; (2) breach of these Terms of Use; (3) any breach of the representations and warranties set forth in these Terms of Use; or (4) violation of the rights of a third party, including but not limited to intellectual property rights.",
       ],
     },
     {
       id: "miscellaneous",
       title: "15. Miscellaneous",
       paragraphs: [
-        "These Terms of Use and any policies or operating rules posted by us on the Service constitute the entire agreement and understanding between you and us. Our failure to exercise or enforce any right or provision of these Terms of Use shall not operate as a waiver of such right or provision.",
+        "These Terms of Use and any policies or operating rules posted by us on the Service constitute the entire agreement and understanding between the user and us. Our failure to exercise or enforce any right or provision of these Terms of Use shall not operate as a waiver of such right or provision.",
         "These Terms of Use operate to the fullest extent permissible by law. We may assign any or all of our rights and obligations to others at any time. We shall not be responsible or liable for any loss, damage, delay, or failure to act caused by any cause beyond our reasonable control.",
         "If any provision or part of a provision of these Terms of Use is determined to be unlawful, void, or unenforceable, that provision or part of the provision is deemed severable from these Terms of Use and does not affect the validity and enforceability of any remaining provisions.",
-        "There is no joint venture, partnership, employment or agency relationship created between you and us as a result of these Terms of Use or use of the Service.",
+        "There is no joint venture, partnership, employment or agency relationship created between the user and us as a result of these Terms of Use or use of the Service.",
       ],
     },
     {
       id: "contact",
       title: "16. Contact",
       paragraphs: [
-        'For questions or comments about these Terms of Use, please contact us at: <a href="mailto:hello@svitlogics.com" class="text-blue-accent hover:underline">hello@svitlogics.com</a> or by visiting our <a href="/contact" class="text-blue-accent hover:underline">Contact page</a>.',
+        'For questions or comments about these Terms of Use, contact the Service at: <a href="mailto:hello@svitlogics.com">hello@svitlogics.com</a> or by visiting the <a href="/contact">Contact page</a>.',
       ],
     },
   ],
 };
 
-const TermsSubSection: React.FC<{ subSection: any }> = ({ subSection }) => (
-  <div className="mt-6">
-    <h3 className="font-mono font-medium text-h3-desktop text-black mb-4 normal-case">
-      {subSection.subTitle}
-    </h3>
-    {subSection.text && (
-      <p dangerouslySetInnerHTML={{ __html: subSection.text }} />
-    )}
-  </div>
-);
+// --- Мемоїзовані та Безпечні Підкомпоненти ---
+const createSanitizedHtml = (rawHtml: string): { __html: string } => {
+  if (typeof window !== "undefined") {
+    return {
+      __html: DOMPurify.sanitize(rawHtml, {
+        USE_PROFILES: { html: true },
+        ALLOWED_TAGS: ["strong", "em", "a"],
+        ALLOWED_ATTR: ["href", "target", "rel"],
+      }),
+    };
+  }
+  return { __html: rawHtml };
+};
 
-const TermsSection: React.FC<{ section: any }> = ({ section }) => (
-  <section
-    aria-labelledby={`section-title-${section.title.replace(/\s+/g, "-")}`}
-  >
-    <h2
-      id={`section-title-${section.title.replace(/\s+/g, "-")}`}
-      className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-6 normal-case"
-    >
-      {section.title}
-    </h2>
-    <div className="space-y-4 font-mono font-normal text-body-main leading-body text-black">
-      {section.paragraphs &&
-        section.paragraphs.map((p: string, i: number) => (
-          <p key={i} dangerouslySetInnerHTML={{ __html: p }} />
+const generateId = (text: string): string =>
+  text
+    .toLowerCase()
+    .replace(/[\s().]/g, "-")
+    .replace(/[/]/g, "");
+
+interface TermsSubSectionProps {
+  subSection: TermsSubSectionData;
+}
+const TermsSubSection: React.FC<TermsSubSectionProps> = React.memo(
+  ({ subSection }) => (
+    <div className="pt-4">
+      <h3 className="mb-4 font-medium text-black text-h3-mobile lg:text-h3-desktop">
+        {subSection.subTitle}
+      </h3>
+      <p dangerouslySetInnerHTML={createSanitizedHtml(subSection.text)} />
+    </div>
+  )
+);
+TermsSubSection.displayName = "TermsSubSection";
+
+interface TermsSectionProps {
+  section: TermsSectionData;
+}
+const TermsSection: React.FC<TermsSectionProps> = React.memo(({ section }) => {
+  const headingId = useMemo(() => generateId(section.title), [section.title]);
+  return (
+    <section aria-labelledby={headingId}>
+      <h2
+        id={headingId}
+        className="mb-6 font-semibold text-black text-h2-mobile lg:text-h2-desktop"
+      >
+        {section.title}
+      </h2>
+      <div className="space-y-4 text-body-main text-black">
+        {section.paragraphs?.map((p, i) => (
+          <p key={i} dangerouslySetInnerHTML={createSanitizedHtml(p)} />
         ))}
-      {section.list && (
-        <ul className="space-y-2 list-disc ml-6 mt-4">
-          {section.list.map((item: string) => (
-            <li
-              key={item.substring(0, 20)}
-              dangerouslySetInnerHTML={{ __html: item }}
-            />
-          ))}
-        </ul>
-      )}
-      {section.subSections &&
-        section.subSections.map((sub: any) => (
+        {section.list && (
+          <ul className="ml-6 list-disc space-y-2 pt-2">
+            {section.list.map((item, index) => (
+              <li
+                key={index}
+                dangerouslySetInnerHTML={createSanitizedHtml(item)}
+              />
+            ))}
+          </ul>
+        )}
+        {section.subSections?.map((sub) => (
           <TermsSubSection key={sub.subTitle} subSection={sub} />
         ))}
-    </div>
-  </section>
-);
+      </div>
+    </section>
+  );
+});
+TermsSection.displayName = "TermsSection";
 
+/**
+ * @description Статична сторінка "Terms of Use".
+ * @component
+ */
 const TermsOfUsePage: React.FC = () => {
+  const renderedSections = useMemo(
+    () =>
+      content.sections.map((section) => (
+        <TermsSection key={section.id} section={section} />
+      )),
+    []
+  );
   return (
     <>
       <Helmet>
         <title>{content.seoTitle}</title>
         <meta name="description" content={content.seoDescription} />
-        <link rel="canonical" href="https://svitlogics.com/terms-of-use" />
+        <link rel="canonical" href={content.canonicalUrl} />
         <meta property="og:title" content={content.seoTitle} />
         <meta property="og:description" content={content.seoDescription} />
-        <meta property="og:url" content="https://svitlogics.com/terms-of-use" />
+        <meta property="og:url" content={content.canonicalUrl} />
         <meta property="og:type" content="article" />
       </Helmet>
-
-      <div className="container-main pt-16 pb-16">
-        <h1 className="font-mono font-bold text-h1-mobile normal-case md:uppercase lg:text-h1-desktop text-black mb-4 text-left">
-          {content.pageTitle}
-        </h1>
-        <p className="font-mono text-ui-label text-text-secondary mb-16">
-          Last Updated: {content.lastUpdated}
-        </p>
-
-        <div className="max-w-3xl space-y-12">
-          {content.sections.map((section) => (
-            <TermsSection key={section.title} section={section} />
-          ))}
-        </div>
+      <div className="container-main">
+        <header>
+          <h1 className="mb-4 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
+            {content.pageTitle}
+          </h1>
+          <p className="mb-16 uppercase text-text-secondary text-ui-label">
+            Last Updated: {content.lastUpdated}
+          </p>
+        </header>
+        <main className="max-w-3xl space-y-16">{renderedSections}</main>
       </div>
     </>
   );
 };
 
-export default TermsOfUsePage;
+export default React.memo(TermsOfUsePage);

@@ -1,27 +1,90 @@
 import React, { useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { getArticles } from "../articles";
+import { getArticles, Article } from "../articles";
 
+// --- Типізація, Константи та Утиліти ---
+
+/**
+ * @description Утиліта для генерації URL-дружнього slug.
+ * @param {string} text - Вхідний рядок.
+ * @returns {string} Slug-рядок.
+ */
 const slugify = (text: string): string => {
   if (!text) return "";
   return text
-    .toString()
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "-")
-    .replace(/[^\w\-]+/g, "")
-    .replace(/\-\-+/g, "-");
+    .replace(/[^\w-]+/g, "");
 };
 
+// --- Мемоїзовані Підкомпоненти ---
+
+/**
+ * @description Пропси для підкомпонента `ArticleCard`.
+ */
+interface ArticleCardProps {
+  article: Article;
+}
+
+/**
+ * @description Мемоїзований компонент для відображення картки однієї статті.
+ * @component
+ */
+const ArticleCard: React.FC<ArticleCardProps> = React.memo(({ article }) => {
+  const formattedDate = useMemo(
+    () =>
+      new Date(article.createdAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+    [article.createdAt]
+  );
+
+  return (
+    <article
+      aria-labelledby={`article-title-${article.slug}`}
+      className="group relative block border-1 border-black bg-white p-4 transition-colors duration-100 hover:border-blue-accent"
+    >
+      <h2
+        id={`article-title-${article.slug}`}
+        className="mb-2 font-medium text-blue-accent text-h3-mobile group-hover:underline lg:text-h3-desktop"
+      >
+        <Link
+          to={`/blog/${article.slug}`}
+          className="after:absolute after:inset-0 after:content-['']"
+        >
+          {/* span з z-10 потрібен, щоб вкладені посилання-теги були клікабельні */}
+          <span className="relative z-10">{article.title}</span>
+        </Link>
+      </h2>
+      <div className="mb-4 flex flex-wrap items-center gap-x-3 text-text-secondary text-ui-label">
+        <time dateTime={article.createdAt}>{formattedDate}</time>
+        {article.author && (
+          <>
+            <span aria-hidden="true">•</span>
+            <span>{article.author}</span>
+          </>
+        )}
+      </div>
+      <p className="text-body-main text-black">{article.description}</p>
+    </article>
+  );
+});
+ArticleCard.displayName = "ArticleCard";
+
+/**
+ * @description Сторінка, що відображає список статей, відфільтрованих за певним тегом.
+ * @component
+ */
 const TagPage: React.FC = () => {
   const { tagSlug } = useParams<{ tagSlug: string }>();
 
   const filteredArticles = useMemo(() => {
+    if (!tagSlug) return [];
     const allArticles = getArticles();
-    if (!tagSlug) {
-      return [];
-    }
     return allArticles.filter((article) =>
       article.tags?.some((tag) => slugify(tag) === tagSlug)
     );
@@ -29,35 +92,29 @@ const TagPage: React.FC = () => {
 
   const tagName = useMemo(() => {
     if (!tagSlug) return "";
-    const firstMatch = filteredArticles[0];
-    if (firstMatch?.tags) {
-      return (
-        firstMatch.tags.find((tag) => slugify(tag) === tagSlug) ||
-        tagSlug.replace(/-/g, " ")
-      );
-    }
-    return tagSlug.replace(/-/g, " ");
-  }, [filteredArticles, tagSlug]);
+    const firstArticle = filteredArticles[0];
+    const originalTag = firstArticle?.tags.find(
+      (tag) => slugify(tag) === tagSlug
+    );
+    return originalTag || tagSlug.replace(/-/g, " ");
+  }, [tagSlug, filteredArticles]);
 
   return (
-    <div>
+    <>
       <Helmet>
-        <title>{`Tag: ${tagName} | Svitlogics Blog`}</title>
+        <title>{`TAG: ${tagName} | SVITLOGICS`}</title>
         <meta
           name="description"
-          content={`Articles tagged with "${tagName}" on the Svitlogics blog.`}
+          content={`An index of articles on the Svitlogics blog tagged with "${tagName}".`}
         />
         <link
           rel="canonical"
           href={`https://svitlogics.com/blog/tag/${tagSlug}`}
         />
-        <meta
-          property="og:title"
-          content={`Tag: ${tagName} | Svitlogics Blog`}
-        />
+        <meta property="og:title" content={`TAG: ${tagName} | SVITLOGICS`} />
         <meta
           property="og:description"
-          content={`Articles tagged with "${tagName}" on the Svitlogics blog.`}
+          content={`An index of articles on the Svitlogics blog tagged with "${tagName}".`}
         />
         <meta
           property="og:url"
@@ -65,61 +122,38 @@ const TagPage: React.FC = () => {
         />
       </Helmet>
 
-      <div className="container-main pt-16 pb-16">
-        <div className="max-w-3xl">
-          <p className="font-mono text-ui-label text-black uppercase mb-2">
-            Tag
+      <div className="container-main">
+        <header>
+          <p className="mb-2 font-medium uppercase text-black text-ui-label">
+            TAG
           </p>
-          {/* --- ВИПРАВЛЕННЯ ТУТ: Видалено 'normal-case' --- */}
-          <h1 className="font-mono font-bold text-h1-mobile md:uppercase lg:text-h1-desktop text-black mb-12 text-left capitalize">
+          <h1 className="mb-16 font-bold text-black text-h1-mobile capitalize md:uppercase lg:text-h1-desktop">
             {tagName}
           </h1>
+        </header>
 
+        <main className="max-w-3xl">
           {filteredArticles.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-8">
               {filteredArticles.map((article) => (
-                <Link
-                  key={article.slug}
-                  to={`/blog/${article.slug}`}
-                  className="block border border-black p-4 bg-white rounded-none transition-colors duration-100 hover:border-blue-accent group"
-                >
-                  <article>
-                    <h2 className="font-mono font-medium text-h3-desktop normal-case text-blue-accent mb-2 group-hover:underline">
-                      {article.title}
-                    </h2>
-                    <div className="flex flex-wrap items-center gap-x-3 font-mono text-ui-label text-black normal-case mb-4">
-                      <span>{article.createdAt}</span>
-                      {article.author && (
-                        <>
-                          <span aria-hidden="true">•</span>
-                          <span>by {article.author}</span>
-                        </>
-                      )}
-                    </div>
-                    <p className="font-mono font-normal text-body-main leading-body text-black">
-                      {article.description}
-                    </p>
-                  </article>
-                </Link>
+                <ArticleCard key={article.slug} article={article} />
               ))}
             </div>
           ) : (
-            <p className="font-mono text-body-main">
-              No articles found with this tag.
-            </p>
+            <p className="text-body-main">NO ARTICLES FOUND WITH THIS TAG.</p>
           )}
 
-          <div className="mt-12 border-t border-black pt-8">
+          <div className="mt-16 border-t-1 border-black pt-8">
             <Link
               to="/blog"
-              className="font-mono font-medium text-ui-label uppercase text-blue-accent no-underline hover:underline"
+              className="font-medium uppercase text-blue-accent text-ui-label no-underline hover:underline focus-visible:underline"
             >
-              ← Back to Blog Index
+              ← RETURN TO BLOG INDEX
             </Link>
           </div>
-        </div>
+        </main>
       </div>
-    </div>
+    </>
   );
 };
 

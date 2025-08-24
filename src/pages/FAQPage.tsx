@@ -1,16 +1,38 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
-// import { useTranslation } from 'react-i18next';
 
-// Структура для одного Q&A блоку
+// --- Типізація та Константи ---
+
+/**
+ * @description Визначає структуру даних для одного Q&A блоку.
+ */
 interface FaqItemData {
-  question: string;
-  answer: React.ReactNode;
-  plainTextAnswer: string; // Окреме поле для чистого тексту для JSON-LD
+  /** @description Питання. */
+  readonly question: string;
+  /** @description Відповідь у форматі JSX для рендерингу. */
+  readonly answer: React.ReactNode;
+  /** @description Відповідь у форматі чистого тексту для SEO (JSON-LD). */
+  readonly plainTextAnswer: string;
 }
 
-// --- ОНОВЛЕНИЙ КОНТЕНТ ---
-const faqData: FaqItemData[] = [
+/**
+ * @description Статичний контент сторінки. `as const` забезпечує глибоку незмінність.
+ */
+const content = {
+  seoTitle: "FAQ | SVITLOGICS",
+  seoDescription:
+    "Answers to frequently asked questions about Svitlogics, including its AI model, accuracy, data privacy, and supported languages.",
+  canonicalUrl: "https://svitlogics.com/faq",
+  pageTitle: "FREQUENTLY ASKED QUESTIONS",
+  introParagraph:
+    "This section provides answers to common questions. For inquiries not addressed here, use the Contact page.",
+} as const;
+
+/**
+ * @description Статичні дані для FAQ.
+ * @type {readonly FaqItemData[]}
+ */
+const faqData: readonly FaqItemData[] = [
   {
     question:
       "What is the primary difference between Svitlogics and other analysis tools?",
@@ -36,13 +58,13 @@ const faqData: FaqItemData[] = [
         The analysis is powered by a{" "}
         <strong>secure server-side API gateway</strong> running on Netlify
         Functions. It utilizes a high-availability cascade of{" "}
-        <strong>premium Google Gemini 2.5 models</strong> to ensure operational
+        <strong>Google Gemini 2.5 Pro models</strong> to ensure operational
         reliability. The core logic and API keys are stored securely on the
         server, never exposed to the user's browser.
       </p>
     ),
     plainTextAnswer:
-      "The analysis is powered by a secure server-side API gateway using a cascade of premium Google Gemini 2.5 models. Core logic and API keys are stored securely on the server.",
+      "The analysis is powered by a secure server-side API gateway using a cascade of Google Gemini 2.5 Pro models. Core logic and API keys are stored securely on the server.",
   },
   {
     question: "Why does Svitlogics use a 'brutalist' design?",
@@ -56,7 +78,7 @@ const faqData: FaqItemData[] = [
       </p>
     ),
     plainTextAnswer:
-      "The 'Pure Minimalist-Brutalist' design is a functional choice that supports the tool's mission of honesty. The UI is intentionally direct, with no decorative elements, ensuring the user's focus remains on the content and its analysis.",
+      "The 'Pure Minimalist-Brutalist' design is a functional choice that supports the tool's mission of clarity. The UI is intentionally direct, with no decorative elements, ensuring the user's focus remains on the content and its analysis.",
   },
   {
     question: "Is the AI analysis 100% accurate?",
@@ -75,10 +97,9 @@ const faqData: FaqItemData[] = [
     question: "What are the text input limits?",
     answer: (
       <p>
-        To ensure system stability and fair usage for all users, there is a
-        character limit for each analysis. This limit is determined by the
-        back-end service and is always displayed on the main page near the input
-        field.
+        To ensure system stability and fair usage, there is a character limit
+        for each analysis. This limit is determined by the back-end service and
+        is always displayed on the main page near the input field.
       </p>
     ),
     plainTextAnswer:
@@ -97,17 +118,20 @@ const faqData: FaqItemData[] = [
       "Svitlogics is optimized for analyzing texts in English and Ukrainian, with system prompts calibrated for these languages.",
   },
   {
-    question: "Is my submitted text stored?",
+    question: "Is submitted text stored?",
     answer: (
       <p>
-        No. <strong>Svitlogics does not store the content you analyze.</strong>{" "}
-        All processing is stateless. The text you submit is sent to our secure
+        No.{" "}
+        <strong>
+          Svitlogics does not store the content submitted for analysis.
+        </strong>{" "}
+        All processing is stateless. Submitted text is sent to the secure
         back-end, forwarded to the Google AI API for analysis, and then
         discarded. It is never written to a database.
       </p>
     ),
     plainTextAnswer:
-      "No. Svitlogics does not store the content you analyze. All processing is stateless and your text is never written to a database.",
+      "No. Svitlogics does not store the content submitted for analysis. All processing is stateless and the text is never written to a database.",
   },
   {
     question: "Who developed Svitlogics?",
@@ -120,82 +144,97 @@ const faqData: FaqItemData[] = [
     plainTextAnswer:
       "Svitlogics is a solo project developed by Eugene Kozlovsky from Kyiv, Ukraine.",
   },
-];
+] as const;
 
-// Підкомпонент для одного Q&A блоку
-const FaqItem: React.FC<{ item: FaqItemData }> = ({ item }) => (
-  <section
-    aria-labelledby={`faq-question-${item.question.replace(/\s+/g, "-")}`}
-  >
-    <h2
-      id={`faq-question-${item.question.replace(/\s+/g, "-")}`}
-      className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-4 normal-case"
-    >
-      {item.question}
-    </h2>
-    <div className="space-y-4 font-mono font-normal text-body-main leading-body text-black">
-      {item.answer}
-    </div>
-  </section>
-);
+// --- Мемоїзовані Підкомпоненти та Хелпери ---
 
+/**
+ * @description Утиліта для генерації валідного HTML id з рядка.
+ * @private
+ */
+const generateId = (text: string) =>
+  text.toLowerCase().replace(/\s+/g, "-").replace(/[?']/g, "");
+
+/**
+ * @description Пропси для підкомпонента `FaqItem`.
+ */
+interface FaqItemProps {
+  item: FaqItemData;
+}
+
+/**
+ * @description Мемоїзований компонент для відображення одного Q&A блоку.
+ * @component
+ */
+const FaqItem: React.FC<FaqItemProps> = React.memo(({ item }) => {
+  const headingId = useMemo(() => generateId(item.question), [item.question]);
+
+  return (
+    <section aria-labelledby={headingId}>
+      <h2
+        id={headingId}
+        className="mb-4 font-semibold text-black text-h2-mobile lg:text-h2-desktop"
+      >
+        {item.question}
+      </h2>
+      <div className="text-body-main text-black">{item.answer}</div>
+    </section>
+  );
+});
+FaqItem.displayName = "FaqItem";
+
+/**
+ * @description Статична сторінка "FAQ".
+ * @component
+ */
 const FAQPage: React.FC = () => {
-  // const { t } = useTranslation();
-  const pageTitle = "FREQUENTLY ASKED QUESTIONS";
-  const introParagraph =
-    "This section provides answers to common questions. If your question is not answered here, use the Contact page.";
-  const seoDescription =
-    "Find answers to common questions about Svitlogics. Learn about its AI accuracy, supported languages, data privacy, and the technology behind the text analysis.";
+  const faqJsonLdString = useMemo(() => {
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqData.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.plainTextAnswer,
+        },
+      })),
+    };
+    return JSON.stringify(schema);
+  }, []);
 
-  // Генеруємо JSON-LD для FAQPage structured data
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqData.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.plainTextAnswer,
-      },
-    })),
-  };
+  const renderedFaqItems = useMemo(
+    () => faqData.map((item) => <FaqItem key={item.question} item={item} />),
+    []
+  );
 
   return (
     <>
       <Helmet>
-        <title>FAQ | Svitlogics - Frequently Asked Questions</title>
-        <meta name="description" content={seoDescription} />
-        <link rel="canonical" href="https://svitlogics.com/faq" />
-        <meta
-          property="og:title"
-          content="FAQ | Svitlogics - Frequently Asked Questions"
-        />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content="https://svitlogics.com/faq" />
-        {/* og:type="website" буде успадковано з Layout.tsx */}
-        <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
+        <title>{content.seoTitle}</title>
+        <meta name="description" content={content.seoDescription} />
+        <link rel="canonical" href={content.canonicalUrl} />
+        <meta property="og:title" content={content.seoTitle} />
+        <meta property="og:description" content={content.seoDescription} />
+        <meta property="og:url" content={content.canonicalUrl} />
+        <script type="application/ld+json">{faqJsonLdString}</script>
       </Helmet>
 
-      <div className="container-main pt-16 pb-16">
-        <h1 className="font-mono font-bold text-h1-mobile normal-case md:uppercase lg:text-h1-desktop text-black mb-12 text-left">
-          {pageTitle}
-        </h1>
-
-        <div className="max-w-3xl">
-          <p className="font-mono text-body-main leading-body text-black mb-16">
-            {introParagraph}
+      <div className="container-main">
+        <header>
+          <h1 className="mb-8 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
+            {content.pageTitle}
+          </h1>
+          <p className="mb-16 max-w-3xl text-body-main text-black">
+            {content.introParagraph}
           </p>
+        </header>
 
-          <div className="space-y-12">
-            {faqData.map((item) => (
-              <FaqItem key={item.question} item={item} />
-            ))}
-          </div>
-        </div>
+        <main className="max-w-3xl space-y-16">{renderedFaqItems}</main>
       </div>
     </>
   );
 };
 
-export default FAQPage;
+export default React.memo(FAQPage);

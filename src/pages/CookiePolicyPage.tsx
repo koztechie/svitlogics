@@ -1,11 +1,36 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
+import DOMPurify from "dompurify";
 
-// --- НОВИЙ, ДЕТАЛЬНИЙ КОНТЕНТ ПОЛІТИКИ ЩОДО COOKIE ---
+// --- Типізація та Константи ---
+
+/** @description Визначає структуру підсекції. */
+interface PolicySubSectionData {
+  readonly subTitle: string;
+  readonly text?: string;
+  readonly listHeader?: string;
+  readonly list?: readonly string[];
+  readonly finalParagraph?: string;
+}
+
+/** @description Визначає структуру основної секції політики. */
+interface PolicySectionData {
+  readonly id: string;
+  readonly title: string;
+  readonly paragraphs?: readonly string[];
+  readonly list?: readonly string[];
+  readonly subSections?: readonly PolicySubSectionData[];
+  readonly finalParagraph?: string;
+}
+
+/**
+ * @description Статичний контент сторінки. `as const` забезпечує глибоку незмінність.
+ */
 const content = {
-  seoTitle: "Cookie Policy | Svitlogics",
+  seoTitle: "COOKIE POLICY | SVITLOGICS",
   seoDescription:
-    "Review the comprehensive Cookie Policy for Svitlogics. This document explains what cookies are, how we use them for analytics, and how you can manage your consent preferences in compliance with GDPR and CCPA.",
+    "This document details the Svitlogics Cookie Policy, explaining the types of cookies used, their purpose for analytics, and methods for managing consent in compliance with GDPR and CCPA.",
+  canonicalUrl: "https://svitlogics.com/cookie-policy",
   pageTitle: "COOKIE POLICY",
   lastUpdated: "August 22, 2025",
   sections: [
@@ -13,41 +38,41 @@ const content = {
       id: "introduction",
       title: "1. Introduction",
       paragraphs: [
-        'This Cookie Policy explains how Svitlogics ("the Service," "we," "us," or "our") uses cookies and similar tracking technologies on our website, svitlogics.com. This policy is designed to be read in conjunction with our main <a href="/privacy-policy" class="text-blue-accent hover:underline">Privacy Policy</a>.',
-        "Our use of cookies is minimal and aligns with our core principles of privacy and data minimization. We do not use cookies for advertising, marketing, or user profiling. Our sole use of non-essential cookies is for anonymized website analytics, which helps us understand how the Service is used and how to improve it. By using our cookie consent banner, you have full control over the use of these non-essential cookies.",
+        'This Cookie Policy defines how Svitlogics ("the Service," "we," "us," or "our") uses cookies and similar tracking technologies on its website, svitlogics.com. This document is a supplement to the primary <a href="/privacy-policy">Privacy Policy</a>.',
+        "The use of cookies is minimal, aligning with core principles of privacy and data minimization. The Service does not use cookies for advertising, marketing, or user profiling. The sole use of non-essential cookies is for anonymized website analytics. This data is used to understand Service usage and guide improvements. The cookie consent banner provides full control over these non-essential cookies.",
       ],
     },
     {
       id: "what-are-cookies",
       title: "2. What Are Cookies?",
       paragraphs: [
-        "A cookie is a small text file that a website stores on your computer or mobile device when you visit the site. It enables the website to remember your actions and preferences (such as consent choices) over a period of time, so you do not have to keep re-entering them whenever you come back to the site or browse from one page to another.",
+        "A cookie is a small text file stored on a user's computer or mobile device by a website. It enables the website to remember actions and preferences (such as consent choices) over time, which prevents re-entry of this information during subsequent visits.",
         "Cookies can be classified in several ways:",
       ],
       list: [
-        "<strong>First-party vs. Third-party:</strong> First-party cookies are set by the website you are visiting (in this case, Svitlogics). Third-party cookies are set by a domain other than the one you are visiting, such as Google Analytics.",
-        "<strong>Session vs. Persistent:</strong> Session cookies are temporary and are deleted as soon as you close your browser. Persistent cookies remain on your device for a set period or until you manually delete them.",
+        "<strong>First-party vs. Third-party:</strong> First-party cookies are set by the website being visited (Svitlogics). Third-party cookies are set by a domain other than the one being visited, such as Google Analytics.",
+        "<strong>Session vs. Persistent:</strong> Session cookies are temporary and are deleted when the browser is closed. Persistent cookies remain on a device for a set period or until manually deleted.",
       ],
     },
     {
       id: "how-we-use-cookies",
       title: "3. How We Use Cookies",
       paragraphs: [
-        "Svitlogics uses a limited number of cookies for two specific purposes: remembering your consent choices and collecting aggregated, anonymous analytics data.",
+        "Svitlogics uses a limited number of cookies for two specific purposes: remembering consent choices and collecting aggregated, anonymous analytics data.",
       ],
       subSections: [
         {
           subTitle: "3.1. Essential Cookies (Strictly Necessary)",
-          text: "These cookies are essential for the website to function correctly and cannot be disabled in our systems. They do not store any personally identifiable information.",
+          text: "These cookies are essential for the website to function correctly and cannot be disabled. They do not store any personally identifiable information.",
           list: [
-            "<strong>Consent Cookie:</strong> We use a first-party persistent cookie (e.g., `svitlogics-cookie-consent`) to store your consent preferences. This cookie remembers whether you have accepted or rejected our use of analytics cookies, so we do not have to ask you on every visit. This cookie is considered strictly necessary.",
+            "<strong>Consent Cookie:</strong> A first-party persistent cookie (e.g., `svitlogics-cookie-consent`) stores user consent preferences. This cookie remembers the acceptance or rejection of analytics cookies, which is a strictly necessary function.",
           ],
         },
         {
           subTitle: "3.2. Analytics Cookies (Non-Essential)",
-          text: 'These cookies are optional and will **only be activated if you provide your explicit consent** by clicking "Accept" on our cookie banner. They are provided by our third-party analytics service, Google Analytics.',
+          text: 'These cookies are optional and are <strong>only activated upon explicit user consent</strong> via the "Accept" action on the cookie banner. They are provided by the third-party analytics service, Google Analytics.',
           list: [
-            "<strong>Google Analytics Cookies (e.g., `_ga`, `_gid`):</strong> These cookies are used to collect information about how visitors use our Service. We use this information to compile reports and to help us improve the site. The cookies collect information in an anonymous form, including the number of visitors to the website, where visitors have come to the website from, and the pages they visited. This data is aggregated and does not allow us to identify individual users.",
+            "<strong>Google Analytics Cookies (e.g., `_ga`, `_gid`):</strong> These cookies collect information about how visitors use the Service. This information is used to compile reports and improve the site. The cookies collect data in an anonymous form, including the number of visitors, their origin, and the pages they visited. This data is aggregated and does not permit the identification of individual users.",
           ],
         },
       ],
@@ -56,37 +81,37 @@ const content = {
       id: "third-party-cookies",
       title: "4. Third-Party Cookies In Detail",
       paragraphs: [
-        "The only third-party cookies used on Svitlogics are from Google Analytics. When you consent to analytics, Google places cookies on your device to perform the services described above. Svitlogics does not have direct control over the information collected by these cookies.",
-        'The data generated by these cookies is transmitted to and stored by Google on servers in the United States. Google uses this information on our behalf to evaluate your use of the website. Google may also transfer this information to third parties where required to do so by law, or where such third parties process the information on Google\'s behalf. For more information, please review <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer" class="text-blue-accent hover:underline">Google\'s Privacy & Terms</a>.',
+        "The only third-party cookies used on Svitlogics are from Google Analytics. When you consent to analytics, Google places cookies on your device to perform the services described. Svitlogics does not have direct control over the information collected by these cookies.",
+        'Data generated by these cookies is transmitted to and stored by Google on servers in the United States. Google uses this information on our behalf to evaluate website use. Google may also transfer this information to third parties where required by law, or where such third parties process the information on Google\'s behalf. For more information, review the <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">Google Privacy & Terms</a>.',
       ],
     },
     {
       id: "managing-consent",
       title: "5. Your Choices and How to Manage Consent",
       paragraphs: [
-        "We respect your right to privacy, and you have full control over the use of non-essential cookies on Svitlogics.",
+        "You have full control over the use of non-essential cookies on Svitlogics.",
       ],
       subSections: [
         {
           subTitle: "5.1. Using Our Consent Banner",
-          text: "When you first visit our website, you will be presented with a cookie consent banner. You have two primary options:",
+          text: "Upon first visit, the website presents a cookie consent banner with two primary options:",
           list: [
-            '<strong>Accept:</strong> If you click "Accept," you consent to the use of both essential and analytics cookies. The Google Analytics script will be activated.',
-            '<strong>Reject:</strong> If you click "Reject," only essential cookies (for remembering your choice) will be used. The Google Analytics script will remain blocked.',
+            "<strong>Accept:</strong> Consents to the use of both essential and analytics cookies. The Google Analytics script is activated.",
+            "<strong>Reject:</strong> Rejects non-essential cookies. Only essential cookies (for remembering the choice) are used. The Google Analytics script remains blocked.",
           ],
           finalParagraph:
-            'You can change your preferences at any time by clicking the "Cookie Preferences" link, which is always available in the footer of our website. This will re-open the consent management tool.',
+            'Preferences can be changed at any time by selecting the "Cookie Preferences" link in the website footer. This action re-opens the consent management tool.',
         },
         {
           subTitle: "5.2. Browser Settings",
-          text: "In addition to our consent tool, you can control and manage cookies directly within your web browser. You can set your browser to block some or all cookies, or to alert you when cookies are being sent. Please note that if you block all cookies (including essential ones), you may not be able to access all parts of our website, and your consent preferences may not be saved.",
+          text: "In addition to the consent tool, cookies can be controlled and managed directly within a web browser. Browsers can be configured to block some or all cookies, or to provide an alert when cookies are being sent. Note: If you block all cookies (including essential ones), you may not be able to access all parts of the website, and consent preferences may not be saved.",
           listHeader:
-            "You can find instructions for managing cookies in popular browsers here:",
+            "Instructions for managing cookies in major browsers are available below:",
           list: [
-            '<a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" class="text-blue-accent hover:underline">Google Chrome</a>',
-            '<a href="https://support.mozilla.org/en-US/kb/enable-and-disable-cookies-website-preferences" target="_blank" rel="noopener noreferrer" class="text-blue-accent hover:underline">Mozilla Firefox</a>',
-            '<a href="https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac" target="_blank" rel="noopener noreferrer" class="text-blue-accent hover:underline">Apple Safari</a>',
-            '<a href="https://support.microsoft.com/en-us/windows/delete-and-manage-cookies-168dab11-0753-043d-7c16-ede5947fc64d" target="_blank" rel="noopener noreferrer" class="text-blue-accent hover:underline">Microsoft Edge</a>',
+            '<a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer">Google Chrome</a>',
+            '<a href="https://support.mozilla.org/en-US/kb/enable-and-disable-cookies-website-preferences" target="_blank" rel="noopener noreferrer">Mozilla Firefox</a>',
+            '<a href="https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac" target="_blank" rel="noopener noreferrer">Apple Safari</a>',
+            '<a href="https://support.microsoft.com/en-us/windows/delete-and-manage-cookies-168dab11-0753-043d-7c16-ede5947fc64d" target="_blank" rel="noopener noreferrer">Microsoft Edge</a>',
           ],
         },
       ],
@@ -95,129 +120,175 @@ const content = {
       id: "google-consent-mode",
       title: "6. Google Consent Mode v2",
       paragraphs: [
-        "Svitlogics has implemented Google Consent Mode v2 to ensure our use of Google services respects your consent choices. This is a technical framework that communicates your consent decisions to Google.",
-        "When you visit our site, before our consent banner is displayed, we send a default signal to Google that consent for `analytics_storage` is **'denied'**. This ensures that Google Analytics operates in a restricted, cookieless mode, collecting only basic, non-identifiable interaction data (pings) without reading or writing cookies. If you choose to **'Accept'** analytics cookies, we then send an updated signal to Google, setting `analytics_storage` to **'granted'**. This allows Google Analytics to begin using cookies for the session and collect richer, albeit still anonymous, data. This mechanism ensures that no analytics cookies are used without your explicit consent, in full compliance with GDPR.",
+        "Svitlogics implements Google Consent Mode v2 to ensure its use of Google services respects user consent choices. This technical framework communicates consent decisions to Google.",
+        "Before the consent banner is displayed, a default signal is sent to Google indicating that consent for `analytics_storage` is <strong>'denied'</strong>. This ensures Google Analytics operates in a restricted, cookieless mode, collecting only basic, non-identifiable interaction data (pings) without reading or writing cookies. If you <strong>'Accept'</strong> analytics cookies, an updated signal is sent, setting `analytics_storage` to <strong>'granted'</strong>. This allows Google Analytics to use cookies and collect more comprehensive, anonymous data. This mechanism ensures no analytics cookies are used without explicit user consent, in full compliance with GDPR.",
       ],
     },
     {
       id: "policy-updates",
       title: "7. Changes to This Cookie Policy",
       paragraphs: [
-        "We may update this Cookie Policy from time to time to reflect changes to the cookies we use or for other operational, legal, or regulatory reasons. Please revisit this policy regularly to stay informed about our use of cookies and related technologies.",
+        "This Cookie Policy may be updated to reflect changes to the cookies used or for other operational, legal, or regulatory reasons. Revisit this policy regularly to remain informed about the use of cookies and related technologies.",
       ],
     },
     {
       id: "contact",
       title: "8. Contact Us",
       paragraphs: [
-        'If you have questions or comments about this Cookie Policy, you may contact us by email at <a href="mailto:hello@svitlogics.com" class="text-blue-accent hover:underline">hello@svitlogics.com</a> or by visiting our <a href="/contact" class="text-blue-accent hover:underline">Contact page</a>.',
+        'For questions or comments about this Cookie Policy, contact Svitlogics via email at <a href="mailto:hello@svitlogics.com">hello@svitlogics.com</a> or via the <a href="/contact">Contact page</a>.',
       ],
     },
   ],
+} as const;
+
+// --- Мемоїзовані та Безпечні Підкомпоненти ---
+
+/**
+ * @description Безпечно рендерить HTML-рядок, попередньо очистивши його.
+ * @param {string} rawHtml - Необроблений HTML-рядок.
+ * @returns {{ __html: string }} Об'єкт, сумісний з `dangerouslySetInnerHTML`.
+ */
+const createSanitizedHtml = (rawHtml: string): { __html: string } => {
+  const sanitizedHtml = DOMPurify.sanitize(rawHtml, {
+    USE_PROFILES: { html: true },
+    ALLOWED_TAGS: ["strong", "em", "a"],
+    ALLOWED_ATTR: ["href", "target", "rel"],
+  });
+  return { __html: sanitizedHtml };
 };
 
-const PolicySubSection: React.FC<{ subSection: any }> = ({ subSection }) => (
-  <div className="mt-6">
-    <h3 className="font-mono font-medium text-h3-desktop text-black mb-4 normal-case">
-      {subSection.subTitle}
-    </h3>
-    {subSection.text && (
-      <p
-        className="mb-4"
-        dangerouslySetInnerHTML={{ __html: subSection.text }}
-      />
-    )}
-    {subSection.listHeader && <p className="mb-4">{subSection.listHeader}</p>}
-    {subSection.list && (
-      <ul className="space-y-2 list-disc ml-6">
-        {subSection.list.map((item: string) => (
-          <li
-            key={item.substring(0, 20)}
-            dangerouslySetInnerHTML={{ __html: item }}
-          />
-        ))}
-      </ul>
-    )}
-    {subSection.finalParagraph && (
-      <p
-        className="mt-4"
-        dangerouslySetInnerHTML={{ __html: subSection.finalParagraph }}
-      />
-    )}
-  </div>
-);
+/** @description Пропси для підкомпонента `PolicySubSection`. */
+interface PolicySubSectionProps {
+  subSection: PolicySubSectionData;
+}
 
-const PolicySection: React.FC<{ section: any }> = ({ section }) => (
-  <section
-    aria-labelledby={`section-title-${section.title.replace(/\s+/g, "-")}`}
-  >
-    <h2
-      id={`section-title-${section.title.replace(/\s+/g, "-")}`}
-      className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-6 normal-case"
-    >
-      {section.title}
-    </h2>
-    <div className="space-y-4 font-mono font-normal text-body-main leading-body text-black">
-      {section.paragraphs &&
-        section.paragraphs.map((p: string, i: number) => (
-          <p key={i} dangerouslySetInnerHTML={{ __html: p }} />
-        ))}
-      {section.list && (
-        <ul className="space-y-2 list-disc ml-6 mt-4">
-          {section.list.map((item: string) => (
+const PolicySubSection: React.FC<PolicySubSectionProps> = React.memo(
+  ({ subSection }) => (
+    <div className="pt-4">
+      <h3 className="mb-4 font-medium text-black text-h3-mobile lg:text-h3-desktop">
+        {subSection.subTitle}
+      </h3>
+      {subSection.text && (
+        <p
+          className="mb-4"
+          dangerouslySetInnerHTML={createSanitizedHtml(subSection.text)}
+        />
+      )}
+      {subSection.listHeader && <p className="mb-4">{subSection.listHeader}</p>}
+      {subSection.list && (
+        <ul className="ml-6 list-disc space-y-2">
+          {subSection.list.map((item, index) => (
             <li
-              key={item.substring(0, 20)}
-              dangerouslySetInnerHTML={{ __html: item }}
+              key={index}
+              dangerouslySetInnerHTML={createSanitizedHtml(item)}
             />
           ))}
         </ul>
       )}
-      {section.subSections &&
-        section.subSections.map((sub: any) => (
-          <PolicySubSection key={sub.subTitle} subSection={sub} />
-        ))}
-      {section.finalParagraph && (
+      {subSection.finalParagraph && (
         <p
           className="mt-4"
-          dangerouslySetInnerHTML={{ __html: section.finalParagraph }}
+          dangerouslySetInnerHTML={createSanitizedHtml(
+            subSection.finalParagraph
+          )}
         />
       )}
     </div>
-  </section>
+  )
 );
+PolicySubSection.displayName = "PolicySubSection";
 
+/** @description Пропси для підкомпонента `PolicySection`. */
+interface PolicySectionProps {
+  section: PolicySectionData;
+}
+
+const PolicySection: React.FC<PolicySectionProps> = React.memo(
+  ({ section }) => {
+    const headingId = useMemo(
+      () => `section-title-${section.id}`,
+      [section.id]
+    );
+
+    return (
+      <section aria-labelledby={headingId}>
+        <h2
+          id={headingId}
+          className="mb-6 font-semibold text-black text-h2-mobile lg:text-h2-desktop"
+        >
+          {section.title}
+        </h2>
+        <div className="space-y-4 text-body-main text-black">
+          {section.paragraphs?.map((p, i) => (
+            <p key={i} dangerouslySetInnerHTML={createSanitizedHtml(p)} />
+          ))}
+          {section.list && (
+            <ul className="ml-6 list-disc space-y-2 pt-2">
+              {section.list.map((item, index) => (
+                <li
+                  key={index}
+                  dangerouslySetInnerHTML={createSanitizedHtml(item)}
+                />
+              ))}
+            </ul>
+          )}
+          {section.subSections?.map((sub) => (
+            <PolicySubSection key={sub.subTitle} subSection={sub} />
+          ))}
+          {section.finalParagraph && (
+            <p
+              className="pt-2"
+              dangerouslySetInnerHTML={createSanitizedHtml(
+                section.finalParagraph
+              )}
+            />
+          )}
+        </div>
+      </section>
+    );
+  }
+);
+PolicySection.displayName = "PolicySection";
+
+/**
+ * @description Статична сторінка "Cookie Policy".
+ * @component
+ */
 const CookiePolicyPage: React.FC = () => {
+  const renderedSections = useMemo(
+    () =>
+      content.sections.map((section) => (
+        <PolicySection key={section.id} section={section} />
+      )),
+    []
+  );
+
   return (
     <>
       <Helmet>
         <title>{content.seoTitle}</title>
         <meta name="description" content={content.seoDescription} />
-        <link rel="canonical" href="https://svitlogics.com/cookie-policy" />
+        <link rel="canonical" href={content.canonicalUrl} />
         <meta property="og:title" content={content.seoTitle} />
         <meta property="og:description" content={content.seoDescription} />
-        <meta
-          property="og:url"
-          content="https://svitlogics.com/cookie-policy"
-        />
+        <meta property="og:url" content={content.canonicalUrl} />
         <meta property="og:type" content="article" />
       </Helmet>
 
-      <div className="container-main pt-16 pb-16">
-        <h1 className="font-mono font-bold text-h1-mobile normal-case md:uppercase lg:text-h1-desktop text-black mb-4 text-left">
-          {content.pageTitle}
-        </h1>
-        <p className="font-mono text-ui-label text-text-secondary mb-16">
-          Last Updated: {content.lastUpdated}
-        </p>
+      <div className="container-main">
+        <header>
+          <h1 className="mb-4 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
+            {content.pageTitle}
+          </h1>
+          <p className="mb-16 uppercase text-text-secondary text-ui-label">
+            Last updated: {content.lastUpdated}
+          </p>
+        </header>
 
-        <div className="max-w-3xl space-y-12">
-          {content.sections.map((section) => (
-            <PolicySection key={section.title} section={section} />
-          ))}
-        </div>
+        <main className="max-w-3xl space-y-16">{renderedSections}</main>
       </div>
     </>
   );
 };
 
-export default CookiePolicyPage;
+export default React.memo(CookiePolicyPage);

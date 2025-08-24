@@ -2,29 +2,59 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
+// --- Типізація та Константи ---
+
+/**
+ * @description Статичний контент для сторінки 404.
+ * Винесено для легкої зміни, централізації та майбутньої локалізації.
+ */
+const content = {
+  seoTitle: "404: PAGE NOT FOUND | SVITLOGICS",
+  pageTitle: "404: PAGE NOT FOUND",
+  description: "The requested resource does not exist or has been moved.",
+  linkText: "RETURN TO HOMEPAGE",
+} as const;
+
+/**
+ * @description
+ * Статична сторінка, що відображається, коли маршрут не знайдено (HTTP 404).
+ * Надає чітке повідомлення про помилку та посилання для повернення на головну сторінку.
+ * Компонент мемоїзовано для оптимальної продуктивності, оскільки він є чисто презентаційним
+ * і не залежить від пропсів чи динамічного стану.
+ *
+ * @component
+ * @example
+ * <Route path="*" element={<NotFoundPage />} />
+ */
 const NotFoundPage: React.FC = () => {
   return (
-    <div>
+    <>
       <Helmet>
-        <title>404: Page Not Found | Svitlogics</title>
+        <title>{content.seoTitle}</title>
         <meta name="robots" content="noindex" />
       </Helmet>
-      <div className="container-main pt-16 pb-16 text-center">
-        <h1 className="font-mono font-bold text-h1-mobile uppercase md:text-h1-desktop text-black mb-4">
-          404: PAGE NOT FOUND
+
+      {/* Використання `<main>` є семантично коректним для основного контенту сторінки */}
+      <main className="container-main text-center">
+        <h1 className="mb-4 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
+          {content.pageTitle}
         </h1>
-        <p className="font-mono text-body-main mb-8 max-w-md mx-auto">
-          The page you are looking for does not exist or has been moved.
+        <p className="mx-auto mb-8 max-w-3xl text-body-main">
+          {content.description}
         </p>
         <Link
           to="/"
-          className="font-mono font-medium text-ui-label uppercase text-blue-accent no-underline hover:underline"
+          className="font-medium uppercase text-blue-accent text-ui-label no-underline hover:underline focus-visible:underline"
         >
-          RETURN TO HOMEPAGE
+          {content.linkText}
         </Link>
-      </div>
-    </div>
+      </main>
+    </>
   );
 };
 
-export default NotFoundPage;
+// --- Мемоїзація ---
+// Оскільки NotFoundPage є статичним компонентом без пропсів, React.memo
+// гарантує, що він буде ре-рендеритися лише один раз, навіть якщо
+// батьківські компоненти (напр., Layout) оновлюються.
+export default React.memo(NotFoundPage);

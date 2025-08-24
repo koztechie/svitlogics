@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { Trash2, Copy, Check } from "lucide-react";
+import clsx from "clsx";
 
 // --- Типізація та Константи ---
 
@@ -89,11 +90,17 @@ const TextInput: React.FC<TextInputProps> = ({
     [setText]
   );
 
+  const disabledSecondaryButtonClasses =
+    "disabled:cursor-not-allowed disabled:border-disabled disabled:bg-bg-disabled disabled:text-text-disabled";
+
+  const disabledPrimaryButtonClasses =
+    "disabled:cursor-not-allowed disabled:border-disabled disabled:bg-bg-disabled disabled:text-text-disabled";
+
   return (
-    <div className="rounded-none border border-black bg-white">
+    <div className="border-1 border-black bg-white">
       {/* Header */}
-      <header className="flex items-center justify-between border-b border-black px-4 py-3">
-        <h2 className="font-mono font-medium uppercase text-ui-label text-black">
+      <header className="flex items-center justify-between border-b-1 border-black px-4 py-2">
+        <h2 className="font-medium uppercase text-black text-ui-label">
           {UI_TEXT.title}
         </h2>
         <div className="flex space-x-2">
@@ -101,20 +108,15 @@ const TextInput: React.FC<TextInputProps> = ({
             type="button"
             onClick={handleCopy}
             disabled={!metrics.hasText || isAnalyzing || isCopied}
-            className={`
-              rounded-none border border-black p-2 transition-colors duration-100 
-              focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-accent
-              ${
-                isCopied
-                  ? "cursor-default bg-black text-white"
-                  : "bg-white text-black hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white"
-              }
-              ${
-                !metrics.hasText || isAnalyzing
-                  ? "cursor-not-allowed border-text-disabled text-text-disabled"
-                  : ""
-              }
-            `}
+            className={clsx(
+              "border-1 p-2 transition-colors duration-100",
+              {
+                "border-black bg-white text-black hover:bg-black hover:text-white":
+                  !isCopied,
+                "border-black bg-black text-white": isCopied,
+              },
+              disabledSecondaryButtonClasses
+            )}
             aria-label={isCopied ? UI_TEXT.copiedLabel : UI_TEXT.copyLabel}
             title={isCopied ? UI_TEXT.copiedLabel : UI_TEXT.copyLabel}
           >
@@ -131,7 +133,10 @@ const TextInput: React.FC<TextInputProps> = ({
             type="button"
             onClick={onClear}
             disabled={!metrics.hasText || isAnalyzing}
-            className="rounded-none border border-black bg-white p-2 text-black transition-colors duration-100 hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white disabled:cursor-not-allowed disabled:border-text-disabled disabled:text-text-disabled"
+            className={clsx(
+              "border-1 border-black bg-white p-2 text-black transition-colors duration-100 hover:bg-black hover:text-white",
+              disabledSecondaryButtonClasses
+            )}
             aria-label={UI_TEXT.clearLabel}
             title={UI_TEXT.clearLabel}
           >
@@ -146,7 +151,7 @@ const TextInput: React.FC<TextInputProps> = ({
           value={text}
           onChange={handleTextChange}
           placeholder={UI_TEXT.textareaPlaceholder}
-          className="h-64 w-full resize-y rounded-none border border-black bg-white p-4 font-mono font-normal text-body-main leading-body text-black placeholder-text-secondary transition-colors duration-100 focus:border-blue-accent focus:outline-none disabled:cursor-not-allowed disabled:bg-bg-disabled"
+          className="h-64 w-full resize-y border-1 p-4 text-body-main text-black placeholder-text-secondary transition-colors duration-100 focus:border-blue-accent focus:outline-none disabled:cursor-not-allowed disabled:border-disabled disabled:bg-bg-disabled disabled:text-text-disabled"
           aria-label={UI_TEXT.textareaAriaLabel}
           disabled={isAnalyzing}
           autoComplete="off"
@@ -156,25 +161,23 @@ const TextInput: React.FC<TextInputProps> = ({
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-black bg-white p-4">
-        <div className="flex flex-col gap-y-4 sm:flex-row sm:items-center sm:justify-between sm:gap-y-0">
-          <div className="order-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-ui-label sm:order-1">
+      <footer className="border-t-1 border-black bg-white p-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="order-2 flex flex-wrap gap-x-4 gap-y-1 text-ui-label sm:order-1">
             <span
               id="char-count-status"
-              className={
-                metrics.isLimitExceeded
-                  ? "text-status-error"
-                  : "text-text-secondary"
-              }
-              aria-live="polite" // Оголошує зміни, коли ліміт перевищено
+              className={clsx({
+                "text-status-error": metrics.isLimitExceeded,
+                "text-text-secondary": !metrics.isLimitExceeded,
+              })}
+              aria-live="polite"
             >
               {UI_TEXT.charactersLabel}{" "}
               <strong
-                className={
-                  metrics.isLimitExceeded
-                    ? "font-medium text-status-error"
-                    : "font-medium text-black"
-                }
+                className={clsx("font-medium", {
+                  "text-status-error": metrics.isLimitExceeded,
+                  "text-black": !metrics.isLimitExceeded,
+                })}
               >
                 {metrics.charCount}
               </strong>{" "}
@@ -193,7 +196,10 @@ const TextInput: React.FC<TextInputProps> = ({
             disabled={
               !metrics.hasText || isAnalyzing || metrics.isLimitExceeded
             }
-            className="order-1 rounded-none border-2 px-4 py-2 font-mono font-medium uppercase text-ui-label transition-colors duration-100 active:translate-y-[0.5px] active:transform sm:order-2 border-blue-accent bg-blue-accent text-white hover:border-blue-accent-hover hover:bg-blue-accent-hover active:bg-blue-accent-active disabled:cursor-not-allowed disabled:border-text-disabled disabled:bg-bg-disabled disabled:text-text-disabled"
+            className={clsx(
+              "order-1 border-1 border-blue-accent bg-blue-accent px-4 py-2 font-medium uppercase text-ui-label text-white transition-colors duration-100 hover:border-blue-accent-hover hover:bg-blue-accent-hover active:translate-y-[0.5px] active:bg-blue-accent-active sm:order-2",
+              disabledPrimaryButtonClasses
+            )}
           >
             {isAnalyzing
               ? UI_TEXT.analyzingButtonText

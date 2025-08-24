@@ -1,4 +1,5 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react"; // --- ВИПРАВЛЕННЯ ТУТ: Видалено 'useMemo' ---
+import clsx from "clsx";
 
 // --- Типізація та Константи ---
 
@@ -49,15 +50,6 @@ interface LanguageButtonProps {
  */
 const LanguageButton: React.FC<LanguageButtonProps> = React.memo(
   ({ lang, isActive, children, onClick }) => {
-    // Класи обчислюються лише якщо зміниться `isActive`.
-    const buttonClasses = useMemo(() => {
-      const base =
-        "w-full py-3 font-mono font-medium text-ui-label uppercase transition-colors duration-100 rounded-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-accent";
-      const active = "cursor-default bg-black text-white";
-      const inactive = "bg-white text-black hover:bg-black hover:text-white";
-      return `${base} ${isActive ? active : inactive}`;
-    }, [isActive]);
-
     const handleClick = useCallback(() => {
       onClick(lang);
     }, [lang, onClick]);
@@ -66,7 +58,15 @@ const LanguageButton: React.FC<LanguageButtonProps> = React.memo(
       <button
         type="button"
         onClick={handleClick}
-        className={buttonClasses}
+        className={clsx(
+          "w-full py-2 font-medium uppercase text-ui-label transition-colors duration-100",
+          {
+            // Active state (inverted secondary button)
+            "cursor-default bg-black text-white": isActive,
+            // Inactive state (matches secondary button hover)
+            "bg-white text-black hover:bg-black hover:text-white": !isActive,
+          }
+        )}
         aria-pressed={isActive}
         disabled={isActive}
       >
@@ -95,18 +95,18 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 }) => {
   return (
     <section aria-labelledby="language-selector-title">
-      <div className="rounded-none border border-black">
-        <header className="border-b border-black bg-white px-4 py-3">
+      <div className="border-1 border-black">
+        <header className="border-b-1 border-black bg-white px-4 py-2">
           <h2
             id="language-selector-title"
-            className="font-mono font-medium uppercase text-ui-label text-black"
+            className="font-medium uppercase text-black text-ui-label"
           >
             {UI_TEXT.sectionTitle}
           </h2>
         </header>
 
         <div
-          className="grid grid-cols-2 divide-x divide-black"
+          className="grid grid-cols-2 divide-x-1 divide-black"
           role="group"
           aria-label={UI_TEXT.sectionTitle}
         >

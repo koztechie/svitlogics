@@ -73,23 +73,23 @@ const Footer: React.FC = () => {
   const versionText = "SVITLOGICS V0.4.0 (BETA)";
 
   return (
-    <footer className="border-t border-black bg-white px-4 py-8">
-      <div className="mx-auto max-w-container">
+    <footer className="border-t-1 border-black bg-white px-4 py-8">
+      <div className="container-main">
         <nav
           className="mb-8 grid grid-cols-2 gap-8 md:grid-cols-4"
           aria-label="Footer navigation"
         >
           {footerSections.map((section) => (
             <div key={section.title}>
-              <h3 className="font-mono font-bold uppercase text-ui-label text-black mb-4">
+              <h3 className="mb-4 font-medium uppercase text-black text-ui-label">
                 {section.title}
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {section.links.map((link) => (
                   <li key={link.to}>
                     <Link
                       to={link.to}
-                      className="font-mono font-medium capitalize text-ui-label text-blue-accent no-underline hover:underline focus-visible:underline"
+                      className="font-medium text-blue-accent text-ui-label no-underline hover:underline focus-visible:underline"
                     >
                       {link.label}
                     </Link>
@@ -101,13 +101,13 @@ const Footer: React.FC = () => {
         </nav>
 
         {/* Bottom section: Copyright and social links */}
-        <div className="border-t border-black pt-8">
+        <div className="border-t-1 border-black pt-8">
           <div className="flex flex-col gap-y-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="font-mono uppercase text-ui-label text-black text-center sm:text-left">
+            <p className="text-center uppercase text-text-secondary text-ui-label sm:text-left">
               {copyrightText}
             </p>
             <div className="flex items-center justify-center gap-x-6 sm:justify-end">
-              <p className="font-mono uppercase text-ui-label text-text-secondary">
+              <p className="uppercase text-text-secondary text-ui-label">
                 {versionText}
               </p>
               <div className="flex items-center gap-x-4">

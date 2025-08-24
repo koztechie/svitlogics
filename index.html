@@ -1,22 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
   <head>
+    <!-- ==========================================================================
+       # Basic Metadata & Viewport
+       ========================================================================== -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!--
-      ==================================================================
-      STEP 1: Google Consent Mode v2 - Default Settings
-      This block MUST be placed BEFORE the GTM script.
-      ==================================================================
+      ==========================================================================
+      # SEO & Social Sharing Metadata
+      ==========================================================================
+      Ці метатеги будуть динамічно перезаписані `react-helmet-async`
+      на кожній сторінці, але вони служать як якісні "fallback" значення
+      для краулерів та у випадку, якщо JavaScript не виконається.
+    -->
+    <title>Svitlogics | AI Text Analysis Tool</title>
+    <!-- Open Graph Tags (for Facebook, LinkedIn, etc.) -->
+    <meta property="og:title" content="Svitlogics | AI Text Analysis Tool" />
+    <meta
+      property="og:description"
+      content="An independent AI tool for analyzing text for propaganda, bias, and manipulation. Svitlogics provides structured insights to empower critical thinking."
+    />
+    <meta
+      property="og:image"
+      content="https://svitlogics.com/svitlogics-og-banner.png"
+    />
+    <meta property="og:url" content="https://svitlogics.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Svitlogics" />
+    <meta property="og:locale" content="uk_UA" />
+
+    <!--
+      ==========================================================================
+      # Google Consent Mode v2 - Default Settings
+      Цей блок ПОВИНЕН бути розміщений ПЕРЕД скриптом Google Tag Manager.
+      ==========================================================================
     -->
     <script>
+      // Ініціалізуємо dataLayer, якщо він ще не існує
       window.dataLayer = window.dataLayer || [];
+      // Створюємо хелпер-функцію gtag
       function gtag() {
         dataLayer.push(arguments);
       }
 
-      // Set default consent to 'denied' for all parameters
+      // Встановлюємо стан згоди за замовчуванням "denied" для всіх параметрів
       gtag("consent", "default", {
         analytics_storage: "denied",
         ad_storage: "denied",
@@ -24,7 +53,7 @@
         ad_personalization: "denied",
       });
 
-      // Check localStorage for previously granted consent
+      // Перевіряємо localStorage на наявність попередньо наданої згоди
       try {
         const consentValue = localStorage.getItem("svitlogics-cookie-consent");
         if (consentValue) {
@@ -41,11 +70,80 @@
     </script>
 
     <!--
-      ==================================================================
-      STEP 2: Google Tag Manager (GTM)
-      ==================================================================
+      ==========================================================================
+      # Icons & Manifest
+      ==========================================================================
     -->
-    <script>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="apple-mobile-web-app-title" content="Svitlogics" />
+
+    <!--
+      ==========================================================================
+      # Asynchronous & Non-blocking Font Loading
+      ==========================================================================
+      Шрифти завантажуються асинхронно, щоб не блокувати рендеринг сторінки.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+      />
+    </noscript>
+  </head>
+  <body>
+    <!--
+      ==========================================================================
+      # Accessibility: Skip to Main Content Link
+      ==========================================================================
+      Це посилання є першим елементом, що отримує фокус, і дозволяє
+      користувачам клавіатури пропустити навігацію та перейти до основного контенту.
+    -->
+    <a href="#root" class="sr-only focus:not-sr-only">Skip to main content</a>
+
+    <!--
+      ==========================================================================
+      # Google Tag Manager (noscript)
+      ==========================================================================
+    -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=%VITE_GTM_ID%"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+        title="Google Tag Manager"
+      ></iframe
+    ></noscript>
+
+    <!--
+      ==========================================================================
+      # React Application Mount Point
+      ==========================================================================
+      Основний контент рендериться всередині цього елемента.
+    -->
+    <div id="root"><!--ssr-outlet--></div>
+
+    <!--
+      ==========================================================================
+      # Deferred Scripts
+      ==========================================================================
+      Основний скрипт програми та GTM завантажуються асинхронно,
+      щоб не блокувати парсинг HTML та рендеринг.
+    -->
+    <script type="module" src="/src/main.tsx" defer></script>
+    <script defer>
       (function (w, d, s, l, i) {
         w[l] = w[l] || [];
         w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
@@ -57,44 +155,5 @@
         f.parentNode.insertBefore(j, f);
       })(window, document, "script", "dataLayer", "%VITE_GTM_ID%");
     </script>
-    <!-- End Google Tag Manager -->
-
-    <!-- Page Title will be injected here -->
-    <!-- Meta Description will be injected here -->
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Favicon and App Icons -->
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="/site.webmanifest" />
-
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#FFFFFF" />
-    <meta name="apple-mobile-web-app-title" content="Svitlogics" />
-  </head>
-  <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript
-      ><iframe
-        src="https://www.googletagmanager.com/ns.html?id=%VITE_GTM_ID%"
-        height="0"
-        width="0"
-        style="display: none; visibility: hidden"
-      ></iframe
-    ></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-
-    <div id="root"><!--ssr-outlet--></div>
-    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

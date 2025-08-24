@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { Copy, Check } from "lucide-react";
+import clsx from "clsx"; // Допоміжна утиліта для умовних класів
 
 // --- Типізація та Константи ---
 
@@ -36,8 +37,8 @@ const COPY_SUCCESS_TIMEOUT = 2000; // ms
  * @component
  */
 const LoadingState: React.FC = React.memo(() => (
-  <div className="p-16 text-center" role="status" aria-live="polite">
-    <p className="font-mono font-medium uppercase text-ui-label text-black">
+  <div className="p-4 text-center" role="status" aria-live="polite">
+    <p className="font-medium uppercase text-black text-ui-label">
       ANALYZING...
     </p>
   </div>
@@ -49,8 +50,8 @@ LoadingState.displayName = "LoadingState";
  * @component
  */
 const EmptyState: React.FC = React.memo(() => (
-  <div className="p-16 text-center">
-    <p className="font-mono font-medium uppercase text-ui-label text-black">
+  <div className="p-4 text-center">
+    <p className="font-medium uppercase text-black text-ui-label">
       RESULTS WILL APPEAR HERE AFTER ANALYSIS
     </p>
   </div>
@@ -72,45 +73,41 @@ type ResultsDisplayProps = Pick<
  */
 const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
   ({ categories, overallSummary }) => (
-    <div className="p-4">
-      <div className="space-y-4">
-        {categories.map((category) => (
-          <section
-            key={category.name}
-            className="rounded-none border border-black bg-white p-4"
-            aria-labelledby={`category-heading-${category.name}`}
+    <div className="space-y-4 p-4">
+      {categories.map((category) => (
+        <section
+          key={category.name}
+          className="border-1 border-black bg-white p-4"
+          aria-labelledby={`category-heading-${category.name}`}
+        >
+          <h3
+            id={`category-heading-${category.name}`}
+            className="mb-2 font-medium text-black text-h3-mobile lg:text-h3-desktop"
           >
-            <h3
-              id={`category-heading-${category.name}`}
-              className="font-mono font-medium text-h3-mobile normal-case text-black mb-2 lg:text-h3-desktop"
-            >
-              {category.name}
-            </h3>
-            <p className="font-mono font-bold text-h2-mobile text-blue-accent mb-3 lg:text-h2-desktop">
-              {category.percentage !== null ? `${category.percentage}%` : "--%"}
-            </p>
-            <p className="font-mono font-normal text-body-main leading-body text-black">
-              {category.explanation ||
-                "Analysis is pending or was not returned for this category."}
-            </p>
-          </section>
-        ))}
-      </div>
+            {category.name}
+          </h3>
+          <p className="mb-2 font-semibold text-blue-accent text-h2-mobile lg:text-h2-desktop">
+            {category.percentage !== null ? `${category.percentage}%` : "--%"}
+          </p>
+          <p className="text-body-main text-black">
+            {category.explanation ||
+              "Analysis is pending or was not returned for this category."}
+          </p>
+        </section>
+      ))}
 
       {overallSummary && (
         <section
-          className="rounded-none border border-black bg-white p-4 mt-4"
+          className="border-1 border-black bg-white p-4"
           aria-labelledby="overall-summary-heading"
         >
           <h3
             id="overall-summary-heading"
-            className="font-mono font-medium text-h3-mobile normal-case text-black mb-2 lg:text-h3-desktop"
+            className="mb-2 font-medium text-black text-h3-mobile lg:text-h3-desktop"
           >
             OVERALL SUMMARY
           </h3>
-          <p className="font-mono font-normal text-body-main leading-body text-black">
-            {overallSummary}
-          </p>
+          <p className="text-body-main text-black">{overallSummary}</p>
         </section>
       )}
     </div>
@@ -171,7 +168,6 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({
     );
   }, [categories, overallSummary, hasResults]);
 
-  // Створення контенту один раз для уникнення дублювання логіки в JSX
   const content = useMemo(() => {
     if (isAnalyzing) {
       return <LoadingState />;
@@ -194,30 +190,29 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({
   const isCopyButtonDisabled = !hasResults || isAnalyzing || isCopied;
 
   return (
-    <div className="rounded-none border border-black bg-white">
+    <div className="border-1 border-black bg-white">
       {/* Заголовок секції */}
-      <header className="flex items-center justify-between border-b border-black px-4 py-3">
-        <h2 className="font-mono font-medium uppercase text-ui-label text-black">
+      <header className="flex items-center justify-between border-b-1 border-black px-4 py-2">
+        <h2 className="font-medium uppercase text-black text-ui-label">
           {resultsTitleText}
         </h2>
         <button
           type="button"
           onClick={handleCopy}
           disabled={isCopyButtonDisabled}
-          className={`
-            rounded-none border border-black p-2 transition-colors duration-100 
-            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-accent
-            ${
-              isCopied
-                ? "cursor-default bg-black text-white"
-                : "bg-white text-black hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white"
+          className={clsx(
+            "border-1 p-2 text-black transition-colors duration-100",
+            {
+              // Secondary button styles
+              "border-black bg-white hover:bg-black hover:text-white":
+                !isCopied,
+              // Copied state (inverted secondary button)
+              "border-black bg-black text-white": isCopied,
+              // Disabled state
+              "disabled:cursor-not-allowed disabled:border-disabled disabled:bg-bg-disabled disabled:text-text-disabled":
+                true,
             }
-            ${
-              isCopyButtonDisabled && !isCopied
-                ? "cursor-not-allowed border-text-disabled text-text-disabled"
-                : ""
-            }
-          `}
+          )}
           aria-label={isCopied ? copiedLabel : copyLabel}
           title={isCopied ? copiedLabel : copyLabel}
         >

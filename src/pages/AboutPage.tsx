@@ -72,7 +72,7 @@ const content = {
   ],
 } as const;
 
-// --- ПРОСТА ТА НАДІЙНА ФУНКЦІЯ ОЧИЩЕННЯ ---
+// --- ФУНКЦІЯ ОЧИЩЕННЯ HTML ---
 /**
  * @description Безпечно рендерить HTML-рядок, попередньо очистивши його.
  * Перевіряє, чи виконується код у браузері, перед використанням DOMPurify.
@@ -81,41 +81,37 @@ const content = {
  */
 const createSanitizedHtml = (rawHtml: string) => {
   let sanitizedHtml = rawHtml;
-
-  // Перевіряємо, чи ми в браузерному середовищі
   if (typeof window !== "undefined") {
     sanitizedHtml = DOMPurify.sanitize(rawHtml, {
       USE_PROFILES: { html: true },
       ALLOWED_TAGS: ["strong", "em", "a"],
-      ALLOWED_ATTR: ["href", "target", "rel", "class"],
+      ALLOWED_ATTR: ["href", "target", "rel"],
     });
   }
-
-  // Завжди застосовуємо стилізацію для <em>
+  // Застосовуємо системний стиль для <em>, використовуючи вагу шрифту, а не курсив
   const styledHtml = sanitizedHtml.replace(
     /<em>(.*?)<\/em>/g,
     '<em class="not-italic font-medium">$1</em>'
   );
-
   return { __html: styledHtml };
 };
 
-// --- ПІДКОМПОНЕНТИ (без змін) ---
+// --- ПІДКОМПОНЕНТИ ---
 const InfoSection: React.FC<{ section: ContentSection }> = ({ section }) => (
   <section aria-labelledby={section.id}>
     <h2
       id={section.id}
-      className="font-mono font-semibold text-h2-mobile normal-case text-black mb-6 lg:text-h2-desktop"
+      className="mb-6 font-semibold text-black text-h2-mobile lg:text-h2-desktop"
     >
       {section.title}
     </h2>
-    <div className="space-y-4 font-mono font-normal text-body-main leading-body text-black">
+    <div className="space-y-4 text-body-main text-black">
       {section.paragraphs?.map((p, i) => (
         <p key={i} dangerouslySetInnerHTML={createSanitizedHtml(p)} />
       ))}
       {section.subSections?.map((sub) => (
-        <div key={sub.id} className="mt-4">
-          <h3 className="font-mono font-medium text-h3-desktop normal-case text-black mb-4">
+        <div key={sub.id} className="pt-4">
+          <h3 className="mb-4 font-medium text-black text-h3-mobile lg:text-h3-desktop">
             {sub.title}
           </h3>
           <div className="space-y-4">
@@ -129,7 +125,7 @@ const InfoSection: React.FC<{ section: ContentSection }> = ({ section }) => (
   </section>
 );
 
-// --- ГОЛОВНИЙ КОМПОНЕНТ СТОРІНКИ (без змін) ---
+// --- ГОЛОВНИЙ КОМПОНЕНТ СТОРІНКИ ---
 const AboutPage: React.FC = () => {
   return (
     <>
@@ -143,19 +139,19 @@ const AboutPage: React.FC = () => {
         <meta property="og:type" content="article" />
       </Helmet>
 
-      <div className="container-main pt-16 pb-16">
+      <div className="container-main">
         <header>
-          <h1 className="font-mono font-bold text-h1-mobile normal-case text-black mb-8 text-left md:uppercase lg:text-h1-desktop">
+          <h1 className="mb-8 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
             {content.pageTitle}
           </h1>
           <p
-            className="max-w-3xl font-mono font-semibold text-h3-desktop text-black mb-16"
+            className="mb-16 max-w-3xl font-semibold text-black text-h3-desktop"
             dangerouslySetInnerHTML={createSanitizedHtml(content.introduction)}
           />
         </header>
 
         <div className="max-w-3xl">
-          <div className="space-y-12">
+          <div className="space-y-16">
             {content.sections.map((section) => (
               <InfoSection key={section.id} section={section} />
             ))}
