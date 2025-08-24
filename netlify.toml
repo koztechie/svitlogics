@@ -5,7 +5,7 @@
 # розгортання та поведінки сайту на платформі Netlify.
 #
 # Документація: https://docs.netlify.com/configure-builds/file-based-configuration/
-# Версія: 4.0 (Refactored)
+# Версія: 4.1 (SEO & SPA Redirects)
 # ==============================================================================
 
 
@@ -49,44 +49,10 @@
     # --------------------------------------------------------------------------
     # Content Security Policy (CSP)
     # --------------------------------------------------------------------------
-    # Захищає від XSS-атак, обмежуючи джерела, з яких браузер може
-    # завантажувати ресурси.
-    #
-    # `default-src 'self'`: За замовчуванням дозволяє завантажувати ресурси лише з власного домену.
-    # `script-src`:
-    #   'self': Скрипти з власного домену.
-    #   'unsafe-inline': ПОПЕРЕДЖЕННЯ: Дозволяє інлайнові скрипти. Необхідно для роботи GTM Consent Mode.
-    #   'unsafe-eval': ПОПЕРЕДЖЕННЯ: Дозволяє `eval()`. Необхідно для GTM.
-    #   https://www.googletagmanager.com: Google Tag Manager.
-    #   https://challenges.cloudflare.com: Cloudflare Turnstile (захист від ботів).
-    #   https://*.google-analytics.com: Google Analytics.
-    # `style-src`:
-    #   'self': Стилі з власного домену.
-    #   'unsafe-inline': Дозволяє інлайнові стилі.
-    #   https://fonts.googleapis.com: Google Fonts.
-    # `font-src`:
-    #   'self': Шрифти з власного домену.
-    #   https://fonts.gstatic.com: Google Fonts.
-    # `img-src 'self' data:`: Зображення з власного домену та у форматі data URI.
-    # `connect-src`:
-    #   'self': API-запити на власний домен (Netlify Functions).
-    #   https://generativelanguage.googleapis.com: Google AI API.
-    #   https://www.google-analytics.com https://*.google-analytics.com: Google Analytics.
-    # `frame-src https://challenges.cloudflare.com`: Дозволяє вбудовувати iframe для Cloudflare Turnstile.
-    # `object-src 'none'`: Забороняє застарілі плагіни, такі як Flash.
-    #
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://challenges.cloudflare.com https://*.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com https://www.google-analytics.com https://*.google-analytics.com; frame-src https://challenges.cloudflare.com; object-src 'none';"
-
-    # Забороняє відображення сайту в `<iframe>` на інших доменах, захищаючи від clickjacking.
     X-Frame-Options = "DENY"
-
-    # Запобігає "MIME-sniffing" атакам, змушуючи браузер довіряти `Content-Type` заголовку.
     X-Content-Type-Options = "nosniff"
-
-    # Контролює, яка інформація надсилається в `Referer` заголовку.
     Referrer-Policy = "strict-origin-when-cross-origin"
-
-    # Обмежує використання чутливих API браузера (камера, мікрофон тощо).
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
 
 
@@ -94,14 +60,29 @@
 # # Redirects
 # ==============================================================================
 # Правила перенаправлення.
+# ВАЖЛИВО: Netlify обробляє редиректи по порядку, від першого до останнього.
+
+# --- НОВЕ ПРАВИЛО (SEO): Видаляємо кінцеві слеші з URL ---
+# Це правило уніфікує всі URL-адреси, перенаправляючи /path/ на /path.
+# Це вирішує проблему з канонічними тегами.
+[[redirects]]
+  from = "/:path+/"
+  to = "/:path"
+  status = 301
+  force = true
 
 # Редирект з тимчасового домену Netlify на основний домен.
 [[redirects]]
-  # Звідки: будь-який шлях на домені netlify.app
   from = "https://svitlogics.netlify.app/*"
-  # Куди: той самий шлях на основному домені
   to = "https://svitlogics.com/:splat"
-  # HTTP статус 301 (Moved Permanently) - найкращий для SEO.
   status = 301
-  # `force = true` гарантує, що редирект спрацює, навіть якщо файл існує за старим шляхом.
   force = true
+
+# --- НОВЕ ПРАВИЛО (SPA): Обробка 404 для клієнтського роутингу ---
+# Це правило має йти ОСТАННІМ. Воно "ловить" всі запити, для яких не знайдено
+# фізичного файлу, і віддає index.html, дозволяючи React Router
+# обробити маршрут і показати правильну сторінку (або сторінку 404).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
