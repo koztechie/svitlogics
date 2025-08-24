@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { Copy, Check } from "lucide-react";
-import clsx from "clsx"; // Допоміжна утиліта для умовних класів
+import clsx from "clsx";
 
 // --- Типізація та Константи ---
 
@@ -33,7 +33,7 @@ const COPY_SUCCESS_TIMEOUT = 2000; // ms
 // --- Мемоїзовані Підкомпоненти ---
 
 /**
- * @description Підкомпонент для стану завантаження. Мемоїзований, оскільки є статичним.
+ * @description Підкомпонент для стану завантаження.
  * @component
  */
 const LoadingState: React.FC = React.memo(() => (
@@ -46,7 +46,7 @@ const LoadingState: React.FC = React.memo(() => (
 LoadingState.displayName = "LoadingState";
 
 /**
- * @description Підкомпонент для порожнього стану. Мемоїзований, оскільки є статичним.
+ * @description Підкомпонент для порожнього стану.
  * @component
  */
 const EmptyState: React.FC = React.memo(() => (
@@ -67,8 +67,7 @@ type ResultsDisplayProps = Pick<
 >;
 
 /**
- * @description Підкомпонент для відображення результатів. Мемоїзований для запобігання
- * ре-рендерам, якщо пропси `categories` та `overallSummary` не змінилися.
+ * @description Підкомпонент для відображення результатів.
  * @component
  */
 const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
@@ -78,10 +77,13 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
         <section
           key={category.name}
           className="border-1 border-black bg-white p-4"
-          aria-labelledby={`category-heading-${category.name}`}
+          aria-labelledby={`category-heading-${category.name.replace(
+            /\s+/g,
+            "-"
+          )}`}
         >
           <h3
-            id={`category-heading-${category.name}`}
+            id={`category-heading-${category.name.replace(/\s+/g, "-")}`}
             className="mb-2 font-medium text-black text-h3-mobile lg:text-h3-desktop"
           >
             {category.name}
@@ -115,22 +117,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
 );
 ResultsDisplay.displayName = "ResultsDisplay";
 
-/**
- * @description
- * Рендерить всю секцію результатів аналізу, включаючи заголовок та
- * один з трьох можливих станів: Завантаження, Результати, або Порожній стан.
- *
- * @component
- * @param {AnalysisResultsProps} props - Пропси компонента.
- * @example
- * <AnalysisResults
- *   categories={[{ name: 'Toxicity', percentage: 10, explanation: 'Low toxicity' }]}
- *   isAnalyzing={false}
- *   overallSummary="The text is generally safe."
- * />
- */
 const AnalysisResults: React.FC<AnalysisResultsProps> = ({
-  categories,
+  // --- ВИПРАВЛЕННЯ ТУТ: Додаємо значення за замовчуванням для 'categories' ---
+  categories = [],
   isAnalyzing,
   overallSummary,
 }) => {
@@ -191,11 +180,14 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({
 
   return (
     <div className="border-1 border-black bg-white">
-      {/* Заголовок секції */}
       <header className="flex items-center justify-between border-b-1 border-black px-4 py-2">
-        <h2 className="font-medium uppercase text-black text-ui-label">
+        <div
+          className="font-medium uppercase text-black text-ui-label"
+          role="heading"
+          aria-level={2}
+        >
           {resultsTitleText}
-        </h2>
+        </div>
         <button
           type="button"
           onClick={handleCopy}
@@ -203,12 +195,9 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({
           className={clsx(
             "border-1 p-2 text-black transition-colors duration-100",
             {
-              // Secondary button styles
               "border-black bg-white hover:bg-black hover:text-white":
                 !isCopied,
-              // Copied state (inverted secondary button)
               "border-black bg-black text-white": isCopied,
-              // Disabled state
               "disabled:cursor-not-allowed disabled:border-disabled disabled:bg-bg-disabled disabled:text-text-disabled":
                 true,
             }
@@ -227,7 +216,6 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({
         </button>
       </header>
 
-      {/* Умовний рендеринг одного з трьох станів */}
       {content}
     </div>
   );
