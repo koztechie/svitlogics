@@ -118,7 +118,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
 ResultsDisplay.displayName = "ResultsDisplay";
 
 const AnalysisResults: React.FC<AnalysisResultsProps> = ({
-  // --- ВИПРАВЛЕННЯ ТУТ: Додаємо значення за замовчуванням для 'categories' ---
+  // --- ВИПРАВЛЕННЯ ТУТ : Додаємо значення за замовчуванням для 'categories' ---
   categories = [],
   isAnalyzing,
   overallSummary,
