@@ -1,94 +1,50 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { Copy, Check } from "lucide-react";
-import clsx from "clsx";
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { Helmet } from "react-helmet-async";
+import DOMPurify from "dompurify";
 
-// --- Типізація та Константи ---
+import AnalysisResults, { Category } from "../components/AnalysisResults";
+import TextInput from "../components/TextInput";
+import LanguageSelector, { AnalysisLanguage } from "../components/LanguageSelector";
+import { startAnalysis, checkAnalysisStatus } from "../services/aiApiService";
 
-/**
- * @description Визначає структуру даних для однієї категорії аналізу.
- */
-export interface Category {
-  /** @description Назва категорії. */
-  name: string;
-  /** @description Оцінка в процентах. `null`, якщо дані ще не отримані. */
-  percentage: number | null;
-  /** @description Текстове пояснення результату. `null`, якщо дані ще не отримані. */
-  explanation: string | null;
-}
-
-/**
- * @description Визначає контракт пропсів для головного компонента `AnalysisResults`.
- */
-export interface AnalysisResultsProps {
-  /** @description Масив об'єктів категорій для відображення. */
+interface AnalysisData {
   categories: Category[];
-  /** @description Прапорець, що вказує на процес аналізу. Якщо `true`, відображається спінер. */
-  isAnalyzing: boolean;
-  /** @description Загальний підсумок аналізу. */
   overallSummary: string;
 }
 
-const COPY_SUCCESS_TIMEOUT = 2000; // ms
+const initialCategories: Category[] = [
+  { name: "Manipulative Content", percentage: null, explanation: null },
+  { name: "Propagandistic Content", percentage: null, explanation: null },
+  { name: "Disinformation", percentage: null, explanation: null },
+  { name: "Unbiased Presentation", percentage: null, explanation: null },
+  { name: "Emotional Tone", percentage: null, explanation: null },
+];
 
-// --- Мемоїзовані Підкомпоненти ---
-
-/**
- * @description Підкомпонент для стану завантаження.
- * @component
- */
-const LoadingState: React.FC = React.memo(() => (
-  <div className="p-4 text-center" role="status" aria-live="polite">
-    <p className="font-medium uppercase text-black text-ui-label">
-      ANALYZING...
-    </p>
-  </div>
-));
-LoadingState.displayName = "LoadingState";
-
-/**
- * @description Підкомпонент для порожнього стану.
- * @component
- */
-const EmptyState: React.FC = React.memo(() => (
-  <div className="p-4 text-center">
-    <p className="font-medium uppercase text-black text-ui-label">
-      RESULTS WILL APPEAR HERE AFTER ANALYSIS
-    </p>
-  </div>
-));
-EmptyState.displayName = "EmptyState";
-
-/**
- * @description Пропси для компонента `ResultsDisplay`.
- */
-type ResultsDisplayProps = Pick<
-  AnalysisResultsProps,
-  Category,
-} from "../components/AnalysisResults";
-import TextInput from "../components/TextInput";
-import LanguageSelector, {
-  AnalysisLanguage,
-} from "../components/LanguageSelector";
-import { startAnalysis, checkAnalysisStatus } from "../services/aiApiService";
-
-const initialResultsState: Omit<AnalysisResultsProps, "isAnalyzing"> = {
-  categories: [
-    { name: "Manipulative Content", percentage: null, explanation: null },
-    { name: "Propagandistic Content", percentage: null, explanation: null },
-    { name: "Disinformation", percentage: null, explanation: null },
-    { name: "Unbiased Presentation", percentage: null, explanation: null },
-    { name: "Emotional Tone", percentage: null, explanation: null },
-  ],
+const initialAnalysisData: AnalysisData = {
+  categories: initialCategories,
   overallSummary: "",
 };
 
 const SAFE_CHARACTER_LIMIT = 15000;
+
+const createSanitizedHtml = (rawHtml: string): { __html: string } => {
+  const styledHtml = rawHtml.replace(
+    /<em>(.*?)<\/em>/g,
+    '<em class="not-italic font-medium">$1</em>'
+  );
+  if (typeof window !== 'undefined') {
+    return { __html: DOMPurify.sanitize(styledHtml, { USE_PROFILES: { html: true }, ALLOWED_TAGS: ["strong", "em"] }) };
+  }
+  return { __html: styledHtml };
+};
+
 
 const Home: React.FC = () => {
   const content = {
     seoTitle: "Svitlogics | AI Text Analyzer for Bias & Disinformation",
     seoDescription:
       "Analyze text for manipulation, propaganda, and bias with Svitlogics. An AI tool to empower critical thinking in English & Ukrainian. By Eugene Kozlovsky.",
+    canonicalUrl: "https://svitlogics.com/",
     mainHeading: "DISINFORMATION & MANIPULATION ANALYSIS",
     introParagraph:
       "An independent AI tool that analyzes text for propaganda, bias, and manipulation. Svitlogics provides structured insights to aid your critical thinking.",
@@ -115,18 +71,100 @@ const Home: React.FC = () => {
   const [analysisLanguage, setAnalysisLanguage] =
     useState<AnalysisLanguage>("en");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisData, setAnalysisData] = useState(initialResultsState);
+  const [analysisData, setAnalysisData] = useState<AnalysisData>(initialAnalysisData);
   const [apiError, setApiError] = useState<string | null>(null);
 
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const cleanupTimers = useCallback(() => {
+    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  }, []);
+
+  useEffect(() => {
+    return cleanupTimers;
+  }, [cleanupTimers]);
+
+  const handleClear = useCallback(() => {
+    setText("");
+    setAnalysisData(initialAnalysisData);
+    setApiError(null);
+    setIsAnalyzing(false);
+    cleanupTimers();
+  }, [cleanupTimers]);
+
+  const handleAnalyze = useCallback(async () => {
+    const inputText = text.trim();
+    setApiError(null);
+    setAnalysisData(initialAnalysisData);
+
+    if (!inputText || inputText.length > SAFE_CHARACTER_LIMIT) {
+      setApiError(
+        !inputText 
+        ? "Error: Input text is required for analysis." 
+        : `Error: Text exceeds the maximum length of ${SAFE_CHARACTER_LIMIT} characters.`
+      );
+      return;
+    }
+
+    setIsAnalyzing(true);
+    cleanupTimers();
+
+    try {
+      const { taskId } = await startAnalysis(inputText, analysisLanguage);
+
+      timeoutRef.current = setTimeout(() => {
+        cleanupTimers();
+        setIsAnalyzing(false);
+        setApiError(
+          "Error: Analysis timed out. The server may be under heavy load. Please try again."
+        );
+      }, 90000);
+
+      pollingIntervalRef.current = setInterval(async () => {
+        try {
+          const statusResponse = await checkAnalysisStatus(taskId);
+
+          if (statusResponse.status === "completed" && statusResponse.data) {
+            cleanupTimers();
+            setIsAnalyzing(false);
+
+            const result = statusResponse.data;
+            const updatedCategories: Category[] = result.analysis_results.map(
+              (cat) => ({
+                name: cat.category_name,
+                percentage: cat.percentage_score,
+                explanation: cat.justification,
+              })
+            );
+
+            setAnalysisData({
+              categories: initialCategories.map(c => updatedCategories.find(u => u.name === c.name) || c),
+              overallSummary: result.overall_summary || "",
+            });
+          } else if (statusResponse.status === "failed") {
+            cleanupTimers();
+            setIsAnalyzing(false);
+            setApiError(`Error: ${statusResponse.error || "Analysis failed on the server."}`);
+          }
+        } catch (pollError: any) {
+          cleanupTimers();
+          setIsAnalyzing(false);
+          setApiError(`Error checking status: ${pollError.message}`);
+        }
+      }, 3000);
+    } catch (e: any) {
+      cleanupTimers();
+      setIsAnalyzing(false);
+      setApiError(`Error: ${e.message}`);
+    }
+  }, [text, analysisLanguage, cleanupTimers]);
+
   useEffect(() => {
     const storedLang = localStorage.getItem("svitlogics_language");
     if (storedLang === "uk" || storedLang === "en") {
-      if (storedLang !== analysisLanguage) {
         setAnalysisLanguage(storedLang);
-      }
     }
   }, []);
 
@@ -134,122 +172,121 @@ const Home: React.FC = () => {
     localStorage.setItem("svitlogics_language", analysisLanguage);
   }, [analysisLanguage]);
 
-  useEffect(() => {
-    return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  const maxChars = SAFE_CHARACTER_LIMIT;
-
-  const resetAnalysisDisplay = useCallback(() => {
-    setAnalysisData(initialResultsState);
-  }, []);
-
-  const handleClear = useCallback(() => {
-    setText("");
-    resetAnalysisDisplay();
-    setApiError(null);
-    setIsAnalyzing(false);
-    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-  }, [resetAnalysisDisplay]);
-
-  const handleCopy = useCallback(() => {
-    if (!hasResults) return;
-
-    const details = categories
-      .map(
-        (category) =>
-          `${category.name}: ${
-            category.percentage !== null ? `${category.percentage}%` : "--%"
-          }\n${
-            category.explanation || "Analysis not available for this category."
-          }`
-      )
-      .join("\n\n");
-
-    const textToCopy = `OVERALL SUMMARY:\n${overallSummary}\n\n---DETAILS---\n\n${details}`;
-
-    navigator.clipboard.writeText(textToCopy).then(
-      () => {
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), COPY_SUCCESS_TIMEOUT);
-      },
-      (err) => {
-        console.error("Error: Failed to copy results to clipboard.", err);
-      }
-    );
-  }, [categories, overallSummary, hasResults]);
-
-  const content = useMemo(() => {
-    if (isAnalyzing) {
-      return <LoadingState />;
-    }
-    if (hasResults) {
-      return (
-        <ResultsDisplay
-          categories={categories}
-          overallSummary={overallSummary}
-        />
-      );
-    }
-    return <EmptyState />;
-  }, [isAnalyzing, hasResults, categories, overallSummary]);
-
-  const resultsTitleText = "ANALYSIS RESULTS";
-  const copyLabel = "Copy results";
-  const copiedLabel = "Copied!";
-
-  const isCopyButtonDisabled = !hasResults || isAnalyzing || isCopied;
+  const softwareAppJsonLd = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Svitlogics",
+    applicationCategory: "ProductivityApplication",
+    operatingSystem: "WebPlatform",
+    description: content.seoDescription,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    author: {
+      "@type": "Person",
+      name: "Eugene Kozlovsky",
+    },
+  }), [content.seoDescription]);
 
   return (
-    <div className="border-1 border-black bg-white">
-      <header className="flex items-center justify-between border-b-1 border-black px-4 py-2">
-        {/* --- ВИПРАВЛЕННЯ ТУТ: h2 замінено на div з ARIA-атрибутами --- */}
-        <div
-          className="font-medium uppercase text-black text-ui-label"
-          role="heading"
-          aria-level={2}
-        >
-          {resultsTitleText}
-        </div>
-        <button
-          type="button"
-          onClick={handleCopy}
-          disabled={isCopyButtonDisabled}
-          className={clsx(
-            "border-1 p-2 text-black transition-colors duration-100",
-            {
-              "border-black bg-white hover:bg-black hover:text-white":
-                !isCopied,
-              "border-black bg-black text-white": isCopied,
-              "disabled:cursor-not-allowed disabled:border-disabled disabled:bg-bg-disabled disabled:text-text-disabled":
-                true,
-            }
-          )}
-          aria-label={isCopied ? copiedLabel : copyLabel}
-          title={isCopied ? copiedLabel : copyLabel}
-        >
-          <span aria-live="polite" className="sr-only">
-            {isCopied ? copiedLabel : copyLabel}
-          </span>
-          {isCopied ? (
-            <Check size={16} strokeWidth={3} />
-          ) : (
-            <Copy size={16} strokeWidth={2} />
-          )}
-        </button>
-      </header>
+    <div>
+      <Helmet>
+        <title>{content.seoTitle}</title>
+        <meta name="description" content={content.seoDescription} />
+        <link rel="canonical" href={content.canonicalUrl} />
+        <meta property="og:title" content={content.seoTitle} />
+        <meta property="og:description" content={content.seoDescription} />
+        <meta property="og:url" content={content.canonicalUrl} />
+        <script type="application/ld+json">
+          {JSON.stringify(softwareAppJsonLd)}
+        </script>
+      </Helmet>
 
-      {content}
+      <div className="container-main pt-16">
+        <section>
+          <div className="w-full">
+            <h1 className="font-mono font-bold text-h1-mobile normal-case md:uppercase lg:text-h1-desktop text-black mb-4 text-left">
+              {content.mainHeading}
+            </h1>
+            <p className="font-mono text-body-main leading-body text-black max-w-3xl">
+              {content.introParagraph}
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <div className="container-main pt-12 lg:pt-16 pb-16">
+        <div className="space-y-12 lg:space-y-16">
+          <section id="analysis-form-section" className="space-y-8">
+            <LanguageSelector
+              selectedLanguage={analysisLanguage}
+              onLanguageChange={(lang) => {
+                setAnalysisLanguage(lang);
+                handleClear(); // Скидаємо все при зміні мови 
+              }}
+            />
+            <TextInput
+              text={text}
+              setText={setText}
+              onAnalyze={handleAnalyze}
+              onClear={handleClear}
+              isAnalyzing={isAnalyzing}
+              maxLength={SAFE_CHARACTER_LIMIT}
+            />
+          </section>
+
+          <section aria-live="polite" aria-atomic="true">
+            {apiError && (
+              <div className="p-4 border-2 border-status-error bg-white text-status-error font-mono mb-8 rounded-none">
+                <strong className="font-mono font-medium text-ui-label uppercase">
+                  Error:
+                </strong>
+                <span className="font-mono font-normal text-body-main">
+                  {" "}
+                  {apiError.replace("Error: ", "")}
+                </span>
+              </div>
+            )}
+            <AnalysisResults
+              categories={analysisData.categories}
+              isAnalyzing={isAnalyzing}
+              overallSummary={analysisData.overallSummary}
+            />
+          </section>
+
+          <section id="methodology-section" className="max-w-3xl mx-auto">
+            <h2 className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-6 normal-case text-center">
+              {content.newSection.title}
+            </h2>
+            <div className="space-y-4 font-mono font-normal text-body-main leading-body text-black">
+              {content.newSection.paragraphs.map((p, index) => (
+                <p
+                  key={index}
+                  dangerouslySetInnerHTML={createSanitizedHtml(p)}
+                />
+              ))}
+              <ul className="list-disc ml-6 space-y-2 pt-2">
+                {content.newSection.criteria.map((criterion, index) => (
+                  <li
+                    key={index}
+                    dangerouslySetInnerHTML={createSanitizedHtml(criterion)}
+                  />
+                ))}
+              </ul>
+              <p
+                className="pt-4"
+                dangerouslySetInnerHTML={createSanitizedHtml(
+                  content.newSection.finalParagraph
+                )}
+              />
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default React.memo(AnalysisResults);
+export default Home;
