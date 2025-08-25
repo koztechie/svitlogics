@@ -63,71 +63,102 @@ EmptyState.displayName = "EmptyState";
  */
 type ResultsDisplayProps = Pick<
   AnalysisResultsProps,
-  "categories" | "overallSummary"
->;
+  Category,
+} from "../components/AnalysisResults";
+import TextInput from "../components/TextInput";
+import LanguageSelector, {
+  AnalysisLanguage,
+} from "../components/LanguageSelector";
+import { startAnalysis, checkAnalysisStatus } from "../services/aiApiService";
 
-/**
- * @description Підкомпонент для відображення результатів.
- * @component
- */
-const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
-  ({ categories, overallSummary }) => (
-    <div className="space-y-4 p-4">
-      {categories.map((category) => (
-        <section
-          key={category.name}
-          className="border-1 border-black bg-white p-4"
-          aria-labelledby={`category-heading-${category.name.replace(
-            /\s+/g,
-            "-"
-          )}`}
-        >
-          <h3
-            id={`category-heading-${category.name.replace(/\s+/g, "-")}`}
-            className="mb-2 font-medium text-black text-h3-mobile lg:text-h3-desktop"
-          >
-            {category.name}
-          </h3>
-          <p className="mb-2 font-semibold text-blue-accent text-h2-mobile lg:text-h2-desktop">
-            {category.percentage !== null ? `${category.percentage}%` : "--%"}
-          </p>
-          <p className="text-body-main text-black">
-            {category.explanation ||
-              "Analysis is pending or was not returned for this category."}
-          </p>
-        </section>
-      ))}
+const initialResultsState: Omit<AnalysisResultsProps, "isAnalyzing"> = {
+  categories: [
+    { name: "Manipulative Content", percentage: null, explanation: null },
+    { name: "Propagandistic Content", percentage: null, explanation: null },
+    { name: "Disinformation", percentage: null, explanation: null },
+    { name: "Unbiased Presentation", percentage: null, explanation: null },
+    { name: "Emotional Tone", percentage: null, explanation: null },
+  ],
+  overallSummary: "",
+};
 
-      {overallSummary && (
-        <section
-          className="border-1 border-black bg-white p-4"
-          aria-labelledby="overall-summary-heading"
-        >
-          <h3
-            id="overall-summary-heading"
-            className="mb-2 font-medium text-black text-h3-mobile lg:text-h3-desktop"
-          >
-            OVERALL SUMMARY
-          </h3>
-          <p className="text-body-main text-black">{overallSummary}</p>
-        </section>
-      )}
-    </div>
-  )
-);
-ResultsDisplay.displayName = "ResultsDisplay";
+const SAFE_CHARACTER_LIMIT = 15000;
 
-const AnalysisResults: React.FC<AnalysisResultsProps> = ({
-  categories,
-  isAnalyzing,
-  overallSummary,
-}) => {
-  const [isCopied, setIsCopied] = useState(false);
+const Home: React.FC = () => {
+  const content = {
+    seoTitle: "Svitlogics | AI Text Analyzer for Bias & Disinformation",
+    seoDescription:
+      "Analyze text for manipulation, propaganda, and bias with Svitlogics. An AI tool to empower critical thinking in English & Ukrainian. By Eugene Kozlovsky.",
+    mainHeading: "DISINFORMATION & MANIPULATION ANALYSIS",
+    introParagraph:
+      "An independent AI tool that analyzes text for propaganda, bias, and manipulation. Svitlogics provides structured insights to aid your critical thinking.",
+    newSection: {
+      title: "Methodology and mission",
+      paragraphs: [
+        "My mission with Svitlogics is straightforward: to provide an accessible, transparent tool for identifying manipulative techniques. I developed it as a solo project from Kyiv, Ukraine, driven by the need to counter pervasive information warfare. The core principle is that understanding <em>how</em> manipulation works is the first step toward resisting it.",
+        "The analysis is performed by a high-availability cascade of Google AI models, including the Gemini and Gemma families. This system ensures reliability by automatically falling back to an alternative model if a primary one is at capacity. Each model is guided by a detailed, custom-calibrated system prompt, which instructs the AI to assess the text against five core criteria.",
+        "The analysis focuses on these five areas:",
+      ],
+      criteria: [
+        "<strong>Manipulative Content:</strong> Identifies logical fallacies, emotional appeals, and psychological tactics.",
+        "<strong>Propagandistic Content:</strong> Detects elements of systematic, one-sided ideological campaigns.",
+        "<strong>Disinformation:</strong> Assesses for verifiably false information presented with intent to deceive.",
+        "<strong>Unbiased Presentation (Impartiality):</strong> Evaluates the text's commitment to fairness, objectivity, and balance.",
+        "<strong>Emotional Tone:</strong> Analyzes the underlying sentiment and its intensity.",
+      ],
+      finalParagraph:
+        'It is important to understand that <strong>no AI analysis is 100% infallible</strong>. Svitlogics is not designed to deliver a final "truth" verdict. Its purpose is to provide structured data and justifications, empowering you to form your own, more informed conclusions.',
+    },
+  };
 
-  const hasResults = useMemo(
-    () => categories.some((cat) => cat.percentage !== null) || !!overallSummary,
-    [categories, overallSummary]
-  );
+  const [text, setText] = useState<string>("");
+  const [analysisLanguage, setAnalysisLanguage] =
+    useState<AnalysisLanguage>("en");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisData, setAnalysisData] = useState(initialResultsState);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const storedLang = localStorage.getItem("svitlogics_language");
+    if (storedLang === "uk" || storedLang === "en") {
+      if (storedLang !== analysisLanguage) {
+        setAnalysisLanguage(storedLang);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("svitlogics_language", analysisLanguage);
+  }, [analysisLanguage]);
+
+  useEffect(() => {
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const maxChars = SAFE_CHARACTER_LIMIT;
+
+  const resetAnalysisDisplay = useCallback(() => {
+    setAnalysisData(initialResultsState);
+  }, []);
+
+  const handleClear = useCallback(() => {
+    setText("");
+    resetAnalysisDisplay();
+    setApiError(null);
+    setIsAnalyzing(false);
+    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  }, [resetAnalysisDisplay]);
 
   const handleCopy = useCallback(() => {
     if (!hasResults) return;
