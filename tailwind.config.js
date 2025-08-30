@@ -1,125 +1,74 @@
-/**
- * @fileoverview Головний конфігураційний файл для Tailwind CSS.
- *
- * Цей файл є ЄДИНИМ ДЖЕРЕЛОМ ІСТИНИ для всіх дизайн-токенів
- * (кольорів, шрифтів, розмірів, відступів) у проекті.
- * Він визначає та обмежує палітру, доступну для використання через
- * утилітарні класи Tailwind, забезпечуючи візуальну консистентність.
- *
- * @see https://tailwindcss.com/docs/configuration
- * @version 1.1.0
- * @type {import('tailwindcss').Config}
- */
-
-// --- Type Definitions for JSDoc ---
-
-/**
- * @typedef {import('tailwindcss/types/config').ThemeConfig} ThemeConfig
- * @typedef {import('tailwindcss/types/config').CustomThemeConfig} CustomThemeConfig
- */
-
-// --- Design System Tokens ---
-
-/**
- * @description Палітра кольорів, що відповідає дизайн-системі.
- * @private
- * @type {ThemeConfig['colors']}
- */
-const COLORS = {
-  transparent: "transparent",
-  current: "currentColor",
-  white: "#FFFFFF",
-  black: "#000000",
-  // Accent color for interactive elements
-  "blue-accent": "#0000CC",
-  "blue-accent-hover": "#0000AA",
-  "blue-accent-active": "#000088",
-  // Grayscale palette for UI
-  "text-secondary": "#555555",
-  "text-disabled": "#AAAAAA",
-  "bg-disabled": "#F0F0F0",
-  // Status colors
-  "status-error": "#FF0000",
-  "status-success": "#00AA00",
-  "status-info": "#0000CC", // Reusing accent color
-};
-
-/**
- * @description Типографічна шкала.
- * @private
- * @type {ThemeConfig['fontSize']}
- */
-const FONT_SIZES = {
-  "ui-label": "14px",
-  "body-main": "16px",
-  "h3-mobile": "16px",
-  "h3-desktop": "18px",
-  "h2-mobile": "20px",
-  "h2-desktop": "24px",
-  "h1-mobile": "26px",
-  "h1-desktop": "32px",
-  logo: "36px",
-};
-
-// --- Main Configuration Export ---
-
-/**
- * @description Основний експортований об'єкт конфігурації Tailwind CSS.
- * @type {CustomThemeConfig}
- */
-const tailwindConfig = {
-  // Файли, які Tailwind сканує на наявність утилітарних класів.
+/** @type {import('tailwindcss').Config} */
+export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
 
   theme: {
-    // =================================================================
-    // # Core Overrides
-    // =================================================================
-    // Повністю перевизначаємо палітру кольорів, щоб уникнути використання
-    // кольорів Tailwind за замовчуванням та забезпечити строгу відповідність
-    // дизайн-системі.
-    colors: COLORS,
-
-    // Перевизначаємо сімейства шрифтів, залишаючи лише `mono`.
-    // Це змушує використовувати `font-mono` для всього тексту.
-    fontFamily: {
-      mono: ['"IBM Plex Mono"', "monospace"],
+    // --- ПАЛІТРА ТА ШРИФТИ ПОВНІСТЮ ПЕРЕВИЗНАЧЕНІ ---
+    colors: {
+      transparent: "transparent",
+      current: "currentColor",
+      "svitlogics-blue": "#2D5B8C",
+      "paper-white": "#F9F9FA",
+      "carbon-black": "#1A1A1D",
+      "neutral-300": "#D1D1D5",
+      "neutral-500": "#A3A3A8",
+      "neutral-700": "#6B6B70",
+      "semantic-violet": "#8A5EAF",
+      "semantic-teal": "#5A828A",
+      "semantic-terracotta": "#AD6A48",
+      "semantic-slate": "#6B6B70",
+      "semantic-amber": "#B0893E",
+      "signal-red": "#C73E3E",
+      "signal-green": "#2A8C4A",
+      "signal-yellow": "#D9A53B",
     },
 
-    // =================================================================
-    // # Theme Extensions
-    // =================================================================
-    // Розширюємо тему Tailwind нашими кастомними значеннями.
+    fontFamily: {
+      sans: ["Inter", "sans-serif"],
+      serif: ["Lora", "serif"],
+      mono: ['"Source Code Pro"', "monospace"],
+    },
+
+    // --- РОЗШИРЕННЯ ТЕМИ ---
     extend: {
-      // Кастомні розміри шрифтів з нашої типографічної шкали.
-      fontSize: FONT_SIZES,
-
-      // Кастомна висота рядка для основного тексту.
-      lineHeight: {
-        body: "1.5",
+      fontSize: {
+        h1: [
+          "2.441rem",
+          { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "600" },
+        ],
+        h2: [
+          "1.953rem",
+          { lineHeight: "1.2", letterSpacing: "-0.015em", fontWeight: "600" },
+        ],
+        h3: ["1.563rem", { lineHeight: "1.2", fontWeight: "600" }],
+        h4: ["1.25rem", { lineHeight: "1.2", fontWeight: "600" }],
+        body: ["1rem", { lineHeight: "1.7", fontWeight: "400" }],
+        small: [
+          "0.8rem",
+          { lineHeight: "1.7", fontWeight: "400", letterSpacing: "+0.01em" },
+        ],
       },
 
-      // Кастомна максимальна ширина для головного контейнера.
       maxWidth: {
-        container: "1024px",
+        container: "1440px",
+        prose: "75ch",
       },
 
-      // Кастомна ширина рамок.
-      borderWidth: {
-        1: "1px", // Для більшості рамок
-        2: "2px", // Для статусних повідомлень
+      // Всі заокруглення мають бути '0' згідно з новою DS, яка не передбачає заокруглених елементів
+      borderRadius: {
+        DEFAULT: "0px",
+        none: "0",
+        sm: "0",
+        md: "0",
+        lg: "0",
+        full: "0",
       },
 
-      // Дозволяємо використовувати всі кольори з палітри як кольори рамок.
-      /** @param {function(string): any} theme */
-      borderColor: (theme) => ({
-        ...theme("colors"),
-        DEFAULT: theme("colors.black"), // `border` -> `border-color: black`
-        disabled: theme("colors.text-disabled"), // `border-disabled`
-      }),
+      transitionDuration: {
+        DEFAULT: "150ms",
+      },
     },
   },
-  plugins: [], // Наразі не використовуються додаткові плагіни.
-};
 
-export default tailwindConfig;
+  plugins: [],
+};

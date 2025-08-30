@@ -1,60 +1,71 @@
+/**
+ * Svitlogics 404 Not Found Page
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Design is an Act of Resistance): This page presents
+ *   error information in a sober, structured manner, stripped of all non-essential
+ *   visual elements and decorative attributes. It is a direct, functional response
+ *   to a navigation error.
+ * - Section Alpha (Interface is a Laboratory): The design is calibrated for
+ *   precision and objectivity, serving as a clear, predictable error state.
+ * - Section Bravo (Clarity is a Moral Imperative): The error message is
+ *   unambiguous and diagnostic, not apologetic. It clearly states the failure
+ *   condition and provides a single, clear path forward.
+ * - Section Charlie (Chromatic System): Employs the prescribed palette for
+ *   text (Carbon Black, Svitlogics Blue) and background (Paper White).
+ * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
+ *   grid system and constrains content to `max-w-prose` for optimal readability.
+ *   The centered layout creates a sense of order and calm.
+ * - Section Delta (Typography): Uses 'Inter' (`font-sans`) for headings and
+ *   links, and 'Lora' (`font-serif`) for body copy, maintaining UI/Instrument distinction.
+ * - Section Foxtrot (Component Architecture): Embodies a purely functional
+ *   error container with no decorative attributes or shadows.
+ * - Section Hotel (Copy & Tone of Voice): The content uses precise, technical
+ *   language and avoids emotional or persuasive phrasing. The message is
+ *   diagnostic, not apologetic.
+ */
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-
-// --- Типізація та Константи ---
-
-/**
- * @description Статичний контент для сторінки 404.
- * Винесено для легкої зміни, централізації та майбутньої локалізації.
- */
-const content = {
-  seoTitle: "404: PAGE NOT FOUND | SVITLOGICS",
-  pageTitle: "404: PAGE NOT FOUND",
-  description: "The requested resource does not exist or has been moved.",
-  linkText: "RETURN TO HOMEPAGE",
-} as const;
+import { Heading } from "../components/ui/Heading";
 
 /**
- * @description
- * Статична сторінка, що відображається, коли маршрут не знайдено (HTTP 404).
- * Надає чітке повідомлення про помилку та посилання для повернення на головну сторінку.
- * Компонент мемоїзовано для оптимальної продуктивності, оскільки він є чисто презентаційним
- * і не залежить від пропсів чи динамічного стану.
- *
- * @component
- * @example
- * <Route path="*" element={<NotFoundPage />} />
+ * Renders the 404 error page for paths that do not match any route.
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Hotel (Tone of Voice): The messaging is direct, clinical, and diagnostic,
+ *   avoiding apologetic or colloquial language.
+ * - Section Delta (Typography): Strictly follows the established typographic hierarchy,
+ *   using the <Heading> component and system-defined text styles.
+ * - Section Echo (Spatial System): The layout is clean, centered, and uses generous
+ *   whitespace to maintain a sense of calm and order, even on an error page.
  */
 const NotFoundPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{content.seoTitle}</title>
+        <title>404: Not Found | Svitlogics</title>
         <meta name="robots" content="noindex" />
       </Helmet>
-
-      {/* Використання `<main>` є семантично коректним для основного контенту сторінки */}
-      <main className="container-main text-center">
-        <h1 className="mb-4 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
-          {content.pageTitle}
-        </h1>
-        <p className="mx-auto mb-8 max-w-3xl text-body-main">
-          {content.description}
-        </p>
-        <Link
-          to="/"
-          className="font-medium uppercase text-blue-accent text-ui-label no-underline hover:underline focus-visible:underline"
-        >
-          {content.linkText}
-        </Link>
-      </main>
+      <div className="container-main py-16 text-center">
+        <div className="mx-auto max-w-prose">
+          <Heading as="h1" className="mb-4">
+            404: Not Found
+          </Heading>
+          <p className="mb-8 font-serif text-body text-carbon-black">
+            The requested resource could not be located. The page may have been
+            moved or does not exist.
+          </p>
+          <Link
+            to="/"
+            className="font-sans text-body text-svitlogics-blue hover:underline"
+          >
+            Return to Analysis Processor
+          </Link>
+        </div>
+      </div>
     </>
   );
 };
 
-// --- Мемоїзація ---
-// Оскільки NotFoundPage є статичним компонентом без пропсів, React.memo
-// гарантує, що він буде ре-рендеритися лише один раз, навіть якщо
-// батьківські компоненти (напр., Layout) оновлюються.
-export default React.memo(NotFoundPage);
+export default NotFoundPage;

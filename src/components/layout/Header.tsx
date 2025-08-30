@@ -1,195 +1,150 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Link, NavLink as RouterNavLink, useLocation } from "react-router-dom";
+/**
+ * Svitlogics Header Component
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Design is an Act of Resistance): This component is a
+ *   sober, functional identity and navigation element, stripped of all non-essential
+ *   visual elements and decorative attributes.
+ * - Section Alpha (Interface is a Laboratory): The design is calibrated for
+ *   precision and objectivity, serving as a clear, predictable system chrome.
+ * - Section Bravo (Clarity is a Moral Imperative): The component's structure,
+ *   navigation, and interactive elements are unambiguous and purpose-driven.
+ * - Section Charlie (Chromatic System): Employs the prescribed palette for
+ *   UI chrome (Svitlogics Blue), background (Paper White), and text (Carbon Black).
+ * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
+ *   grid system (py-4, px-4, gap-x-8, py-2, py-4) for all elements.
+ * - Section Delta (Typography): Uses 'Inter' (`font-sans`) at the 'small'
+ *   scale (`text-small`) for all navigation links, maintaining UI/Instrument distinction.
+ * - Section Foxtrot (Component Architecture): Embodies a purely functional
+ *   navigation container with sharp corners, no shadows, and imperative labeling.
+ *   Mobile menu follows a predictable collapse/expand pattern.
+ * - Section Golf (Motion Philosophy): Uses CSS transitions for state changes
+ *   (hover, active) that are subtle and enhance understanding.
+ * - Section Hotel (Copy & Tone of Voice): The component's API and internal
+ *   labels use precise, technical language.
+ */
+
+import React, { useState, useEffect } from "react";
+import {
+  Link,
+  NavLink as RouterNavLink,
+  useLocation,
+  NavLinkRenderProps,
+} from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import SvitlogicsLogo from "../../assets/logo/SvitlogicsLogo.svg?react";
+import { clsx } from "clsx";
 
-// --- Типізація та Константи ---
-
-/**
- * @description Конфігурація навігаційних елементів для десктопної версії.
- * Визначена поза компонентом, щоб уникнути повторного створення.
- * @type {readonly NavItem[]}
- */
 const navItems = [
-  { to: "/", label: "HOME" },
-  { to: "/about", label: "ABOUT" },
-  { to: "/how-it-works", label: "HOW IT WORKS" },
+  { to: "/", label: "Analysis" },
+  { to: "/how-it-works", label: "Methodology" },
+  { to: "/about", label: "About" },
   { to: "/faq", label: "FAQ" },
-  { to: "/blog", label: "BLOG" },
-] as const;
+];
 
 /**
- * @description Розширений набір для мобільного меню.
- * @type {readonly NavItem[]}
- */
-const mobileNavItems = [
-  ...navItems,
-  { to: "/pricing-limits", label: "PRICING & LIMITS" },
-  { to: "/contact", label: "CONTACT" },
-  { to: "/privacy-policy", label: "PRIVACY POLICY" },
-  { to: "/terms-of-use", label: "TERMS OF USE" },
-  { to: "/changelog", label: "CHANGELOG" },
-  { to: "/cookie-policy", label: "COOKIE POLICY" },
-  { to: "/disclaimer", label: "DISCLAIMER" },
-] as const;
-
-// --- Допоміжні Компоненти (Оптимізовані) ---
-
-/**
- * @description Пропси для мемоїзованого компонента `CustomNavLink`.
- */
-interface CustomNavLinkProps {
-  /** @description Шлях призначення. */
-  to: string;
-  /** @description Вміст посилання, зазвичай текст. */
-  children: React.ReactNode;
-  /** @description Прапорець для застосування стилів мобільної версії. */
-  mobile?: boolean;
-}
-
-/**
- * @description
- * Мемоїзований компонент-обгортка над `RouterNavLink` від `react-router-dom`.
- * Використовує функціонал `NavLink` для автоматичного визначення активного стану
- * замість ручного порівняння через `useLocation`, що є значно продуктивнішим.
- *
- * @component
- */
-const CustomNavLink: React.FC<CustomNavLinkProps> = React.memo(
-  ({ to, children, mobile = false }) => {
-    // Класи обчислюються один раз і передаються `NavLink`
-    const getClassName = useCallback(
-      ({ isActive }: { isActive: boolean }): string => {
-        const baseClasses =
-          "font-medium uppercase text-blue-accent text-ui-label transition-colors duration-100";
-        const stateClasses = "hover:underline focus-visible:underline";
-        const activeClasses = isActive ? "underline" : "no-underline";
-        const mobileSpecificClasses = mobile
-          ? "block w-full py-2 text-left"
-          : "py-2";
-        return `${baseClasses} ${stateClasses} ${activeClasses} ${mobileSpecificClasses}`;
-      },
-      [mobile]
-    );
-
-    return (
-      <RouterNavLink to={to} className={getClassName} end>
-        {children}
-      </RouterNavLink>
-    );
-  }
-);
-
-CustomNavLink.displayName = "CustomNavLink"; // Для кращого дебагінгу
-
-/**
- * @description
- * Головний хедер застосунку.
- * Містить логотип, основну навігацію для десктопу та мобільне меню, що розгортається.
- * Компонент мемоїзовано для запобігання зайвим ре-рендерам.
- * @component
+ * The primary navigation and identity component of the Svitlogics system.
+ * Designed according to The Ethos-Driven Design System:
+ * - Section Echo (Spatial System): All padding and gaps strictly adhere to the 8px base unit.
+ * - Section Foxtrot (Component Architecture): A minimal, predictable layout with a clear
+ *   distinction between desktop and mobile navigation. The component structure avoids
+ *   superfluous elements.
+ * - Section Delta (Typography): Uses 'Inter' at the 'small' scale for all navigation
+ *   links, ensuring clarity and consistency.
  */
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Ефект для закриття меню при зміні маршруту.
   useEffect(() => {
+    // Close the mobile menu upon navigation to a new route.
     setIsMenuOpen(false);
   }, [location.pathname]);
 
-  // Ефект для керування доступністю (a11y): блокування скролу та повернення фокусу.
-  useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
-    if (isMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = originalOverflow;
-    }
-
-    // Функція очищення, що виконується при розмонтуванні компонента або зміні `isMenuOpen`
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      // Повернення фокусу на кнопку меню після його закриття
-      if (!isMenuOpen) {
-        menuButtonRef.current?.focus();
-      }
-    };
-  }, [isMenuOpen]);
-
-  const toggleMenu = useCallback(() => {
-    setIsMenuOpen((prev) => !prev);
-  }, []);
-
   return (
-    <header className="relative border-b-1 border-black bg-white">
-      <div className="container-main flex items-center justify-between px-4 py-2">
-        {/* Logo */}
-        <Link
-          to="/"
-          className="flex items-baseline"
-          aria-label="Svitlogics homepage"
-        >
-          <SvitlogicsLogo className="h-8 w-auto text-black" />
+    <header className="relative border-b border-carbon-black bg-paper-white">
+      <div className="mx-auto flex max-w-container items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+        <Link to="/" aria-label="Svitlogics Analysis Processor">
+          <SvitlogicsLogo className="h-10 w-auto text-svitlogics-blue" />
         </Link>
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-x-6">
-          <nav aria-label="Main navigation">
-            <ul className="flex items-center gap-x-6">
-              {navItems.map((item) => (
-                <li key={item.to}>
-                  <CustomNavLink to={item.to}>{item.label}</CustomNavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-
-        {/* Mobile Menu Button */}
+        <nav className="hidden md:block" aria-label="Main navigation">
+          <ul className="flex items-center gap-x-8">
+            {navItems.map((item) => (
+              <li key={item.to}>
+                <CustomNavLink to={item.to}>{item.label}</CustomNavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
         <div className="md:hidden">
           <button
-            ref={menuButtonRef}
             type="button"
-            className="flex items-center justify-center border-1 border-black bg-white p-2 text-black transition-colors duration-100 hover:bg-black hover:text-white"
-            onClick={toggleMenu}
+            className="flex items-center justify-center border border-neutral-500 p-2 text-carbon-black transition-colors hover:border-carbon-black hover:bg-neutral-300"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"
             aria-label={
               isMenuOpen ? "Close navigation menu" : "Open navigation menu"
             }
           >
-            {isMenuOpen ? (
-              <X size={20} strokeWidth={2} />
-            ) : (
-              <Menu size={20} strokeWidth={2} />
-            )}
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
-
-      {/* Mobile Navigation Panel */}
-      {isMenuOpen && (
-        <div
-          id="mobile-menu"
-          role="dialog" // role="dialog" є більш семантичним для модальних вікон
-          aria-modal="true" // Повідомляє скрін-рідерам, що вміст поза цим меню неактивний
-          className="absolute left-0 top-full w-full border-b-1 border-x-1 border-black bg-white md:hidden"
-        >
-          <nav className="p-4" aria-label="Mobile navigation">
-            <ul className="flex flex-col gap-y-2">
-              {mobileNavItems.map((item) => (
-                <li key={item.to}>
-                  <CustomNavLink to={item.to} mobile>
-                    {item.label}
-                  </CustomNavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-      )}
+      <div
+        id="mobile-menu"
+        role="region"
+        className={clsx(
+          "absolute top-full left-0 w-full border-b border-carbon-black bg-paper-white md:hidden",
+          { block: isMenuOpen, hidden: !isMenuOpen }
+        )}
+      >
+        <nav className="px-4 pt-2 pb-4 sm:px-6" aria-label="Mobile navigation">
+          <ul className="flex flex-col">
+            {navItems.map((item) => (
+              <li key={item.to}>
+                <CustomNavLink to={item.to} isMobile>
+                  {item.label}
+                </CustomNavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
     </header>
+  );
+};
+
+interface CustomNavLinkProps {
+  to: string;
+  children: React.ReactNode;
+  isMobile?: boolean;
+}
+
+const CustomNavLink: React.FC<CustomNavLinkProps> = ({
+  to,
+  children,
+  isMobile = false,
+}) => {
+  // Applies styles directly to RouterNavLink, avoiding unnecessary DOM elements
+  // and ensuring global focus styles are not overridden.
+  return (
+    <RouterNavLink
+      to={to}
+      className={({ isActive }: NavLinkRenderProps) =>
+        clsx(
+          "font-sans text-small font-semibold transition-colors",
+          isMobile ? "block w-full py-4 text-left" : "py-2",
+          isActive
+            ? "text-svitlogics-blue underline"
+            : "text-carbon-black hover:text-svitlogics-blue hover:underline"
+        )
+      }
+      // Removed the redundant 'aria-current' prop.
+      // The NavLink component handles this attribute automatically.
+    >
+      {children}
+    </RouterNavLink>
   );
 };
 

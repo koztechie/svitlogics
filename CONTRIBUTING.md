@@ -1,88 +1,77 @@
-# SVITLOGICS CONTRIBUTION DIRECTIVE
+# Svitlogics Contribution Protocol
 
-# DOCUMENT ID: CONTR-V3.0 ("THE GAUNTLET")
-
-# AUTHORIZED PERSONNEL ONLY
-
-## I. DECLARATION OF OPERATIONAL SOVEREIGNTY
-
-This is not a community document. This is an operational directive governing all interaction protocols with the Svitlogics source code repository. Svitlogics is a sovereign, solo-developed instrument. It was forged—not merely "built"—in Kyiv, Ukraine, under the explicit duress of sustained information warfare. It has one function: to provide an instrument for the deconstruction of weaponized narratives. It serves no other purpose.
-
-Engagement with this project is not a right; it is a privilege granted only to those who demonstrate absolute comprehension of and adherence to its core axioms. This directive is designed to repel casual contributors and filter for professionals who understand that in this domain, imprecision is a catastrophic failure.
-
-**If you are seeking validation, community kudos, or a friendly open-source environment, you are in the wrong repository. Terminate your session now.**
-
-If you are here to contribute to a serious instrument under exacting standards, you may proceed to the next article.
+**DOCUMENT ID:** CONTR-V4.0 ("THE ETHOS")  
+**STATUS:** OPERATIONAL
 
 ---
 
-## II. THE AXIOMS (NON-NEGOTIABLE)
+## I. Scope and Philosophy
 
-All potential contributions—bug reports, proposals, code—will be algorithmically and manually evaluated against three immutable axioms. Failure to comply with any single axiom will result in the immediate and permanent rejection of the contribution without further review.
+This document provides the governing protocol for all contributions to the Svitlogics source code repository. Svitlogics is a specialized instrument, engineered in Kyiv, Ukraine, with a singular mission: to serve as a bulwark against informational chaos by providing a tool for the forensic deconstruction of text.
 
-1.  **AXIOM OF MISSION ALIGNMENT**: The contribution must enhance the instrument's capacity for narrative deconstruction. It must add clarity, improve analytical precision, or harden security. Features introducing aesthetic embellishment, unnecessary user engagement mechanics, or any form of "softening" are considered mission-hostile and will be rejected on sight.
-2.  **AXIOM OF ARCHITECTURAL PURITY**: The system's stateless, serverless, zero-trust architecture is non-negotiable. Any contribution proposing data persistence for user-submitted content, introducing stateful logic to the backend, or otherwise compromising the privacy-first model will be classified as a system vulnerability and rejected.
-3.  **AXIOM OF SYSTEMIC COHERENCE**: The contribution must integrate flawlessly with the **[Svitlogics Design System](svitlogics-design-system-pure-minimalist-brutalist-light-theme.md)** and **[Svitlogics Writing System](svitlogics-writing-system-tone-voice.md)**. These are not guidelines; they are the operational physics of this project. `border-radius` is zero. `font-family` is mono. The voice is analytical. There is no alternative.
+Engagement with this project requires a full understanding of its core philosophy. This protocol is designed to filter for precise, mission-aligned contributions and to ensure the system's integrity as a tool for disciplined thought. Casual or aesthetic-driven contributions are outside the scope of this project.
+
+## II. The Core Axioms (Non-Negotiable)
+
+All contributions—bug reports, feature proposals, and code submissions—will be evaluated against three foundational axioms. Non-compliance with any axiom will result in the immediate rejection of the contribution without further review.
+
+1.  **AXIOM OF MISSION ALIGNMENT**: The contribution must directly enhance the instrument's capacity for textual analysis. It must improve clarity, analytical precision, security, or performance. Features introducing aesthetic embellishment, unnecessary user engagement mechanics, or any form of gamification are considered mission-hostile.
+2.  **AXIOM OF ARCHITECTURAL PURITY**: The system's stateless, serverless architecture is a core design principle. Any contribution proposing data persistence for user-submitted content, introducing stateful server-side logic, or otherwise compromising the privacy-first model will be rejected.
+3.  **AXIOM OF SYSTEMIC COHERENCE**: The contribution must integrate flawlessly with **The Ethos-Driven Design System**. This protocol is not a set of guidelines; it is the architectural blueprint. It mandates the strict use of the `Inter` typeface for UI and `Lora` for content, the established clinical color palette, and the 8px spatial grid. There are no deviations.
 
 ---
 
-## III. INTERACTION PROTOCOLS
+## III. Interaction Protocols
 
-### PROTOCOL 3.1: ANOMALY REPORTING (BUG REPORTS)
+### 3.1 Anomaly Reporting (Bug Reports)
 
-Anomalies are fractures in the instrument's integrity. They are to be reported with clinical precision.
+System anomalies compromise the instrument's integrity and must be reported with clinical precision.
 
-1.  **PRE-ACTION SEARCH**: Execute a comprehensive search of the [Issues database](https://github.com/koztechie/svitlogics/issues) to verify the anomaly is not a known artifact. Redundant reports will be closed.
-2.  **REPORTING FORMAT**: Submissions must be structured as a formal anomaly report.
-    - **CLASSIFICATION**: `[BUG] <Precise description of failure>`
-    - **REPLICATION VECTOR**: A deterministic, numbered sequence of actions to reproduce the system failure. If the anomaly is not 100% reproducible with the provided vector, the report is invalid.
-    - **STATE DEVIATION ANALYSIS**: A clear comparison of the documented `Expected State` versus the observed `Failed State`.
-    - **DIAGNOSTIC TELEMETRY**: Full, unedited console logs, network request/response headers and bodies, browser/version, and OS/version are mandatory. UI anomalies require high-resolution, uncropped screenshots or screen recordings.
+1.  **Pre-Action Search**: Execute a thorough search of the existing [Issues database](https://github.com/koztechie/svitlogics/issues) to verify the anomaly is not a known artifact. Redundant reports will be closed.
+2.  **Reporting Format**: Submissions must adhere to the following structure:
+    - **Classification**: `[BUG] <Precise description of failure>`
+    - **Replication Vector**: A deterministic, numbered sequence of actions to reproduce the system failure. If the anomaly is not 100% reproducible with the provided vector, the report is invalid.
+    - **State Deviation Analysis**: A clear comparison of the documented `Expected State` versus the observed `Failed State`.
+    - **Diagnostic Telemetry**: Full, unedited console logs, relevant network request/response data, browser/version, and OS/version are mandatory.
 
-Submissions failing to meet these criteria are not considered bug reports; they are considered system noise and will be purged.
+Submissions failing to meet these criteria are considered system noise and will be closed.
 
-### PROTOCOL 3.2: STRATEGIC PROPOSALS (FEATURE REQUESTS)
+### 3.2 Strategic Proposals (Feature Requests)
 
-All modifications to the instrument's core capabilities require a formal proposal.
+Modifications to the instrument's core capabilities require a formal proposal.
 
-1.  **INITIATION**: Proposals are initiated exclusively via a new Issue.
-2.  **PROPOSAL FORMAT**: The proposal must be structured as a strategic brief.
-    - **CLASSIFICATION**: `[PROPOSAL] <Name of proposed module or function>`
-    - **THREAT/OPPORTUNITY ANALYSIS**: A concise definition of the strategic gap the proposal addresses. What current limitation makes the instrument less effective?
-    - **MISSION ALIGNMENT JUSTIFICATION**: A logical proof demonstrating how the proposal directly aligns with the Axioms in Article II. This is the primary evaluation criterion.
-    - **SYSTEM INTEGRATION BLUEPRINT**: A high-level architectural diagram or description of how the new module integrates with the existing stateless, serverless architecture without compromising it.
+1.  **Initiation**: Proposals are initiated exclusively via a new Issue.
+2.  **Proposal Format**: The proposal must be structured as follows:
+    - **Classification**: `[PROPOSAL] <Name of proposed module or function>`
+    - **Strategic Justification**: A concise definition of the capability gap the proposal addresses.
+    - **Mission Alignment Rationale**: A logical proof demonstrating how the proposal directly aligns with the Core Axioms. This is the primary evaluation criterion.
+    - **System Integration Plan**: A high-level description of how the new module integrates with the existing stateless, serverless architecture without compromising it.
 
 Proposals that are tactical (minor UI tweaks) rather than strategic will be rejected.
 
-### PROTOCOL 3.3: CODE SUBMISSION (PULL REQUESTS)
+### 3.3 Code Submission (Pull Requests)
 
 Code is the final, executed form of an approved proposal. Unsolicited code submissions will be rejected without review.
 
-1.  **BRANCHING DISCIPLINE**: Originate all branches from `dev`. Naming convention is `type/scope/short-description` (e.g., `feat/api/rate-limiter-v2`).
-2.  **CODE INTEGRITY**: All code must be formatted (`npm run format`) and pass all linting checks (`npm run lint`). The build must be clean. There is no tolerance for deviation.
-3.  **COMMIT HYGIENE**: Commits must be atomic and adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification with military precision. A well-curated commit history is a non-negotiable aspect of this project's quality.
-4.  **SUBMISSION BRIEF**: The Pull Request description is a formal document. It must reference the originating proposal issue and provide a clear, technical changelog.
-5.  **PEER REVIEW GAUNTLET**: Your code will be subjected to an unforgiving review process. Be prepared to defend every line, every choice, and every architectural trade-off. The burden of proof for the code's correctness, security, and performance rests solely with the contributor.
+1.  **Branching Discipline**: Originate all branches from `dev`. Naming convention: `type/scope/short-description` (e.g., `feat/api/rate-limiter-v2`).
+2.  **Code Integrity**: All code must be formatted (`npm run format`) and pass all linting checks (`npm run lint`). The build must be clean.
+3.  **Commit Hygiene**: Commits must be atomic and adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification. A well-curated commit history is a non-negotiable requirement.
+4.  **Submission Brief**: The Pull Request description must reference the originating proposal issue and provide a clear, technical changelog.
+5.  **Review Process**: Your code will be subjected to a rigorous review. The burden of proof for the code's correctness, security, and performance rests solely with the contributor.
 
-## IV. TECHNICAL DECREES
+## IV. Technical Mandates
 
-- **STATE**: Shall not be persisted on the server.
-- **SECURITY**: Client-side API key exposure is a critical failure. All sensitive operations are proxied.
-- **AESTHETICS**: Governed by the Design System. No deviation.
-- **TYPOGRAPHY**: `IBM Plex Mono`. No other fonts.
-- **GEOMETRY**: `border-radius` is forbidden.
-- **LANGUAGE**: `TypeScript`. `any` is forbidden except in cases of extreme, well-justified technical necessity.
+- **State**: Shall not be persisted on the server.
+- **Security**: Client-side exposure of secrets is a critical failure. All sensitive operations must be proxied through the serverless backend.
+- **Aesthetics**: Governed strictly by **The Ethos-Driven Design System**. No deviation.
+- **Typography**: `Inter` for UI and headings; `Lora` for body copy. `Source Code Pro` for the input processor. No other fonts.
+- **Geometry**: `border-radius` is forbidden. Sharp 90-degree corners are mandatory.
+- **Language**: `TypeScript`. The use of `any` is forbidden except in cases of extreme, well-justified technical necessity.
 
-## V. INDEMNIFICATION AND WAIVER OF CLAIMS
+## V. License
 
-By contributing, you affirm that your contribution is your own original work and that you have the legal right to grant all licenses contained herein. You agree to indemnify and hold harmless the Author from any and all claims, damages, and legal actions arising from your contribution. You acknowledge that your contribution is provided voluntarily and that you expect no compensation.
-
-## VI. LICENSE
-
-All contributions to this project are irrevocably licensed under the project's own license, the **Svitlogics Software License Agreement v3.0 ("The Uncompromising")**. By submitting a contribution, you agree to these terms.
+All contributions to this project are irrevocably licensed under the project's own license. By submitting a contribution, you agree to these terms.
 
 ---
 
-<div align-center>
-  <strong>FAILURE TO ADHERE TO THIS PROTOCOL WILL RESULT IN REJECTION. NO APPEALS.</strong>
-</div>
+**Adherence to this protocol is a precondition for engagement.**

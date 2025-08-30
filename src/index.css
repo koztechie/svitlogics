@@ -1,133 +1,108 @@
 /**
- * @fileoverview Глобальний файл стилів Svitlogics.
- *
- * Цей файл виконує три основні задачі:
- * 1. Імпортує базові шари Tailwind CSS.
- * 2. Визначає глобальні базові стилі для всього застосунку, забезпечуючи
- *    візуальну консистентність та відповідність дизайн-системі
- *    "Pure Minimalist-Brutalist".
- * 3. Визначає перевикористовувані компонентні класи.
- * @version 1.1.0
+ * Svitlogics Global Stylesheet
+ * Version 2.1 (Ethos-Driven Design System)
  */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/*
- * =============================================================================
- * # Root & Custom Properties
- * =============================================================================
- * Визначаємо глобальні CSS-змінні для значень, які не є частиною теми
- * Tailwind CSS або використовуються в кількох місцях для забезпечення
- * консистентності (DRY).
- */
-:root {
-  --focus-outline-width: 2px;
-  --focus-outline-offset: 2px;
-  --focus-outline-color: theme("colors.blue-accent");
-  --selection-bg-color: theme("colors.blue-accent");
-  --selection-text-color: theme("colors.white");
-}
-
-/*
- * =============================================================================
- * # Base Layer Styles
- * =============================================================================
- * Використовуємо `@layer base` для визначення власних базових стилів.
- * Перевага надається функції `theme()` замість `@apply`, щоб уникнути
- * конфліктів специфічності з утилітарними класами Tailwind.
- */
 @layer base {
-  /* --- Глобальні налаштування документа --- */
-  html {
-    /* `scroll-behavior: smooth` забезпечує плавну прокрутку для посилань-якорів. */
-    scroll-behavior: smooth;
-    /* Використовуємо системні шрифти як fallback для надійності. */
-    font-family: theme("fontFamily.mono"), ui-monospace, SFMono-Regular, Menlo,
-      Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  }
-
-  body {
-    /* `min-height` на `body` дозволяє дочірнім елементам використовувати `100vh`. */
+  /* --- Global Reset & Document Setup --- */
+  html,
+  body,
+  #root {
+    font-family: theme("fontFamily.sans");
+    color: theme("colors.carbon-black");
+    background-color: theme("colors.paper-white");
     min-height: 100vh;
-    color: theme("colors.black");
-    background-color: theme("colors.white");
-    /* Покращене згладжування шрифтів для кращої читабельності. */
+    margin: 0;
+    padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
   }
 
-  /* --- Скидання стилів для типографіки --- */
+  /* --- Typographic Defaults --- */
   h1,
   h2,
   h3,
   h4,
   h5,
-  h6,
-  p,
-  ul,
-  ol {
+  h6 {
+    font-family: theme("fontFamily.sans");
     margin: 0;
     padding: 0;
   }
 
-  p {
-    line-height: theme("lineHeight.body");
+  p,
+  ul,
+  ol {
+    font-family: theme("fontFamily.serif");
+    margin: 0;
+    padding: 0;
   }
 
   a {
-    color: theme("colors.blue-accent");
+    color: theme("colors.svitlogics-blue");
     text-decoration-line: none;
+    transition: color 150ms;
+  }
+  a:hover {
+    text-decoration-line: underline;
   }
 
   strong,
   b {
-    font-weight: theme("fontWeight.bold");
+    font-weight: 600;
   }
 
-  /* --- Глобальні стилі для інтерактивних елементів --- */
-
-  /* Універсальний індикатор фокусу для навігації з клавіатури. */
+  /* --- Global Interactive Element Styles --- */
   *:focus-visible {
-    outline: var(--focus-outline-width) solid var(--focus-outline-color);
-    outline-offset: var(--focus-outline-offset);
-    border-radius: 0; /* Гарантуємо, що outline також буде гострим. */
+    outline: 2px solid theme("colors.svitlogics-blue");
+    outline-offset: 2px;
   }
 
-  /* Бруталістський ресет: забезпечуємо гострі кути для всіх елементів. */
-  *,
-  *::before,
-  *::after {
-    border-radius: 0 !important;
-  }
+  /* --- ВИДАЛЕНО: `border-radius: 0 !important` тепер керується конфігурацією --- */
 
-  /* --- Стилі для виділення тексту --- */
+  /* --- Selection Styles --- */
   ::selection {
-    background-color: var(--selection-bg-color);
-    color: var(--selection-text-color);
+    background-color: theme("colors.svitlogics-blue");
+    color: theme("colors.paper-white");
   }
   ::-moz-selection {
-    /* Специфічно для Firefox */
-    background-color: var(--selection-bg-color);
-    color: var(--selection-text-color);
+    background-color: theme("colors.svitlogics-blue");
+    color: theme("colors.paper-white");
   }
 }
 
-/*
- * =============================================================================
- * # Components Layer
- * =============================================================================
- * Визначаємо перевикористовувані, компонентні класи.
- * Тут використання `@apply` є доречним.
- */
 @layer components {
   /**
-   * .container-main
-   * Головний контейнер для центрування контенту та застосування
-   * консистентних горизонтальних відступів.
+   * .container-main: Reusable container class.
    */
   .container-main {
-    @apply mx-auto max-w-container px-4;
+    @apply max-w-container mx-auto px-4 sm:px-6 lg:px-8; /* Додано адаптивні відступи */
+  }
+
+  /**
+   * .prose-styles: Base styles for MDX/long-form content.
+   */
+  .prose-styles {
+    @apply max-w-prose mx-auto; /* Центруємо текст */
+
+    p,
+    ul,
+    ol {
+      @apply mb-4 font-serif text-body;
+    }
+    h2 {
+      @apply mt-12 mb-4 font-sans text-h2;
+    }
+    h3 {
+      @apply mt-8 mb-3 font-sans text-h3;
+    }
+    a {
+      @apply text-svitlogics-blue hover:underline;
+    }
   }
 }

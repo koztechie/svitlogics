@@ -1,77 +1,172 @@
-import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { Helmet } from "react-helmet-async";
-import DOMPurify from "dompurify";
+/**
+ * Svitlogics Home Page
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (The Interface is a Laboratory, Not a Stage): This page serves
+ *   as the primary analytical workbench. The structure is sober, functional, and
+ *   devoid of theatricality. It is a controlled environment for critical inquiry.
+ * - Section Bravo (Clarity is a Moral Imperative): The component hierarchy and
+ *   data flow are transparent. State management is explicit and predictable.
+ * - Section Bravo (Data as Inquiry, Not Verdict): The AnalysisResults component
+ *   presents findings as structured observations, not absolute judgments.
+ * - Section Bravo (Respect the User's Intellect): The interface provides dense,
+ *   high-value information (methodology, findings) and trusts the user to process it.
+ * - Section Bravo (Engineered for Focus): A single-column layout with generous
+ *   whitespace and a rigid grid creates a distraction-free analytical environment.
+ * - Section Delta (Typography): A strict separation between Inter (UI) and Lora
+ *   (content/specimen) is maintained throughout the page.
+ * - Section Echo (Spatial & Grid System): All spacing uses the 8px grid.
+ *   Generous whitespace is used as a cognitive buffer.
+ * - Section Foxtrot (Component Architecture): Sub-components are functional
+ *   instruments, not decorative elements.
+ * - Section Hotel (Copy & Tone of Voice): All microcopy is clinical, direct,
+ *   and educational. There is no persuasive or colloquial language.
+ */
 
-import AnalysisResults, { Category } from "../components/AnalysisResults";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useMemo,
+} from "react";
+import { Helmet } from "react-helmet-async";
+import AnalysisResults, {
+  AnalysisFinding,
+} from "../components/AnalysisResults";
 import TextInput from "../components/TextInput";
-import LanguageSelector, { AnalysisLanguage } from "../components/LanguageSelector";
+import LanguageSelector, {
+  AnalysisLanguage,
+} from "../components/LanguageSelector";
 import { startAnalysis, checkAnalysisStatus } from "../services/aiApiService";
+import { Heading } from "../components/ui/Heading";
+
+// --- Types and Constants ---
 
 interface AnalysisData {
-  categories: Category[];
+  findings: AnalysisFinding[];
   overallSummary: string;
 }
 
-const initialCategories: Category[] = [
-  { name: "Manipulative Content", percentage: null, explanation: null },
-  { name: "Propagandistic Content", percentage: null, explanation: null },
-  { name: "Disinformation", percentage: null, explanation: null },
-  { name: "Unbiased Presentation", percentage: null, explanation: null },
-  { name: "Emotional Tone", percentage: null, explanation: null },
+const initialFindings: AnalysisFinding[] = [
+  { findingType: "Manipulative Content", observation: null },
+  { findingType: "Propagandistic Content", observation: null },
+  { findingType: "Disinformation", observation: null },
+  { findingType: "Unbiased Presentation", observation: null },
+  { findingType: "Emotional Tone", observation: null },
 ];
 
 const initialAnalysisData: AnalysisData = {
-  categories: initialCategories,
+  findings: initialFindings,
   overallSummary: "",
 };
 
 const SAFE_CHARACTER_LIMIT = 15000;
 
-const createSanitizedHtml = (rawHtml: string): { __html: string } => {
-  const styledHtml = rawHtml.replace(
-    /<em>(.*?)<\/em>/g,
-    '<em class="not-italic font-medium">$1</em>'
-  );
-  if (typeof window !== 'undefined') {
-    return { __html: DOMPurify.sanitize(styledHtml, { USE_PROFILES: { html: true }, ALLOWED_TAGS: ["strong", "em"] }) };
-  }
-  return { __html: styledHtml };
+// --- Content (Pure Text, No HTML) ---
+
+const content = {
+  seoTitle: "Svitlogics | AI Text Analyzer for Bias & Disinformation",
+  seoDescription:
+    "Analyze text for manipulation, propaganda, and bias with Svitlogics. An AI tool to empower critical thinking in English & Ukrainian. Engineered in Kyiv.",
+  canonicalUrl: "https://svitlogics.com/",
+  mainHeading: "Disinformation & Manipulation Analysis",
+  introParagraph:
+    "An independent AI tool that analyzes text for propaganda, bias, and manipulation. Svitlogics provides structured insights to aid, not replace, human critical thinking.",
+  methodology: {
+    title: "Methodology and Mission",
+    paragraphs: [
+      "The mission of Svitlogics is to provide an accessible, transparent tool for identifying manipulative techniques. This system was developed from Kyiv, Ukraine, driven by the need to counter pervasive information warfare. The core principle is that understanding how manipulation works is the first step toward resisting it.",
+      "The analysis is performed by a high-availability cascade of large language models guided by a detailed, custom-calibrated system prompt, which instructs the AI to assess the text against five core criteria:",
+    ],
+    criteria: [
+      {
+        term: "Manipulative Content:",
+        definition:
+          "Identifies logical fallacies, emotional appeals, and psychological tactics.",
+      },
+      {
+        term: "Propagandistic Content:",
+        definition:
+          "Detects elements of systematic, one-sided ideological campaigns.",
+      },
+      {
+        term: "Disinformation:",
+        definition:
+          "Assesses for verifiably false information presented with intent to deceive.",
+      },
+      {
+        term: "Unbiased Presentation:",
+        definition:
+          "Evaluates the text's commitment to fairness, objectivity, and balance.",
+      },
+      {
+        term: "Emotional Tone:",
+        definition: "Analyzes the underlying sentiment and its intensity.",
+      },
+    ],
+    finalParagraph:
+      "It is critical to understand that no AI analysis is infallible. Svitlogics is not designed to deliver a final “truth” verdict. Its purpose is to provide structured data and justifications, empowering you to form your own, more informed conclusions.",
+  },
 };
 
+// --- Sub-components ---
 
+const ApiErrorDisplay: React.FC<{ error: string | null }> = ({ error }) => {
+  if (!error) return null;
+  return (
+    <div
+      className="border border-signal-red bg-signal-red/10 p-4 font-sans text-small text-signal-red"
+      role="alert"
+    >
+      <span className="font-semibold">System Error:</span>{" "}
+      {error.replace("Error: ", "")}
+    </div>
+  );
+};
+
+const MethodologySection: React.FC<{ content: typeof content.methodology }> = ({
+  content,
+}) => (
+  <section id="methodology-section" className="mx-auto max-w-prose">
+    <Heading as="h2" className="mb-6 text-center">
+      {content.title}
+    </Heading>
+    <div className="space-y-4 font-serif text-body text-carbon-black">
+      {content.paragraphs.map((p, index) => (
+        <p key={index}>{p}</p>
+      ))}
+      <ul className="list-disc space-y-2 py-2 pl-6">
+        {content.criteria.map((criterion, index) => (
+          <li key={index}>
+            <strong>{criterion.term}</strong> {criterion.definition}
+          </li>
+        ))}
+      </ul>
+      <p>
+        <strong>{content.finalParagraph}</strong>
+      </p>
+    </div>
+  </section>
+);
+
+/**
+ * The main application page, serving as the user's primary "workbench".
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Laboratory, Not a Stage): The layout is structured, sober, and
+ *   focused entirely on the analysis workflow.
+ * - Section Delta (Typography): Strictly enforces the Inter/Lora font distinction
+ *   between the UI (instrument) and content (specimen).
+ * - Section Echo (Spatial System): Utilizes a single-column, focused layout with
+ *   generous whitespace and adherence to the 8px grid.
+ */
 const Home: React.FC = () => {
-  const content = {
-    seoTitle: "Svitlogics | AI Text Analyzer for Bias & Disinformation",
-    seoDescription:
-      "Analyze text for manipulation, propaganda, and bias with Svitlogics. An AI tool to empower critical thinking in English & Ukrainian. By Eugene Kozlovsky.",
-    canonicalUrl: "https://svitlogics.com/",
-    mainHeading: "DISINFORMATION & MANIPULATION ANALYSIS",
-    introParagraph:
-      "An independent AI tool that analyzes text for propaganda, bias, and manipulation. Svitlogics provides structured insights to aid your critical thinking.",
-    newSection: {
-      title: "Methodology and mission",
-      paragraphs: [
-        "My mission with Svitlogics is straightforward: to provide an accessible, transparent tool for identifying manipulative techniques. I developed it as a solo project from Kyiv, Ukraine, driven by the need to counter pervasive information warfare. The core principle is that understanding <em>how</em> manipulation works is the first step toward resisting it.",
-        "The analysis is performed by a high-availability cascade of Google AI models, including the Gemini and Gemma families. This system ensures reliability by automatically falling back to an alternative model if a primary one is at capacity. Each model is guided by a detailed, custom-calibrated system prompt, which instructs the AI to assess the text against five core criteria.",
-        "The analysis focuses on these five areas:",
-      ],
-      criteria: [
-        "<strong>Manipulative Content:</strong> Identifies logical fallacies, emotional appeals, and psychological tactics.",
-        "<strong>Propagandistic Content:</strong> Detects elements of systematic, one-sided ideological campaigns.",
-        "<strong>Disinformation:</strong> Assesses for verifiably false information presented with intent to deceive.",
-        "<strong>Unbiased Presentation (Impartiality):</strong> Evaluates the text's commitment to fairness, objectivity, and balance.",
-        "<strong>Emotional Tone:</strong> Analyzes the underlying sentiment and its intensity.",
-      ],
-      finalParagraph:
-        'It is important to understand that <strong>no AI analysis is 100% infallible</strong>. Svitlogics is not designed to deliver a final "truth" verdict. Its purpose is to provide structured data and justifications, empowering you to form your own, more informed conclusions.',
-    },
-  };
-
   const [text, setText] = useState<string>("");
   const [analysisLanguage, setAnalysisLanguage] =
     useState<AnalysisLanguage>("en");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisData, setAnalysisData] = useState<AnalysisData>(initialAnalysisData);
+  const [analysisData, setAnalysisData] =
+    useState<AnalysisData>(initialAnalysisData);
   const [apiError, setApiError] = useState<string | null>(null);
 
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -101,9 +196,9 @@ const Home: React.FC = () => {
 
     if (!inputText || inputText.length > SAFE_CHARACTER_LIMIT) {
       setApiError(
-        !inputText 
-        ? "Error: Input text is required for analysis." 
-        : `Error: Text exceeds the maximum length of ${SAFE_CHARACTER_LIMIT} characters.`
+        !inputText
+          ? "Input text is required for analysis."
+          : `Text exceeds the maximum length of ${SAFE_CHARACTER_LIMIT} characters.`
       );
       return;
     }
@@ -118,35 +213,37 @@ const Home: React.FC = () => {
         cleanupTimers();
         setIsAnalyzing(false);
         setApiError(
-          "Error: Analysis timed out. The server may be under heavy load. Please try again."
+          "Analysis timed out. The server may be under heavy load. Please try again."
         );
       }, 90000);
 
       pollingIntervalRef.current = setInterval(async () => {
         try {
           const statusResponse = await checkAnalysisStatus(taskId);
-
           if (statusResponse.status === "completed" && statusResponse.data) {
             cleanupTimers();
             setIsAnalyzing(false);
-
             const result = statusResponse.data;
-            const updatedCategories: Category[] = result.analysis_results.map(
-              (cat) => ({
-                name: cat.category_name,
-                percentage: cat.percentage_score,
-                explanation: cat.justification,
-              })
-            );
-
+            const updatedFindings: AnalysisFinding[] =
+              result.analysis_results.map((cat) => ({
+                findingType: cat.category_name,
+                observation: cat.justification,
+              }));
             setAnalysisData({
-              categories: initialCategories.map(c => updatedCategories.find(u => u.name === c.name) || c),
+              findings: initialFindings.map(
+                (f) =>
+                  updatedFindings.find(
+                    (u) => u.findingType === f.findingType
+                  ) || f
+              ),
               overallSummary: result.overall_summary || "",
             });
           } else if (statusResponse.status === "failed") {
             cleanupTimers();
             setIsAnalyzing(false);
-            setApiError(`Error: ${statusResponse.error || "Analysis failed on the server."}`);
+            setApiError(
+              statusResponse.error || "Analysis failed on the server."
+            );
           }
         } catch (pollError: any) {
           cleanupTimers();
@@ -157,41 +254,36 @@ const Home: React.FC = () => {
     } catch (e: any) {
       cleanupTimers();
       setIsAnalyzing(false);
-      setApiError(`Error: ${e.message}`);
+      setApiError(e.message);
     }
   }, [text, analysisLanguage, cleanupTimers]);
 
   useEffect(() => {
     const storedLang = localStorage.getItem("svitlogics_language");
-    if (storedLang === "uk" || storedLang === "en") {
-        setAnalysisLanguage(storedLang);
-    }
+    if (storedLang === "uk" || storedLang === "en")
+      setAnalysisLanguage(storedLang);
   }, []);
 
   useEffect(() => {
     localStorage.setItem("svitlogics_language", analysisLanguage);
   }, [analysisLanguage]);
 
-  const softwareAppJsonLd = useMemo(() => ({
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: "Svitlogics",
-    applicationCategory: "ProductivityApplication",
-    operatingSystem: "WebPlatform",
-    description: content.seoDescription,
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    author: {
-      "@type": "Person",
-      name: "Eugene Kozlovsky",
-    },
-  }), [content.seoDescription]);
+  const softwareAppJsonLd = useMemo(
+    () => ({
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "Svitlogics",
+      applicationCategory: "ProductivityApplication",
+      operatingSystem: "WebPlatform",
+      description: content.seoDescription,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      author: { "@type": "Person", name: "Eugene Kozlovsky" },
+    }),
+    [content.seoDescription]
+  );
 
   return (
-    <div>
+    <>
       <Helmet>
         <title>{content.seoTitle}</title>
         <meta name="description" content={content.seoDescription} />
@@ -204,27 +296,25 @@ const Home: React.FC = () => {
         </script>
       </Helmet>
 
-      <div className="container-main pt-16">
-        <section>
-          <div className="w-full">
-            <h1 className="font-mono font-bold text-h1-mobile normal-case md:uppercase lg:text-h1-desktop text-black mb-4 text-left">
-              {content.mainHeading}
-            </h1>
-            <p className="font-mono text-body-main leading-body text-black max-w-3xl">
-              {content.introParagraph}
-            </p>
-          </div>
+      <div className="container-main py-16">
+        <section className="mx-auto max-w-prose text-left">
+          <Heading as="h1" className="mb-4">
+            {content.mainHeading}
+          </Heading>
+          <p className="font-serif text-h4 text-carbon-black">
+            {content.introParagraph}
+          </p>
         </section>
       </div>
 
-      <div className="container-main pt-12 lg:pt-16 pb-16">
-        <div className="space-y-12 lg:space-y-16">
-          <section id="analysis-form-section" className="space-y-8">
+      <div className="container-main pb-16">
+        <div className="space-y-12">
+          <section id="analysis-workbench" className="space-y-8">
             <LanguageSelector
               selectedLanguage={analysisLanguage}
               onLanguageChange={(lang) => {
                 setAnalysisLanguage(lang);
-                handleClear(); // Скидаємо все при зміні мови 
+                handleClear();
               }}
             />
             <TextInput
@@ -237,55 +327,21 @@ const Home: React.FC = () => {
             />
           </section>
 
-          <section aria-live="polite" aria-atomic="true">
-            {apiError && (
-              <div className="p-4 border-2 border-status-error bg-white text-status-error font-mono mb-8 rounded-none">
-                <strong className="font-mono font-medium text-ui-label uppercase">
-                  Error:
-                </strong>
-                <span className="font-mono font-normal text-body-main">
-                  {" "}
-                  {apiError.replace("Error: ", "")}
-                </span>
-              </div>
-            )}
+          <section aria-live="polite" aria-atomic="true" className="space-y-8">
+            <ApiErrorDisplay error={apiError} />
             <AnalysisResults
-              categories={analysisData.categories}
+              findings={analysisData.findings}
               isAnalyzing={isAnalyzing}
               overallSummary={analysisData.overallSummary}
             />
           </section>
 
-          <section id="methodology-section" className="max-w-3xl mx-auto">
-            <h2 className="font-mono font-semibold text-h2-mobile lg:text-h2-desktop text-black mb-6 normal-case text-center">
-              {content.newSection.title}
-            </h2>
-            <div className="space-y-4 font-mono font-normal text-body-main leading-body text-black">
-              {content.newSection.paragraphs.map((p, index) => (
-                <p
-                  key={index}
-                  dangerouslySetInnerHTML={createSanitizedHtml(p)}
-                />
-              ))}
-              <ul className="list-disc ml-6 space-y-2 pt-2">
-                {content.newSection.criteria.map((criterion, index) => (
-                  <li
-                    key={index}
-                    dangerouslySetInnerHTML={createSanitizedHtml(criterion)}
-                  />
-                ))}
-              </ul>
-              <p
-                className="pt-4"
-                dangerouslySetInnerHTML={createSanitizedHtml(
-                  content.newSection.finalParagraph
-                )}
-              />
-            </div>
-          </section>
+          <div className="pt-8">
+            <MethodologySection content={content.methodology} />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

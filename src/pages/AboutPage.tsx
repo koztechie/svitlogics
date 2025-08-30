@@ -1,34 +1,44 @@
+/**
+ * Svitlogics About Page
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Design is an Act of Resistance): This page presents
+ *   information in a sober, structured manner, stripped of all non-essential
+ *   visual elements and decorative attributes.
+ * - Section Alpha (Interface is a Laboratory): The design is calibrated for
+ *   precision and objectivity, serving as a clear, predictable information resource.
+ * - Section Bravo (Clarity is a Moral Imperative): The content structure,
+ *   section organization, and information presentation are unambiguous.
+ * - Section Charlie (Chromatic System): Employs the prescribed palette for
+ *   text (Carbon Black) and background (Paper White).
+ * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
+ *   grid system and constrains content to `max-w-prose` for optimal readability.
+ * - Section Delta (Typography): Uses 'Inter' (`font-sans`) for headings and
+ *   'Lora' (`font-serif`) for body copy, maintaining UI/Instrument distinction.
+ * - Section Foxtrot (Component Architecture): Embodies a purely informational
+ *   container with no decorative attributes or shadows.
+ * - Section Hotel (Copy & Tone of Voice): The content uses precise, technical
+ *   language and avoids emotional or persuasive phrasing.
+ */
+
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import DOMPurify from "dompurify";
+import { Heading } from "../components/ui/Heading";
 
-// --- Типізація та Константи (без змін) ---
-interface SubSection {
-  readonly id: string;
-  readonly title: string;
-  readonly paragraphs: readonly string[];
-}
-interface ContentSection {
-  readonly id: string;
-  readonly title: string;
-  readonly paragraphs?: readonly string[];
-  readonly subSections?: readonly SubSection[];
-}
 const content = {
-  seoTitle: "About Svitlogics | Mission, Methodology, and Technology",
+  seoTitle: "About Svitlogics | Mission, Philosophy, and Methodology",
   seoDescription:
-    "An overview of the Svitlogics mission, methodology, and technology. An AI text analysis tool built in Kyiv, Ukraine to combat disinformation and empower critical thinking.",
-  canonicalUrl: "https://svitlogics.com/about",
-  pageTitle: "ABOUT SVITLOGICS",
+    "Discover the ethos behind Svitlogics. Learn how this AI text analysis tool was engineered in Kyiv, Ukraine, as a bulwark against informational chaos.",
+  pageTitle: "About Svitlogics",
   introduction:
-    "Svitlogics was not built as an AI novelty. It was engineered for a singular purpose: to provide a tool for clarity in an environment saturated with informational chaos. This document outlines the project mission, methodology, and core technology.",
+    "Svitlogics was not built as an AI novelty. It was engineered as an instrument for disciplined thought in an environment saturated with informational chaos. This document outlines its mission, methodology, and the philosophy that dictates its every function and design element.",
   sections: [
     {
       id: "mission",
       title: "Mission",
       paragraphs: [
-        "My mission with Svitlogics is direct: to provide an accessible, transparent tool for identifying manipulative techniques. This project was developed as a solo endeavor from my home in Kyiv, Ukraine, driven by the daily reality of information warfare. The core principle is that understanding <em>how</em> a message is constructed to influence is a necessary skill for navigating the modern information environment.",
-        "Svitlogics is designed to be an accessible instrument for journalists, researchers, students, or any individual seeking to analyze the structure of a text.",
+        "The mission is to provide an accessible, transparent tool for identifying manipulative techniques in text. This project was developed as a solo endeavor from Kyiv, Ukraine, driven by the daily reality of systemic information warfare. The core principle is that understanding *how* a message is constructed to influence is a necessary skill for navigating the modern information environment.",
+        "Svitlogics is designed as an auxiliary cognitive instrument for journalists, researchers, students, or any individual seeking to analyze the structure and intent of a text.",
       ],
     },
     {
@@ -37,86 +47,60 @@ const content = {
       subSections: [
         {
           id: "analysis-model",
-          title: "Analysis model",
+          title: "Analysis Model",
           paragraphs: [
-            'Svitlogics is an <strong>auxiliary instrument for critical thinking</strong>, not a "truth machine." It does not deliver a simplistic "true" or "false" verdict, as effective manipulation often relies on a complex web of emotional appeals, logical fallacies, and carefully framed narratives rather than a single, verifiable lie.',
-            "Instead of a verdict, the tool provides a structured analysis across five core criteria: Manipulative Content, Propagandistic Content, Disinformation, Unbiased Presentation, and Emotional Tone. This approach provides data that helps the user ask better questions and form their own, more informed conclusions.",
+            "Svitlogics is an instrument for inquiry, not a 'truth machine.' It never delivers a simplistic verdict. Effective manipulation often relies on a complex web of emotional appeals, logical fallacies, and framed narratives rather than a single, verifiable lie.",
+            "Instead of a verdict, the tool provides a structured analysis of identified rhetorical and linguistic patterns. This approach provides data that helps the user ask better questions and form their own, more informed conclusions, deferring always to their final judgment.",
           ],
         },
         {
           id: "tech-implementation",
-          title: "Technical implementation",
+          title: "Technical Implementation",
           paragraphs: [
-            "Svitlogics is a modern, high-performance web application. The front-end is built with React, TypeScript, and Vite, and all pages are pre-rendered into static HTML during the build process (Static Site Generation), ensuring near-instantaneous load times.",
-            "The core analysis logic resides in a <strong>secure, asynchronous back-end running on Netlify Functions.</strong> This service utilizes a high-availability cascade of <strong>Google Gemini 2.5 Pro models</strong>. This architecture ensures that all complex processing is handled securely on the server, guaranteeing both performance and privacy.",
-            "<strong>Future Development:</strong> The next major milestone is the integration of <strong>real-time, AI-driven web search</strong> capabilities into the Disinformation analysis. This will allow the model to cross-reference claims against external sources for more robust, context-aware analysis.",
+            "Svitlogics is a high-performance web application built with React, TypeScript, and Vite, with all pages pre-rendered into static HTML for near-instantaneous load times.",
+            "The core analysis logic resides in a secure, asynchronous back-end service utilizing a cascade of premium large language models. This architecture ensures all complex processing is handled securely on the server, guaranteeing both performance and privacy.",
+            "The next major development milestone is to integrate real-time, AI-driven web search capabilities directly into the analysis. This will allow the model to cross-reference claims against external sources, transforming Svitlogics into a next-generation instrument for robust, context-aware analysis.",
           ],
         },
       ],
     },
     {
       id: "design-philosophy",
-      title: "Design philosophy",
+      title: "Design Philosophy",
       paragraphs: [
-        "The design of Svitlogics is a functional decision that reflects its core mission. It embraces a <strong>'Pure Minimalist-Brutalist'</strong> aesthetic to build trust through directness.",
-        "The user interface is intentionally clear. Every element, from the universal use of the <strong>IBM Plex Mono</strong> font to the stark black-and-white palette with a single functional blue accent, is chosen to support clarity and transparency. The user experience is designed to be as direct and honest as the analysis it presents.",
+        "The design of Svitlogics is not a stylistic choice; it is an ethical imperative. It is a direct counter-argument to the noisy, frantic, and manipulative digital spaces it is designed to analyze. The interface is a manifestation of its purpose: a sober, structured, and silent sanctuary for focused thought.",
+        "Its aesthetic is that of a high-consequence laboratory. The 'Inter' typeface is used for all UI controls for maximum legibility, while 'Lora' is used for analyzed text to create a clear cognitive separation. The color palette is intentionally desaturated and clinical. Every element is calibrated for precision and objectivity, receding into the background to allow the user's intellect to become the primary focus.",
       ],
     },
     {
       id: "project-status",
-      title: "Project status",
+      title: "Project Status",
       paragraphs: [
-        "Svitlogics is in public beta. The core functionality is operational, but the system is under active development. <strong>Bugs or performance limitations may be present</strong>. All analysis results should be considered preliminary.",
+        "Svitlogics is in public beta. The core functionality is operational, but the system is under active development. Performance limitations or bugs may be present. All analysis results should be considered preliminary and subject to user verification.",
       ],
     },
   ],
-} as const;
-
-// --- ФУНКЦІЯ ОЧИЩЕННЯ HTML ---
-/**
- * @description Безпечно рендерить HTML-рядок, попередньо очистивши його.
- * Перевіряє, чи виконується код у браузері, перед використанням DOMPurify.
- * @param {string} rawHtml - Необроблений HTML-рядок.
- * @returns {object} Об'єкт, сумісний з `dangerouslySetInnerHTML`.
- */
-const createSanitizedHtml = (rawHtml: string) => {
-  let sanitizedHtml = rawHtml;
-  if (typeof window !== "undefined") {
-    sanitizedHtml = DOMPurify.sanitize(rawHtml, {
-      USE_PROFILES: { html: true },
-      ALLOWED_TAGS: ["strong", "em", "a"],
-      ALLOWED_ATTR: ["href", "target", "rel"],
-    });
-  }
-  // Застосовуємо системний стиль для <em>, використовуючи вагу шрифту, а не курсив
-  const styledHtml = sanitizedHtml.replace(
-    /<em>(.*?)<\/em>/g,
-    '<em class="not-italic font-medium">$1</em>'
-  );
-  return { __html: styledHtml };
 };
 
-// --- ПІДКОМПОНЕНТИ ---
-const InfoSection: React.FC<{ section: ContentSection }> = ({ section }) => (
+const InfoSection: React.FC<{ section: (typeof content.sections)[0] }> = ({
+  section,
+}) => (
   <section aria-labelledby={section.id}>
-    <h2
-      id={section.id}
-      className="mb-6 font-semibold text-black text-h2-mobile lg:text-h2-desktop"
-    >
+    <Heading as="h2" id={section.id} className="mb-6">
       {section.title}
-    </h2>
-    <div className="space-y-4 text-body-main text-black">
+    </Heading>
+    <div className="space-y-4 font-serif text-body text-carbon-black">
       {section.paragraphs?.map((p, i) => (
-        <p key={i} dangerouslySetInnerHTML={createSanitizedHtml(p)} />
+        <p key={i}>{p}</p>
       ))}
       {section.subSections?.map((sub) => (
-        <div key={sub.id} className="pt-4">
-          <h3 className="mb-4 font-medium text-black text-h3-mobile lg:text-h3-desktop">
+        <div key={sub.id} className="pt-2">
+          <Heading as="h3" className="mb-4">
             {sub.title}
-          </h3>
+          </Heading>
           <div className="space-y-4">
             {sub.paragraphs.map((p, i) => (
-              <p key={i} dangerouslySetInnerHTML={createSanitizedHtml(p)} />
+              <p key={i}>{p}</p>
             ))}
           </div>
         </div>
@@ -125,33 +109,30 @@ const InfoSection: React.FC<{ section: ContentSection }> = ({ section }) => (
   </section>
 );
 
-// --- ГОЛОВНИЙ КОМПОНЕНТ СТОРІНКИ ---
 const AboutPage: React.FC = () => {
   return (
     <>
       <Helmet>
         <title>{content.seoTitle}</title>
         <meta name="description" content={content.seoDescription} />
-        <link rel="canonical" href={content.canonicalUrl} />
+        <link rel="canonical" href="https://svitlogics.com/about" />
         <meta property="og:title" content={content.seoTitle} />
         <meta property="og:description" content={content.seoDescription} />
-        <meta property="og:url" content={content.canonicalUrl} />
+        <meta property="og:url" content="https://svitlogics.com/about" />
         <meta property="og:type" content="article" />
       </Helmet>
 
-      <div className="container-main">
-        <header>
-          <h1 className="mb-8 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
+      <div className="container-main py-16">
+        <div className="mx-auto max-w-prose">
+          <Heading as="h1" className="mb-8 text-left">
             {content.pageTitle}
-          </h1>
-          <p
-            className="mb-16 max-w-3xl font-semibold text-black text-h3-desktop"
-            dangerouslySetInnerHTML={createSanitizedHtml(content.introduction)}
-          />
-        </header>
+          </Heading>
 
-        <div className="max-w-3xl">
-          <div className="space-y-16">
+          <p className="mb-16 font-serif text-h4 text-carbon-black">
+            {content.introduction}
+          </p>
+
+          <div className="space-y-12">
             {content.sections.map((section) => (
               <InfoSection key={section.id} section={section} />
             ))}

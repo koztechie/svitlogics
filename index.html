@@ -1,148 +1,44 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
   <head>
-    <!-- ==========================================================================
-       # Basic Metadata & Viewport
-       ========================================================================== -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!--
-      ==========================================================================
-      # SEO & Social Sharing Metadata
-      ==========================================================================
-      Ці метатеги будуть динамічно перезаписані `react-helmet-async`
-      на кожній сторінці, але вони служать як якісні "fallback" значення
-      для краулерів та у випадку, якщо JavaScript не виконається.
+      [System Protocol] This document is the foundational HTML shell for the Svitlogics application.
+      It establishes the minimal required metadata and resource links necessary for system operation.
     -->
-    <!-- Open Graph Tags (for Facebook, LinkedIn, etc.) -->
-    <meta property="og:title" content="Svitlogics | AI Text Analysis Tool" />
-    <meta
-      property="og:description"
-      content="An independent AI tool for analyzing text for propaganda, bias, and manipulation. Svitlogics provides structured insights to empower critical thinking."
-    />
-    <meta
-      property="og:image"
-      content="https://svitlogics.com/svitlogics-og-banner.png"
-    />
-    <meta property="og:url" content="https://svitlogics.com/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Svitlogics" />
-    <meta property="og:locale" content="uk_UA" />
 
-    <!--
-      ==========================================================================
-      # Google Consent Mode v2 - Default Settings
-      Цей блок ПОВИНЕН бути розміщений ПЕРЕД скриптом Google Tag Manager.
-      ==========================================================================
-    -->
+    <title>Svitlogics</title>
+
+    <!-- [System Protocol] Google Tag Manager & Consent Mode v2 -->
     <script>
-      // Ініціалізуємо dataLayer, якщо він ще не існує
       window.dataLayer = window.dataLayer || [];
-      // Створюємо хелпер-функцію gtag
       function gtag() {
         dataLayer.push(arguments);
       }
-
-      // Встановлюємо стан згоди за замовчуванням "denied" для всіх параметрів
       gtag("consent", "default", {
         analytics_storage: "denied",
         ad_storage: "denied",
         ad_user_data: "denied",
         ad_personalization: "denied",
       });
-
-      // Перевіряємо localStorage на наявність попередньо наданої згоди
       try {
         const consentValue = localStorage.getItem("svitlogics-cookie-consent");
         if (consentValue) {
           const isGranted = JSON.parse(consentValue);
           if (isGranted === true) {
-            gtag("consent", "update", {
-              analytics_storage: "granted",
-            });
+            gtag("consent", "update", { analytics_storage: "granted" });
           }
         }
       } catch (e) {
-        console.error("Could not parse cookie consent from localStorage", e);
+        console.error(
+          "Protocol Error: Could not parse cookie consent state.",
+          e
+        );
       }
     </script>
-
-    <!--
-      ==========================================================================
-      # Icons & Manifest
-      ==========================================================================
-    -->
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#FFFFFF" />
-    <meta name="apple-mobile-web-app-title" content="Svitlogics" />
-
-    <!--
-      ==========================================================================
-      # Asynchronous & Non-blocking Font Loading
-      ==========================================================================
-      Шрифти завантажуються асинхронно, щоб не блокувати рендеринг сторінки.
-    -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
-      />
-    </noscript>
-  </head>
-  <body>
-    <!--
-      ==========================================================================
-      # Accessibility: Skip to Main Content Link
-      ==========================================================================
-      Це посилання є першим елементом, що отримує фокус, і дозволяє
-      користувачам клавіатури пропустити навігацію та перейти до основного контенту.
-    -->
-    <a href="#root" class="sr-only focus:not-sr-only">Skip to main content</a>
-
-    <!--
-      ==========================================================================
-      # Google Tag Manager (noscript)
-      ==========================================================================
-    -->
-    <noscript
-      ><iframe
-        src="https://www.googletagmanager.com/ns.html?id=%VITE_GTM_ID%"
-        height="0"
-        width="0"
-        style="display: none; visibility: hidden"
-        title="Google Tag Manager"
-      ></iframe
-    ></noscript>
-
-    <!--
-      ==========================================================================
-      # React Application Mount Point
-      ==========================================================================
-      Основний контент рендериться всередині цього елемента.
-    -->
-    <div id="root"><!--ssr-outlet--></div>
-
-    <!--
-      ==========================================================================
-      # Deferred Scripts
-      ==========================================================================
-      Основний скрипт програми та GTM завантажуються асинхронно,
-      щоб не блокувати парсинг HTML та рендеринг.
-    -->
-    <script type="module" src="/src/main.tsx" defer></script>
-    <script defer>
+    <script>
       (function (w, d, s, l, i) {
         w[l] = w[l] || [];
         w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
@@ -154,5 +50,41 @@
         f.parentNode.insertBefore(j, f);
       })(window, document, "script", "dataLayer", "%VITE_GTM_ID%");
     </script>
+    <!-- End GTM -->
+
+    <!-- [SSR/HYDRATION] SEO metadata will be injected here by the Helmet component. -->
+
+    <!-- [Section Delta] Typeface Preload Directive -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400&family=Source+Code+Pro:wght@400&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- [System Protocol] Application Identity & Manifest -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- [Section Charlie] UI Chrome Theme Color -->
+    <meta name="theme-color" content="#F9F9FA" />
+    <meta name="apple-mobile-web-app-title" content="Svitlogics" />
+  </head>
+  <body>
+    <!-- GTM Fallback (Noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=%VITE_GTM_ID%"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End GTM Fallback -->
+
+    <div id="root"><!--ssr-outlet--></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

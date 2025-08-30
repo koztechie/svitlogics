@@ -1,90 +1,59 @@
+/**
+ * Svitlogics Tag Page
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Design is an Act of Resistance): This page presents
+ *   information in a sober, structured manner, stripped of all non-essential
+ *   visual elements and decorative attributes.
+ * - Section Alpha (Interface is a Laboratory): The design is calibrated for
+ *   precision and objectivity, serving as a clear, predictable information resource.
+ * - Section Bravo (Clarity is a Moral Imperative): The content structure,
+ *   article listing, and navigation are unambiguous and purpose-driven.
+ * - Section Charlie (Chromatic System): Employs the prescribed palette for
+ *   text (Carbon Black, Neutral grays, Svitlogics Blue) and background (Paper White).
+ * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
+ *   grid system and constrains content to `max-w-prose` for optimal readability.
+ * - Section Delta (Typography): Uses 'Inter' (`font-sans`) for headings and UI elements,
+ *   and 'Lora' (`font-serif`) for article descriptions, maintaining UI/Instrument distinction.
+ * - Section Foxtrot (Component Architecture): Embodies a purely informational
+ *   container with no decorative attributes or shadows. Article links are clean blocks.
+ * - Section Hotel (Copy & Tone of Voice): The content uses precise, technical
+ *   language and avoids emotional or persuasive phrasing.
+ */
+
 import React, { useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { getArticles, Article } from "../articles";
+import { getArticles } from "../articles";
+import { Heading } from "../components/ui/Heading";
 
-// --- Типізація, Константи та Утиліти ---
-
-/**
- * @description Утиліта для генерації URL-дружнього slug.
- * @param {string} text - Вхідний рядок.
- * @returns {string} Slug-рядок.
- */
 const slugify = (text: string): string => {
   if (!text) return "";
   return text
+    .toString()
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "-")
-    .replace(/[^\w-]+/g, "");
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-");
 };
 
-// --- Мемоїзовані Підкомпоненти ---
-
 /**
- * @description Пропси для підкомпонента `ArticleCard`.
- */
-interface ArticleCardProps {
-  article: Article;
-}
-
-/**
- * @description Мемоїзований компонент для відображення картки однієї статті.
- * @component
- */
-const ArticleCard: React.FC<ArticleCardProps> = React.memo(({ article }) => {
-  const formattedDate = useMemo(
-    () =>
-      new Date(article.createdAt).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }),
-    [article.createdAt]
-  );
-
-  return (
-    <article
-      aria-labelledby={`article-title-${article.slug}`}
-      className="group relative block border-1 border-black bg-white p-4 transition-colors duration-100 hover:border-blue-accent"
-    >
-      <h2
-        id={`article-title-${article.slug}`}
-        className="mb-2 font-medium text-blue-accent text-h3-mobile group-hover:underline lg:text-h3-desktop"
-      >
-        <Link
-          to={`/blog/${article.slug}`}
-          className="after:absolute after:inset-0 after:content-['']"
-        >
-          {/* span з z-10 потрібен, щоб вкладені посилання-теги були клікабельні */}
-          <span className="relative z-10">{article.title}</span>
-        </Link>
-      </h2>
-      <div className="mb-4 flex flex-wrap items-center gap-x-3 text-text-secondary text-ui-label">
-        <time dateTime={article.createdAt}>{formattedDate}</time>
-        {article.author && (
-          <>
-            <span aria-hidden="true">•</span>
-            <span>{article.author}</span>
-          </>
-        )}
-      </div>
-      <p className="text-body-main text-black">{article.description}</p>
-    </article>
-  );
-});
-ArticleCard.displayName = "ArticleCard";
-
-/**
- * @description Сторінка, що відображає список статей, відфільтрованих за певним тегом.
- * @component
+ * Renders a page listing all articles associated with a specific tag.
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Delta (Typography): Strictly follows the hierarchy. Page title and article
+ *   headings use 'Inter' (`font-sans`), while article descriptions use 'Lora' (`font-serif`).
+ * - Section Echo (Spatial System): The content area is constrained to `max-w-prose`
+ *   for optimal readability.
+ * - Section Foxtrot (Component Architecture): Article links are presented as clean,
+ *   unadorned blocks of text, avoiding decorative containers.
  */
 const TagPage: React.FC = () => {
   const { tagSlug } = useParams<{ tagSlug: string }>();
 
   const filteredArticles = useMemo(() => {
-    if (!tagSlug) return [];
     const allArticles = getArticles();
+    if (!tagSlug) return [];
     return allArticles.filter((article) =>
       article.tags?.some((tag) => slugify(tag) === tagSlug)
     );
@@ -93,28 +62,31 @@ const TagPage: React.FC = () => {
   const tagName = useMemo(() => {
     if (!tagSlug) return "";
     const firstArticle = filteredArticles[0];
-    const originalTag = firstArticle?.tags.find(
-      (tag) => slugify(tag) === tagSlug
+    return (
+      firstArticle?.tags?.find((t) => slugify(t) === tagSlug) ||
+      tagSlug.replace(/-/g, " ")
     );
-    return originalTag || tagSlug.replace(/-/g, " ");
-  }, [tagSlug, filteredArticles]);
+  }, [filteredArticles, tagSlug]);
 
   return (
     <>
       <Helmet>
-        <title>{`TAG: ${tagName} | SVITLOGICS`}</title>
+        <title>{`Tag: ${tagName} | Svitlogics Blog`}</title>
         <meta
           name="description"
-          content={`An index of articles on the Svitlogics blog tagged with "${tagName}".`}
+          content={`Articles tagged with "${tagName}" on the Svitlogics blog.`}
         />
         <link
           rel="canonical"
           href={`https://svitlogics.com/blog/tag/${tagSlug}`}
         />
-        <meta property="og:title" content={`TAG: ${tagName} | SVITLOGICS`} />
+        <meta
+          property="og:title"
+          content={`Tag: ${tagName} | Svitlogics Blog`}
+        />
         <meta
           property="og:description"
-          content={`An index of articles on the Svitlogics blog tagged with "${tagName}".`}
+          content={`Articles tagged with "${tagName}" on the Svitlogics blog.`}
         />
         <meta
           property="og:url"
@@ -122,36 +94,59 @@ const TagPage: React.FC = () => {
         />
       </Helmet>
 
-      <div className="container-main">
-        <header>
-          <p className="mb-2 font-medium uppercase text-black text-ui-label">
-            TAG
+      <div className="container-main py-16">
+        <div className="mx-auto max-w-prose">
+          <p className="mb-2 font-sans text-small font-semibold text-neutral-700">
+            Tag
           </p>
-          <h1 className="mb-16 font-bold text-black text-h1-mobile capitalize md:uppercase lg:text-h1-desktop">
+          <Heading as="h1" className="mb-12 text-left capitalize">
             {tagName}
-          </h1>
-        </header>
+          </Heading>
 
-        <main className="max-w-3xl">
           {filteredArticles.length > 0 ? (
-            <div className="space-y-8">
+            <div className="space-y-10">
               {filteredArticles.map((article) => (
-                <ArticleCard key={article.slug} article={article} />
+                <article key={article.slug}>
+                  <Link to={`/blog/${article.slug}`}>
+                    <Heading
+                      as="h2"
+                      className="mb-2 text-svitlogics-blue hover:underline"
+                    >
+                      {article.title}
+                    </Heading>
+                  </Link>
+                  <div className="mb-4 flex flex-wrap items-center gap-x-3 font-sans text-small text-neutral-700">
+                    <span>
+                      {new Date(article.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </span>
+                    <span aria-hidden="true">•</span>
+                    <span>{article.author}</span>
+                  </div>
+                  <p className="font-serif text-body text-carbon-black">
+                    {article.description}
+                  </p>
+                </article>
               ))}
             </div>
           ) : (
-            <p className="text-body-main">NO ARTICLES FOUND WITH THIS TAG.</p>
+            <p className="font-serif text-body text-neutral-700">
+              No articles were found for this tag.
+            </p>
           )}
 
-          <div className="mt-16 border-t-1 border-black pt-8">
+          <div className="mt-12 border-t border-carbon-black pt-8">
             <Link
               to="/blog"
-              className="font-medium uppercase text-blue-accent text-ui-label no-underline hover:underline focus-visible:underline"
+              className="font-sans text-small text-svitlogics-blue hover:underline"
             >
-              ← RETURN TO BLOG INDEX
+              ← Return to Blog Index
             </Link>
           </div>
-        </main>
+        </div>
       </div>
     </>
   );

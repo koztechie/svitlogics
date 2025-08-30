@@ -1,8 +1,35 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { Copy, Trash2, Check, AlertCircle } from "lucide-react";
-import clsx from "clsx";
+/**
+ * Svitlogics Text Input Component
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Design is an Act of Resistance): This component is a
+ *   sober, functional input element, stripped of all non-essential visual
+ *   elements and decorative attributes.
+ * - Section Alpha (Interface is a Laboratory): The design is calibrated for
+ *   precision and objectivity, serving as a clear, predictable "specimen tray".
+ * - Section Bravo (Clarity is a Moral Imperative): The component's purpose and
+ *   structure are unambiguous. It is a transparent instrument for text input.
+ * - Section Charlie (Chromatic System): Employs the prescribed palette for
+ *   borders (Neutral-500), background (White), text (Carbon Black), and states
+ *   (Svitlogics Blue for focus, Signal Yellow for warnings).
+ * - Section Delta (Typography): Uses 'Source Code Pro' (`font-mono`) for the
+ *   input area to reinforce the feeling of examining raw, unprocessed data.
+ *   UI text uses 'Inter' (`font-sans`) for controls and metrics.
+ * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
+ *   grid system (p-4, gap-4, gap-x-2) and maintains visual balance.
+ * - Section Foxtrot (Component Architecture): Embodies a purely functional
+ *   input container with sharp corners, no shadows, and imperative controls.
+ *   Implements the exact Input Processor specification from Section Foxtrot.
+ * - Section Golf (Motion Philosophy): Uses subtle transitions for state changes
+ *   (focus border, button states) that enhance understanding without distraction.
+ * - Section Hotel (Copy & Tone of Voice): The component uses precise, technical
+ *   language and avoids emotional or persuasive phrasing.
+ */
 
-// --- Типізація та Константи ---
+import React, { useState, useMemo, useCallback } from "react";
+import { Copy, Check, X } from "lucide-react";
+import { Button } from "./ui/Button";
+import { clsx } from "clsx";
 
 interface TextInputProps {
   text: string;
@@ -14,21 +41,28 @@ interface TextInputProps {
 }
 
 const UI_TEXT = {
-  inputTitle: "TEXT INPUT",
-  placeholder: "Enter or paste your text here for analysis...",
-  copyLabel: "Copy text",
-  copiedLabel: "Copied!",
-  clearLabel: "Clear text",
-  analyzeButton: "ANALYZE",
-  // --- ВИПРАВЛЕННЯ ТУТ: Правильна назва властивості ---
-  analyzingButtonText: "ANALYZING...",
-  charactersLabel: "CHARACTERS:",
-  wordsLabel: "WORDS:",
+  charactersLabel: "Characters",
+  wordsLabel: "Words",
+  textareaPlaceholder:
+    "System awaiting input. Paste text into the processor to begin analysis.",
+  analyzeButtonLabel: "Initiate Analysis",
 } as const;
 
-const COPY_SUCCESS_TIMEOUT = 2000;
-
-// --- Головний Компонент ---
+/**
+ * The Input Processor component, the system's "specimen tray".
+ * It is a focused, stable environment for inputting text for analysis.
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Foxtrot (Input Processor): Implements the exact specification: a large
+ *   textarea with a subtle `neutral-500` border that changes to `svitlogics-blue`
+ *   on focus. The background is `#FFFFFF` to differentiate from the canvas.
+ * - Section Delta (Typography): Uses `Source Code Pro` (`font-mono`) for the input
+ *   area to reinforce the feeling of examining raw data. UI text uses 'Inter'.
+ * - Section Charlie (Chromatic System): Uses `signal-yellow` for non-critical warnings
+ *   (character limit), reserving `signal-red` for system failures.
+ * - Section Echo (Spatial System): The control group maintains visual balance and
+ *   consistent sizing, adhering to the 8px grid.
+ */
 const TextInput: React.FC<TextInputProps> = ({
   text,
   setText,
@@ -42,98 +76,73 @@ const TextInput: React.FC<TextInputProps> = ({
   const metrics = useMemo(() => {
     const charCount = text.length;
     const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-    const isOverLimit = charCount > maxLength;
+    const isLimitExceeded = charCount > maxLength;
     const hasText = charCount > 0;
-    return { charCount, wordCount, isOverLimit, hasText };
+    return { charCount, wordCount, isLimitExceeded, hasText };
   }, [text, maxLength]);
 
   const handleCopy = useCallback(() => {
     if (!metrics.hasText || isCopied) return;
     navigator.clipboard.writeText(text).then(() => {
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), COPY_SUCCESS_TIMEOUT);
+      setTimeout(() => setIsCopied(false), 2000);
     });
   }, [text, metrics.hasText, isCopied]);
 
   return (
-    <div className="border-1 border-black bg-white">
-      <header className="flex items-center justify-between border-b-1 border-black px-4 py-2">
-        <label
-          htmlFor="text-input-area"
-          className="font-medium uppercase text-black text-ui-label"
-        >
-          {UI_TEXT.inputTitle}
-        </label>
+    <div>
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder={UI_TEXT.textareaPlaceholder}
+        className="h-80 w-full resize-y border border-neutral-500 bg-white p-4 font-mono text-body text-carbon-black placeholder-neutral-500 transition-colors focus:border-svitlogics-blue focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
+        disabled={isAnalyzing}
+        autoComplete="off"
+        spellCheck="false"
+      />
+
+      <div className="flex flex-col gap-4 border-x border-b border-neutral-500 bg-paper-white p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 font-sans text-small text-neutral-700">
+          <span
+            className={clsx({ "text-signal-yellow": metrics.isLimitExceeded })}
+          >
+            {UI_TEXT.charactersLabel}: {metrics.charCount} / {maxLength}
+          </span>
+          <span>
+            {UI_TEXT.wordsLabel}: {metrics.wordCount}
+          </span>
+        </div>
+
         <div className="flex items-center gap-x-2">
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            size="icon"
             onClick={handleCopy}
             disabled={!metrics.hasText || isAnalyzing || isCopied}
-            className="border-1 border-black p-2 text-black transition-colors duration-100 enabled:hover:bg-black enabled:hover:text-white disabled:cursor-not-allowed disabled:border-disabled disabled:text-text-disabled"
-            aria-label={isCopied ? UI_TEXT.copiedLabel : UI_TEXT.copyLabel}
-            title={isCopied ? UI_TEXT.copiedLabel : UI_TEXT.copyLabel}
+            title={isCopied ? "Copied" : "Copy Input Text"}
           >
-            {isCopied ? (
-              <Check size={16} strokeWidth={3} />
-            ) : (
-              <Copy size={16} strokeWidth={2} />
-            )}
-          </button>
-          <button
-            type="button"
+            {isCopied ? <Check size={16} /> : <Copy size={16} />}
+          </Button>
+          <Button
+            variant="secondary"
+            size="icon"
             onClick={onClear}
             disabled={!metrics.hasText || isAnalyzing}
-            className="border-1 border-black p-2 text-black transition-colors duration-100 enabled:hover:bg-black enabled:hover:text-white disabled:cursor-not-allowed disabled:border-disabled disabled:text-text-disabled"
-            aria-label={UI_TEXT.clearLabel}
-            title={UI_TEXT.clearLabel}
+            title="Clear Input"
           >
-            <Trash2 size={16} strokeWidth={2} />
-          </button>
+            <X size={16} />
+          </Button>
+          <Button
+            variant="primary"
+            onClick={onAnalyze}
+            disabled={
+              !metrics.hasText || isAnalyzing || metrics.isLimitExceeded
+            }
+          >
+            {UI_TEXT.analyzeButtonLabel}
+          </Button>
         </div>
-      </header>
-
-      <div className="relative">
-        <textarea
-          id="text-input-area"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder={UI_TEXT.placeholder}
-          className="w-full min-h-[250px] border-none bg-white p-4 font-mono text-body-main text-black placeholder:text-text-secondary focus:outline-none focus:ring-0"
-          disabled={isAnalyzing}
-          autoComplete="off"
-          aria-invalid={metrics.isOverLimit}
-        />
       </div>
-
-      <footer className="flex flex-col items-center justify-between gap-4 border-t-1 border-black p-4 sm:flex-row">
-        <div
-          className={clsx("font-mono text-ui-label", {
-            "text-status-error": metrics.isOverLimit,
-            "text-text-secondary": !metrics.isOverLimit,
-          })}
-        >
-          {metrics.isOverLimit && (
-            <AlertCircle
-              size={16}
-              className="mr-2 inline-block text-status-error"
-            />
-          )}
-          <span>{UI_TEXT.charactersLabel}</span>
-          <span className="font-medium text-black"> {metrics.charCount}</span>
-          <span> / {maxLength}</span>
-          <span className="ml-4">{UI_TEXT.wordsLabel}</span>
-          <span className="font-medium text-black"> {metrics.wordCount}</span>
-        </div>
-
-        <button
-          type="button"
-          onClick={onAnalyze}
-          disabled={isAnalyzing || !metrics.hasText || metrics.isOverLimit}
-          className="w-full border-1 border-blue-accent bg-blue-accent px-8 py-3 font-bold uppercase text-ui-label text-white transition-colors duration-100 enabled:hover:bg-blue-accent-hover enabled:active:bg-blue-accent-active disabled:cursor-not-allowed disabled:border-disabled disabled:bg-bg-disabled disabled:text-text-disabled sm:w-auto"
-        >
-          {isAnalyzing ? UI_TEXT.analyzingButtonText : UI_TEXT.analyzeButton}
-        </button>
-      </footer>
     </div>
   );
 };

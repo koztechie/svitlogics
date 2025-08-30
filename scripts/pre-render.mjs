@@ -7,116 +7,33 @@ import matter from "gray-matter";
 import { render } from "../src/entry-server.tsx";
 import { articleFrontmatterSchema } from "../src/config/schemas.ts";
 
-// --- JSDoc Type Definitions ---
+const root = process.cwd();
 
-/**
- * @typedef {object} ArticleFrontmatter
- * @property {string} slug
- * @property {string} title
- * @property {string} description
- * @property {string} createdAt - ISO date string.
- * @property {string} [updatedAt] - Optional ISO date string.
- * @property {string} author
- * @property {string} image
- * @property {string[]} tags
- * @property {'en' | 'uk'} language
- * @property {string} [canonicalUrl]
- * @property {string} [robots]
- * @property {string} [schema] - JSON-LD schema as a string.
- */
-
-/**
- * @typedef {ArticleFrontmatter & { content: string }} Article
- * Represents a fully processed article with its content.
- */
-
-/**
- * @typedef {object} HelmetData
- * @property {{ toString: () => string }} [title]
- * @property {{ toString: () => string }} [meta]
- * @property {{ toString: () => string }} [link]
- */
-
-/**
- * @typedef {object} RenderResult
- * @property {string} appHtml
- * @property {HelmetData} helmet
- */
-
-// --- Constants ---
-
-const ROOT_DIR = process.cwd();
-const OUTPUT_DIR = path.resolve(ROOT_DIR, "dist");
-const ARTICLES_GLOB_PATH = path.resolve(ROOT_DIR, "src/articles/*.mdx");
-const GENERATED_ARTICLES_FILE_PATH = path.resolve(
-  ROOT_DIR,
-  "src/articles/index.ts"
-);
-const SITEMAP_DOMAIN = "https://svitlogics.com";
-
-const STATIC_ROUTES = [
-  "/",
-  "/about",
-  "/how-it-works",
-  "/faq",
-  "/changelog",
-  "/pricing-limits",
-  "/contact",
-  "/privacy-policy",
-  "/terms-of-use",
-  "/blog",
-  "/cookie-policy",
-  "/disclaimer",
-];
-
-const GENERATED_FILE_HEADER =
-  "// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.\n\n";
-
-// --- Utility Functions ---
-
-/**
- * Generates a URL-friendly slug from a string.
- * @param {string | undefined | null} text The input text to slugify.
- * @returns {string} The slugified text.
- */
 const slugify = (text) => {
-  if (!text) {
-    return "";
-  }
+  if (!text) return "";
   return text
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, "-") // Replace spaces with -
-    .replace(/[^\w-]+/g, "") // Remove all non-word chars
-    .replace(/--+/g, "-"); // Replace multiple - with single -
+    .replace(/\s+/g, "-") // Замінити пробіли на -
+    .replace(/[^\w\-]+/g, "") // Видалити всі не-словесні символи
+    .replace(/\-\-+/g, "-"); // Замінити декілька - на один
 };
 
-// --- Core Logic Functions ---
-
-/**
- * Finds all article files, validates their frontmatter, processes them,
- * and generates a TypeScript file with all article data.
- * @returns {Promise<Article[]>} A promise that resolves to an array of all processed articles.
- */
 async function generateArticlesData() {
   console.log("📄 Generating articles data file...");
-  const articlePaths = await glob(ARTICLES_GLOB_PATH);
+  const articlePaths = await glob(path.resolve(root, "src/articles/*.mdx"));
 
   if (articlePaths.length === 0) {
     console.warn("⚠️ WARNING: No .mdx files found in src/articles/.");
-    return [];
+  } else {
+    console.log(`✅ Found ${articlePaths.length} articles to process.`);
   }
-
-  console.log(`✅ Found ${articlePaths.length} articles to process.`);
 
   const articles = await Promise.all(
     articlePaths.map(async (filePath) => {
       const fileContent = await fs.readFile(filePath, "utf-8");
-      const { data, content } = matter(fileContent);
-
-      /** @type {ArticleFrontmatter} */
-      const frontmatter = data;
+      const { data: frontmatter, content } = matter(fileContent);
 
       try {
         articleFrontmatterSchema.parse(frontmatter);
@@ -134,23 +51,34 @@ async function generateArticlesData() {
         } else {
           console.error(error);
         }
-        console.error("\nBuild process terminated due to validation errors.");
+        console.error("\nBuild process terminated.");
         process.exit(1);
       }
 
       return {
-        ...frontmatter,
+        slug: frontmatter.slug,
+        title: frontmatter.title,
+        description: frontmatter.description,
+        createdAt: frontmatter.createdAt,
+        updatedAt: frontmatter.updatedAt,
+        author: frontmatter.author,
+        image: frontmatter.image,
+        tags: frontmatter.tags,
+        language: frontmatter.language,
+        canonicalUrl: frontmatter.canonicalUrl,
+        robots: frontmatter.robots,
+        schema: frontmatter.schema,
         content: content.trim(),
       };
     })
   );
 
-  // Sort articles by creation date, newest first.
   articles.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
-  const articlesFileContent = `${GENERATED_FILE_HEADER}
+  const articlesFileContent = `// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.
+
 export interface Article {
   slug: string;
   title: string;
@@ -174,52 +102,60 @@ export function getArticles(): Article[] {
 }
 `;
 
-  await fs.writeFile(GENERATED_ARTICLES_FILE_PATH, articlesFileContent);
-  console.log(
-    `✅ Articles data file generated at ${GENERATED_ARTICLES_FILE_PATH}`
+  await fs.writeFile(
+    path.resolve(root, "src/articles/index.ts"),
+    articlesFileContent
   );
+  console.log("✅ Articles data file generated at src/articles/index.ts");
   return articles;
 }
 
-/**
- * Generates a sitemap.xml file from a list of routes.
- * @param {string[]} routes An array of URL paths (e.g., '/about').
- * @param {string} outDir The output directory for the sitemap file.
- * @returns {Promise<void>}
- */
 async function generateSitemap(routes, outDir) {
+  const domain = "https://svitlogics.com";
   const today = new Date().toISOString().split("T")[0];
   const urlEntries = routes
     .map(
       (route) =>
-        `<url><loc>${SITEMAP_DOMAIN}${route}</loc><lastmod>${today}</lastmod></url>`
+        `<url><loc>${domain}${route}</loc><lastmod>${today}</lastmod></url>`
     )
     .join("");
-
   const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urlEntries}</urlset>`;
   const sitemapPath = path.join(outDir, "sitemap.xml");
   await fs.writeFile(sitemapPath, sitemapContent);
 }
 
-/**
- * The main pre-rendering script orchestrator.
- * @returns {Promise<void>}
- */
 async function runPreRender() {
   console.log("🚀 Starting Svitlogics pre-rendering process...");
   const articles = await generateArticlesData();
 
+  const staticRoutes = [
+    "/",
+    "/about",
+    "/how-it-works",
+    "/faq",
+    "/changelog",
+    "/pricing-limits",
+    "/contact",
+    "/privacy-policy",
+    "/terms-of-use",
+    "/blog",
+  ];
   const articleRoutes = articles.map((article) => `/blog/${article.slug}`);
+
+  // --- ВИПРАВЛЕННЯ ТУТ: Додаємо генерацію маршрутів для тегів ---
   const uniqueTags = [...new Set(articles.flatMap((article) => article.tags))];
-  const tagRoutes = uniqueTags.map((tag) => `/blog/tag/${slugify(tag)}`);
+  const tagRoutes = uniqueTags.map((tag) => {
+    return `/blog/tag/${slugify(tag)}`;
+  });
 
-  const allRoutes = [...STATIC_ROUTES, ...articleRoutes, ...tagRoutes];
-  console.log(`🗺️  Found ${allRoutes.length} routes to pre-render.`);
+  const allRoutes = [...staticRoutes, ...articleRoutes, ...tagRoutes];
+  console.log("Found routes to pre-render:", allRoutes);
 
-  const templatePath = path.resolve(OUTPUT_DIR, "index.html");
-  let template;
+  const outDir = path.resolve(root, "dist");
+  const templatePath = path.resolve(outDir, "index.html");
+
   try {
-    template = await fs.readFile(templatePath, "utf-8");
+    await fs.access(templatePath);
   } catch (e) {
     console.error(
       `❌ Error: Template file not found at ${templatePath}. Did you run "vite build" first?`
@@ -227,50 +163,35 @@ async function runPreRender() {
     process.exit(1);
   }
 
-  console.log("🛠️  Starting rendering pages in parallel...");
+  const template = await fs.readFile(templatePath, "utf-8");
+  console.log("\n🛠️  Starting rendering pages...");
 
-  // --- PERFORMANCE OPTIMIZATION: Render all pages in parallel ---
-  await Promise.all(
-    allRoutes.map(async (route) => {
-      /** @type {RenderResult} */
-      const { appHtml, helmet } = render(route);
+  for (const route of allRoutes) {
+    const { appHtml, helmet } = render(route);
+    const helmetContent = `${helmet?.title?.toString() || ""}${
+      helmet?.meta?.toString() || ""
+    }${helmet?.link?.toString() || ""}`;
+    const finalHtml = template
+      .replace(`<!--ssr-outlet-->`, appHtml)
+      .replace("</head>", `${helmetContent}</head>`)
+      .replace(/\/>/g, ">");
 
-      const helmetContent = [
-        helmet?.title?.toString(),
-        helmet?.meta?.toString(),
-        helmet?.link?.toString(),
-      ]
-        .filter(Boolean)
-        .join("");
+    const filePath = path.join(
+      outDir,
+      route === "/" ? "index.html" : `${route.substring(1)}/index.html`
+    );
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, finalHtml);
+    console.log(`  ✓ Rendered ${route}`);
+  }
 
-      const finalHtml = template
-        .replace(`<!--ssr-outlet-->`, appHtml)
-        .replace("</head>", `${helmetContent}</head>`)
-        .replace(/\/>/g, ">"); // Fix for self-closing tags issue with some parsers
-
-      const routePath = route.substring(1);
-      const filePath = path.join(
-        OUTPUT_DIR,
-        route === "/" ? "index.html" : `${routePath}/index.html`
-      );
-      await fs.mkdir(path.dirname(filePath), { recursive: true });
-      await fs.writeFile(filePath, finalHtml);
-      console.log(`  ✓ Rendered ${route}`);
-    })
-  );
-
-  await generateSitemap(allRoutes, OUTPUT_DIR);
+  await generateSitemap(allRoutes, outDir);
   console.log("  ✓ Generated sitemap.xml");
 
   console.log("\n✅ Pre-rendering complete.");
 }
 
-// --- Script Execution ---
-
 runPreRender().catch((error) => {
-  console.error(
-    "❌ A critical error occurred during the pre-rendering process:",
-    error
-  );
+  console.error("❌ Pre-rendering failed:", error);
   process.exit(1);
 });

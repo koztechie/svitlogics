@@ -1,112 +1,56 @@
+/**
+ * Svitlogics Blog Index Page
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Design is an Act of Resistance): This page presents
+ *   information in a sober, structured manner, stripped of all non-essential
+ *   visual elements and decorative attributes.
+ * - Section Alpha (Interface is a Laboratory): The design is calibrated for
+ *   precision and objectivity, serving as a clear, predictable information resource.
+ * - Section Bravo (Clarity is a Moral Imperative): The content structure,
+ *   article listing, and tag filtering are unambiguous and purpose-driven.
+ * - Section Charlie (Chromatic System): Employs the prescribed palette for
+ *   text (Carbon Black, Neutral grays, Svitlogics Blue) and background (Paper White).
+ * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
+ *   grid system and constrains content to `max-w-prose` for optimal readability.
+ * - Section Delta (Typography): Uses 'Inter' (`font-sans`) for headings and UI elements,
+ *   and 'Lora' (`font-serif`) for article descriptions, maintaining UI/Instrument distinction.
+ * - Section Foxtrot (Component Architecture): Embodies a purely informational
+ *   container with no decorative attributes or shadows. Article links are clean blocks.
+ * - Section Hotel (Copy & Tone of Voice): The content uses precise, technical
+ *   language and avoids emotional or persuasive phrasing.
+ */
+
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { getArticles, Article } from "../articles";
+import { getArticles } from "../articles";
+import { Heading } from "../components/ui/Heading";
 
-// --- Типізація, Константи та Утиліти ---
-
-/**
- * @description Контент для SEO та заголовків сторінки.
- */
-const pageContent = {
-  title: "SVITLOGICS BLOG",
-  description:
-    "Technical articles, analysis, and project updates from Svitlogics.",
-  canonicalUrl: "https://svitlogics.com/blog",
-  tagsHeader: "TAGS",
-  noArticlesMessage: "NO ARTICLES FOUND.",
-} as const;
-
-/**
- * @description Утиліта для генерації URL-дружнього slug.
- * @param {string} text - Вхідний рядок.
- * @returns {string} Slug-рядок.
- */
 const slugify = (text: string): string => {
   if (!text) return "";
   return text
+    .toString()
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "-")
-    .replace(/[^\w-]+/g, "");
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-");
 };
 
-// --- Мемоїзовані Підкомпоненти ---
-
 /**
- * @description Пропси для підкомпонента `ArticleCard`.
- */
-interface ArticleCardProps {
-  article: Article;
-}
-
-/**
- * @description Мемоїзований компонент для відображення картки однієї статті.
- * @component
- */
-const ArticleCard: React.FC<ArticleCardProps> = React.memo(({ article }) => {
-  const formattedDate = useMemo(
-    () =>
-      new Date(article.createdAt).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }),
-    [article.createdAt]
-  );
-
-  return (
-    <article
-      aria-labelledby={`article-title-${article.slug}`}
-      className="group relative block border-1 border-black bg-white p-4 transition-colors duration-100 hover:border-blue-accent"
-    >
-      <h3
-        id={`article-title-${article.slug}`}
-        className="mb-2 font-medium text-blue-accent text-h3-mobile group-hover:underline lg:text-h3-desktop"
-      >
-        <Link
-          to={`/blog/${article.slug}`}
-          className="after:absolute after:inset-0 after:content-['']"
-        >
-          {/* span з z-10 потрібен, щоб вкладені посилання-теги були клікабельні */}
-          <span className="relative z-10">{article.title}</span>
-        </Link>
-      </h3>
-
-      <div className="mb-4 flex flex-wrap items-center gap-x-3 text-text-secondary text-ui-label">
-        <time dateTime={article.createdAt}>{formattedDate}</time>
-        <span aria-hidden="true">•</span>
-        <span>{article.author}</span>
-      </div>
-
-      <p className="text-body-main text-black">{article.description}</p>
-
-      {article.tags?.length > 0 && (
-        <div className="relative z-10 mt-4 flex flex-wrap gap-2">
-          {article.tags.map((tag) => (
-            <Link
-              key={tag}
-              to={`/blog/tag/${slugify(tag)}`}
-              onClick={(e) => e.stopPropagation()}
-              className="block border-1 border-black bg-white px-2 py-1 text-black text-ui-label transition-colors duration-100 hover:text-blue-accent"
-            >
-              {tag}
-            </Link>
-          ))}
-        </div>
-      )}
-    </article>
-  );
-});
-ArticleCard.displayName = "ArticleCard";
-
-/**
- * @description
- * Сторінка індексу блогу, що відображає список всіх статей та фільтр за тегами.
- * @component
+ * Renders the main index page for the blog.
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Delta (Typography): Strictly follows the hierarchy. Page title and article
+ *   headings use 'Inter' (`font-sans`), while article descriptions use 'Lora' (`font-serif`).
+ * - Section Echo (Spatial System): The content area is constrained to `max-w-prose`
+ *   for optimal readability.
+ * - Section Foxtrot (Component Architecture): Article links are presented as clean,
+ *   unadorned blocks of text, avoiding decorative containers. Interaction is focused
+ *   on the heading.
  */
 const BlogIndexPage: React.FC = () => {
-  const articles = useMemo(() => getArticles(), []);
+  const articles = getArticles();
 
   const uniqueTags = useMemo(() => {
     const allTags = articles.flatMap((article) => article.tags || []);
@@ -116,36 +60,37 @@ const BlogIndexPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{pageContent.title}</title>
-        <meta name="description" content={pageContent.description} />
-        <link rel="canonical" href={pageContent.canonicalUrl} />
-        <meta property="og:title" content={pageContent.title} />
-        <meta property="og:description" content={pageContent.description} />
-        <meta property="og:url" content={pageContent.canonicalUrl} />
+        <title>Svitlogics Blog</title>
+        <meta
+          name="description"
+          content="Articles and system updates from Svitlogics."
+        />
+        <link rel="canonical" href="https://svitlogics.com/blog" />
+        <meta property="og:title" content="Svitlogics Blog" />
+        <meta
+          property="og:description"
+          content="Articles and system updates from Svitlogics."
+        />
+        <meta property="og:url" content="https://svitlogics.com/blog" />
       </Helmet>
 
-      <div className="container-main">
-        <header>
-          <h1 className="mb-16 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
-            {pageContent.title}
-          </h1>
-        </header>
+      <div className="container-main py-16">
+        <div className="mx-auto max-w-prose">
+          <Heading as="h1" className="mb-12 text-left">
+            Svitlogics Blog
+          </Heading>
 
-        <main className="max-w-3xl">
           {uniqueTags.length > 0 && (
-            <section aria-labelledby="tags-heading" className="mb-16">
-              <h2
-                id="tags-heading"
-                className="mb-4 font-medium uppercase text-black text-ui-label"
-              >
-                {pageContent.tagsHeader}
+            <section className="mb-12">
+              <h2 className="mb-4 font-sans text-small font-semibold text-neutral-700">
+                Filter by Tag
               </h2>
               <div className="flex flex-wrap gap-2">
                 {uniqueTags.map((tag) => (
                   <Link
                     key={tag}
                     to={`/blog/tag/${slugify(tag)}`}
-                    className="block border-1 border-black bg-white px-3 py-1 text-black text-ui-label transition-colors duration-100 hover:text-blue-accent"
+                    className="block border border-neutral-500 px-3 py-1 font-sans text-small text-carbon-black transition-colors hover:border-carbon-black hover:bg-neutral-300"
                   >
                     {tag}
                   </Link>
@@ -155,15 +100,42 @@ const BlogIndexPage: React.FC = () => {
           )}
 
           {articles.length > 0 ? (
-            <div className="space-y-8">
+            <div className="space-y-10">
               {articles.map((article) => (
-                <ArticleCard key={article.slug} article={article} />
+                <article key={article.slug}>
+                  <Link to={`/blog/${article.slug}`}>
+                    <Heading
+                      as="h2"
+                      className="mb-2 text-svitlogics-blue hover:underline"
+                    >
+                      {article.title}
+                    </Heading>
+                  </Link>
+
+                  <div className="mb-4 flex flex-wrap items-center gap-x-3 font-sans text-small text-neutral-700">
+                    <span>
+                      {new Date(article.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </span>
+                    <span aria-hidden="true">•</span>
+                    <span>{article.author}</span>
+                  </div>
+
+                  <p className="font-serif text-body text-carbon-black">
+                    {article.description}
+                  </p>
+                </article>
               ))}
             </div>
           ) : (
-            <p className="text-body-main">{pageContent.noArticlesMessage}</p>
+            <p className="font-serif text-body text-neutral-700">
+              No articles are currently available.
+            </p>
           )}
-        </main>
+        </div>
       </div>
     </>
   );

@@ -1,50 +1,17 @@
-/**
- * @fileoverview Цей файл надає мок-функції для імітації відповідей AI API.
- * Використовується для розробки та тестування UI без реальних API-запитів.
- * @warning **Цей модуль не повинен потрапляти у виробничу збірку.**
- * @version 1.1.0
- */
-
 import { Category } from "../components/AnalysisResults";
 
-// --- Типи та Константи ---
-
-/**
- * @description Визначає узгоджені назви категорій аналізу.
- * Використання `as const` створює незмінний tuple та дозволяє вивести точний тип.
- * @private
- */
+// Узгоджуємо назви категорій з тими, що використовуються в Home.tsx
 const CATEGORY_NAMES = [
   "Manipulative Content",
   "Propagandistic Content",
   "Disinformation",
   "Unbiased Presentation",
   "Emotional Tone",
-] as const;
+] as const; // Використовуємо 'as const' для створення tuple типу
 
-/**
- * @description Тип, що представляє одну з можливих назв категорій.
- * Виведений з `CATEGORY_NAMES` для забезпечення синхронізації.
- * @private
- */
 type CategoryName = (typeof CATEGORY_NAMES)[number];
 
-/**
- * @description Кількість рівнів/пояснень для кожної категорії.
- * Використовується для валідації та обчислень.
- * @private
- */
-const EXPLANATION_LEVELS = 5;
-
-/**
- * @description Мапа, що містить масиви з п'яти рівнів пояснень для кожної категорії.
- * Рівні відповідають діапазонам оцінок: 0-20, 21-40, 41-60, 61-80, 81-100.
- *
- * `satisfies` гарантує, що об'єкт відповідає типу `Record<CategoryName, string[]>`,
- * але не розширює тип `explanations`, зберігаючи його специфічність.
- * @private
- */
-const explanations = {
+const explanations: Record<CategoryName, string[]> = {
   "Manipulative Content": [
     "No significant manipulative techniques detected.",
     "Subtle manipulative elements are present but do not dominate the text.",
@@ -67,7 +34,7 @@ const explanations = {
     "Clear-cut disinformation with fabricated evidence.",
   ],
   "Unbiased Presentation": [
-    // Нагадування: вищий бал = краща неупередженість
+    // Пам'ятаємо, що тут вищий бал = краще
     "Highly biased and one-sided, functions as advocacy.",
     "A noticeable slant is present, favoring one perspective.",
     "An attempt at objectivity is visible, but with some remaining bias.",
@@ -81,70 +48,39 @@ const explanations = {
     "The text is saturated with a strong emotional tone.",
     "The tone is intensely emotional and vehement.",
   ],
-} satisfies Record<CategoryName, string[]>;
-
-// --- Допоміжні функції ---
+};
 
 /**
- * @description Вибирає пояснення для заданої категорії на основі оцінки в процентах.
- * @private
- * @param {CategoryName} categoryName - Назва категорії.
- * @param {number} percentage - Оцінка від 0 до 100.
- * @returns {string} Описовий рядок, що відповідає оцінці.
- * @throws {Error} Якщо `percentage` виходить за межі 0-100.
+ * Selects a random explanation for a given category based on a percentage score.
+ * @param categoryName The name of the category.
+ * @param percentage The score (0-100).
+ * @returns A descriptive string.
  */
 function getMockExplanation(
   categoryName: CategoryName,
   percentage: number
 ): string {
-  if (percentage < 0 || percentage > 100) {
-    throw new Error("Percentage must be between 0 and 100.");
-  }
-
-  // Надійна логіка для визначення індексу, що запобігає виходу за межі масиву.
-  // Діапазон оцінок (101) ділиться на кількість рівнів (5).
-  const bucketSize = (100 + 1) / EXPLANATION_LEVELS;
-  const index = Math.min(
-    Math.floor(percentage / bucketSize),
-    EXPLANATION_LEVELS - 1
-  );
-
-  const explanationSet = explanations[categoryName];
-
-  // Перевірка цілісності даних на випадок помилки в конфігурації.
-  if (explanationSet.length !== EXPLANATION_LEVELS) {
-    console.error(
-      `Configuration error: Category "${categoryName}" has ${explanationSet.length} explanations, but expected ${EXPLANATION_LEVELS}.`
-    );
-    return explanationSet[0] || "Invalid explanation configuration.";
-  }
-
-  return explanationSet[index];
+  // The index is determined by the percentage score, fitting into one of the 5 explanation levels.
+  const index = Math.min(Math.floor(percentage / 21), 4); // 0-20 -> 0, 21-41 -> 1, ..., 81-100 -> 4
+  return explanations[categoryName][index];
 }
 
 /**
- * @description Генерує мок-відповідь аналізу для цілей розробки та тестування.
- * Ця функція не повинна використовуватися або потрапляти у виробничу збірку.
- * @param {string} _text - Вхідний текст (не використовується, але зберігається для сумісності сигнатури).
- * @returns {Category[]} Масив об'єктів `Category` з рандомізованими даними.
- * @example
- * import { generateMockAnalysis } from './mockAiApiService';
- *
- * const mockResults = generateMockAnalysis("some text");
- * setAnalysisData({ categories: mockResults, ... });
+ * Generates a mock analysis response for development and testing purposes.
+ * This function should NOT be used in the production build.
+ * @param _text - The input text (currently unused, but kept for signature consistency).
+ * @returns An array of Category objects with randomized data.
  */
 export function generateMockAnalysis(_text: string): Category[] {
-  // `process.env.NODE_ENV` є більш універсальним і не залежить від Vite.
-  if (process.env.NODE_ENV === "production") {
+  // Попередження в консоль, щоб ви не забули видалити цей виклик з продакшн коду
+  if (import.meta.env.PROD) {
     console.warn(
-      "WARNING: `generateMockAnalysis` is being called in a production environment. This is likely a mistake."
+      "WARNING: `generateMockAnalysis` is being called in a production build. This should be disabled."
     );
-    // У production-збірці повертаємо порожній або початковий стан, щоб уникнути несподіваної поведінки.
-    return [];
   }
 
   return CATEGORY_NAMES.map((name): Category => {
-    const percentage = Math.floor(Math.random() * 101); // 0-100
+    const percentage = Math.floor(Math.random() * 101);
     return {
       name,
       percentage,

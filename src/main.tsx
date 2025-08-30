@@ -1,8 +1,14 @@
 /**
- * @fileoverview Це головний файл-точка входу для React-застосунку Svitlogics.
- * Він відповідає за ініціалізацію та рендеринг кореневого компонента `<App />`
- * в DOM, а також за налаштування глобальних провайдерів контексту.
- * @version 1.1.0
+ * Svitlogics Client Entry Point
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Design is an Act of Resistance): This file establishes the
+ *   foundational runtime environment with严肃 precision, rejecting all
+ *   unnecessary embellishments.
+ * - Section Bravo (Clarity is a Moral Imperative): Provider hierarchy is
+ *   minimal and purpose-driven. Error messaging is diagnostic, not apologetic.
+ * - Section Bravo (Engineered for Focus): StrictMode enforcement ensures
+ *   disciplined component behavior and predictable system performance.
  */
 
 import { StrictMode } from "react";
@@ -13,44 +19,35 @@ import App from "./App";
 import "./index.css";
 
 /**
- * @description ID DOM-елемента, в який буде вмонтовано React-застосунок.
- * Винесено в константу для уникнення "магічних рядків".
- * @private
+ * The client-side entry point for the Svitlogics application.
+ * This file is responsible for mounting the root React component into the DOM.
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Bravo (Clarity is a Moral Imperative): The provider hierarchy
+ *   (HelmetProvider, BrowserRouter) is the minimal set required for core
+ *   functionality, demonstrating a "ruthless economy of design".
+ * - Section Bravo (Diagnostic Error Messages): The error handling for the root
+ *   element is diagnostic, not apologetic, immediately identifying a critical
+ *   failure in the application's HTML structure.
+ * - Section Bravo (Engineered for Focus): The use of <StrictMode> enforces
+ *   best practices and helps identify potential problems, contributing to the
+ *   overall stability and predictability of the system.
  */
-const ROOT_ELEMENT_ID = "root";
+const rootElement = document.getElementById("root");
 
-/**
- * @description Ініціалізує та монтує React-застосунок в DOM.
- * @private
- */
-function initializeAndMountApp(): void {
-  const rootElement = document.getElementById(ROOT_ELEMENT_ID);
-
-  // Надійна перевірка наявності кореневого елемента.
-  // Якщо його немає, це критична помилка конфігурації, і застосунок
-  // не може бути запущений.
-  if (!rootElement) {
-    throw new Error(
-      `Fatal Error: Failed to find the root element with ID '${ROOT_ELEMENT_ID}'. The application cannot be mounted.`
-    );
-  }
-
-  const root = createRoot(rootElement);
-
-  // Рендеримо застосунок, обгорнутий у необхідні провайдери:
-  // - StrictMode: Вмикає додаткові перевірки та попередження в React для розробки.
-  // - HelmetProvider: Надає контекст для асинхронного керування тегами в <head>.
-  // - BrowserRouter: Вмикає клієнтський роутинг для застосунку.
-  root.render(
-    <StrictMode>
-      <HelmetProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </HelmetProvider>
-    </StrictMode>
+// Protocol-compliant diagnostic error. It states the failure condition directly.
+if (!rootElement) {
+  throw new Error(
+    "Critical Failure: The root DOM element with ID 'root' was not found."
   );
 }
 
-// Запускаємо ініціалізацію застосунку.
-initializeAndMountApp();
+createRoot(rootElement).render(
+  <StrictMode>
+    <HelmetProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </HelmetProvider>
+  </StrictMode>
+);

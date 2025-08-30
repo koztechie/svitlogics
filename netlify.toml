@@ -1,54 +1,20 @@
-# ==============================================================================
-# # Netlify Configuration File
-# ==============================================================================
-# Цей файл є єдиним джерелом істини для конфігурації збірки,
-# розгортання та поведінки сайту на платформі Netlify.
-#
-# Документація: https://docs.netlify.com/configure-builds/file-based-configuration/
-# Версія: 4.1 (SEO & SPA Redirects)
-# ==============================================================================
+# === Netlify Configuration File v3.0 (Final Merged) ===
 
-
-# ==============================================================================
-# # Build Settings
-# ==============================================================================
-# Основні команди для процесу збірки сайту.
 [build]
-  # Команда, що виконується для збірки проекту.
   command = "npm run build"
-  # Директорія, вміст якої буде розгорнуто.
   publish = "dist"
 
-
-# ==============================================================================
-# # Deployment Contexts
-# ==============================================================================
-# Ці секції дозволяють перевизначати налаштування для різних середовищ.
-# Залишено як плейсхолдери для майбутньої конфігурації.
-
-# Налаштування для основного (production) сайту.
+# Контексти залишаємо для майбутнього
 [context.production]
   [context.production.environment]
-    # Наприклад: NODE_ENV = "production"
 
-# Налаштування для деплоїв з гілок (окрім production).
 [context.branch-deploy]
   [context.branch-deploy.environment]
-    # Наприклад: NODE_ENV = "development"
 
-
-# ==============================================================================
-# # HTTP Headers
-# ==============================================================================
-# Встановлює кастомні HTTP-заголовки для покращення безпеки та кешування.
-# Ці заголовки будуть застосовані до всіх шляхів (`/*`).
+# Налаштування заголовків
 [[headers]]
   for = "/*"
-
   [headers.values]
-    # --------------------------------------------------------------------------
-    # Content Security Policy (CSP)
-    # --------------------------------------------------------------------------
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://challenges.cloudflare.com https://*.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com https://www.google-analytics.com https://*.google-analytics.com; frame-src https://challenges.cloudflare.com; object-src 'none';"
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"

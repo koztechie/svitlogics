@@ -1,85 +1,70 @@
+/**
+ * Svitlogics Server-Side Rendering Entry Point
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Design is an Act of Resistance): This function is a
+ *   sober, functional implementation of server-side rendering, stripped of all
+ *   non-essential elements. It serves as the first line of defense against
+ *   client-side rendering delays and network uncertainty.
+ * - Section Alpha (Interface is a Laboratory): The design philosophy extends
+ *   to the build and delivery pipeline. SSR ensures a predictable, stable
+ *   initial document state, consistent with the laboratory aesthetic.
+ * - Section Alpha (Truth is a Process, Not a Product): SSR provides the
+ *   foundational document structure, but it is not the final interactive
+ *   experience. It is a necessary step in the process of delivering a fully
+ *   functional application.
+ * - Section Bravo (Clarity is a Moral Imperative): The function's purpose,
+ *   parameters, and return value are unambiguous. It is a transparent instrument
+ *   for generating static HTML. The provider hierarchy is minimal and essential.
+ * - Section Bravo (Engineered for Focus): By pre-rendering the application,
+ *   this function delivers a stable, non-interactive HTML document. This
+ *   ensures the fastest possible initial load and content paint, presenting the
+ *   user with a calm, structured environment before client-side hydration.
+ * - Section Echo (Spatial System): While this component does not directly
+ *   control spatial elements, it ensures the initial HTML document is
+ *   structurally sound, providing a stable foundation for the client-side grid.
+ * - Section Hotel (Copy & Tone of Voice): The documentation uses precise,
+ *   technical language, avoiding hyperbole or casual phrasing.
+ */
+
 import ReactDOMServer from "react-dom/server";
 import { StaticRouter } from "react-router-dom/server";
 import { HelmetProvider, HelmetServerState } from "react-helmet-async";
 import App from "./App";
 
-// --- Типізація для підвищення надійності та DX ---
-
-/**
- * @description Визначає структуру об'єкта, що передається в HelmetProvider
- * для збору метаданих на сервері.
- * @private
- */
 interface HelmetContext {
   helmet?: HelmetServerState;
 }
 
 /**
- * @description Визначає контракт повертаємого значення функції `render`.
+ * The server-side rendering (SSR) entry point for the Svitlogics application.
+ * This function is responsible for generating the initial static HTML for a given route,
+ * ensuring the fastest possible delivery of a stable, non-interactive document to the client.
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Engineered for Focus): By pre-rendering the application on the
+ *   server, this function provides a stable, non-interactive HTML document. This
+ *   ensures the fastest possible initial load and content paint, presenting the
+ *   user with a calm, structured environment before client-side hydration.
+ * - Section Bravo (Clarity is a Moral Imperative): The architecture is ruthlessly
+ *   economical. It includes only the essential providers (`StaticRouter`, `HelmetProvider`)
+ *   required to render a correct and complete document, eliminating all non-essential
+ *   logic from this critical path.
+ *
+ * @param path The URL path requested by the client.
+ * @returns An object containing the rendered application HTML and the extracted helmet metadata.
  */
-export interface RenderOutput {
-  /**
-   * @description HTML-рядок, згенерований з дерева React-компонентів.
-   */
-  readonly appHtml: string;
-  /**
-   * @description Об'єкт, що містить усі метадани, зібрані з `react-helmet-async`
-   * (title, meta, link, script теги), готовий для вставки в `<head>`.
-   */
-  readonly helmet?: HelmetServerState;
-}
-
-/**
- * @description
- * Серверна функція для рендерингу React-застосунку в HTML-рядок.
- * Використовується в процесі статичної генерації сайту (SSG) для створення
- * HTML-файлів для кожного маршруту.
- *
- * @param {string} path - Маршрут (URL-шлях), для якого потрібно згенерувати HTML.
- * @returns {RenderOutput} Об'єкт, що містить HTML-рядок (`appHtml`) та метадані (`helmet`).
- * @throws {Error} Перекидає помилку, якщо `ReactDOMServer.renderToString` зазнає невдачі,
- *                 щоб процес збірки міг її перехопити та завершитися з помилкою.
- *
- * @example
- * // У скрипті pre-render.mjs
- * import { render } from './src/entry-server.js';
- *
- * const routes = ['/', '/about'];
- * for (const route of routes) {
- *   try {
- *     const { appHtml, helmet } = render(route);
- *     // ... логіка для вставки HTML у шаблон ...
- *   } catch (error) {
- *     console.error(`Failed to render path: ${route}`, error);
- *     process.exit(1);
- *   }
- * }
- */
-export function render(path: string): RenderOutput {
+export function render(path: string) {
   const helmetContext: HelmetContext = {};
 
-  try {
-    const appHtml = ReactDOMServer.renderToString(
-      <HelmetProvider context={helmetContext}>
-        <StaticRouter location={path}>
-          <App />
-        </StaticRouter>
-      </HelmetProvider>
-    );
+  const appHtml = ReactDOMServer.renderToString(
+    <HelmetProvider context={helmetContext}>
+      <StaticRouter location={path}>
+        <App />
+      </StaticRouter>
+    </HelmetProvider>
+  );
 
-    const { helmet } = helmetContext;
-    return { appHtml, helmet };
-  } catch (error) {
-    // Логуємо помилку з контекстом (який шлях не вдалося відрендерити),
-    // що є критично важливим для швидкого налагодження.
-    console.error(
-      `\n❌ Critical error during server-side rendering for path: "${path}"`
-    );
-    console.error(
-      "This is likely caused by an error within a React component rendered on this page.\n"
-    );
-    // Перекидаємо помилку далі, щоб скрипт збірки (pre-render.mjs)
-    // міг її перехопити та завершити процес з ненульовим кодом виходу.
-    throw error;
-  }
+  const { helmet } = helmetContext;
+  return { appHtml, helmet };
 }

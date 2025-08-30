@@ -1,38 +1,36 @@
 <div align="center">
-  <a href="https://svitlogics.com" title="Access the Instrument">
-    <img src="./assets/readme/SvitlogicsLogo.svg" alt="Svitlogics Logo" width="140"/>
+  <a href="https://svitlogics.com" title="Access the Svitlogics Analysis Instrument">
+    <img src="./public/logo/SvitlogicsLogo.svg" alt="Svitlogics Logo" width="120"/>
   </a>
 </div>
 
-<h1 align="center" style="border: none; margin-top: 20px; margin-bottom: 0;">SVITLOGICS</h1>
+<h1 align="center" style="border: none; margin-top: 16px; margin-bottom: 0;">Svitlogics</h1>
 
 <p align="center">
-  <strong>AN INSTRUMENT FOR DECONSTRUCTING NARRATIVES.</strong>
+  <strong>An instrument for the forensic analysis of text.</strong>
 </p>
 
 <p align="center">
-  This is not a "truth machine." It is a tool engineered to dissect text, revealing the architecture of manipulation. It operates on a single principle: to resist manipulation, you must first understand its mechanics.
+  This system is designed to dissect text and identify the architecture of manipulation. It operates on the principle that to resist manipulative narratives, one must first understand their mechanics.
 </p>
 
 <p align="center">
   <code>STATUS: PUBLIC BETA</code>
   &nbsp;&nbsp;|&nbsp;&nbsp;
-  <code>LICENSE: MIT</code>
+  <code>LICENSE: CUSTOM (ETHICAL USE)</code>
   &nbsp;&nbsp;|&nbsp;&nbsp;
-  <code>CONTRIBUTIONS: WELCOME</code>
+  <code>CONTRIBUTIONS: SEE PROTOCOL</code>
 </p>
 
 ---
 
-## I. GENESIS: A REACTION TO WEAPONIZED NARRATIVE
+## I. Mission
 
-Svitlogics was not born from a business plan. It was forged in Kyiv, Ukraine, as a direct reaction to the daily reality of information warfare. Its genesis was a single, viral post that masterfully weaponized human tragedy to normalize poor service—a microcosm of the sophisticated manipulation that defines the modern information environment. People saw patriotism; I saw a meticulously constructed deception.
+Svitlogics was engineered in Kyiv, Ukraine, as a direct response to sustained information warfare. Its singular mission is to provide a transparent, open-source instrument for deconstructing weaponized narratives. It is a tool for journalists, researchers, and individuals who require a clinical approach to textual analysis.
 
-This project is the operationalization of that dissent. It is a solo-developed, fully open-source instrument built on the conviction that clarity is a form of resistance.
+## II. Methodology
 
-## II. THE INSTRUMENT: METHODOLOGY OF DECONSTRUCTION
-
-The Service rejects the simplistic binary of "true/false." Instead, it provides a structured, multi-vector analysis to expose the underlying framework of influence. All submitted text is processed against five core criteria, with the AI functioning as an analyst, not a judge.
+The Service rejects the simplistic binary of "true/false." Instead, it provides a structured, multi-vector analysis to expose the underlying framework of influence. All submitted text is processed against five core criteria, with the AI functioning as a dispassionate analyst, not a judge.
 
 | Criterion                  | Function                                                                    |
 | :------------------------- | :-------------------------------------------------------------------------- |
@@ -42,30 +40,28 @@ The Service rejects the simplistic binary of "true/false." Instead, it provides 
 | **Unbiased Presentation**  | Evaluates the text's commitment to fairness, objectivity, and balance.      |
 | **Emotional Tone**         | Analyzes the underlying sentiment and its intensity.                        |
 
-The output is a data-driven report. It is not an answer. It is a tool designed to help you formulate better questions. The final judgment remains with the user.
+The output is a qualitative report intended to help the user formulate better questions. The final judgment remains with the human analyst.
 
-> **OPERATIONAL CAVEAT:** No AI is infallible. This instrument is an auxiliary for human critical thinking, not a replacement. Use at your own discretion.
+> **System Caveat:** No AI analysis is infallible. This instrument is an auxiliary for human critical thinking, not a replacement. All findings require user verification.
 
-## III. ARCHITECTURE: ZERO-TRUST, STATELESS, SERVERLESS
+## III. System Architecture
 
-The system is engineered for absolute security and user privacy. There are no compromises.
+The system is engineered for security and user privacy through a stateless, serverless, zero-trust architecture.
 
-- **DATA HANDLING**: The service is **stateless**. User-submitted text is processed in-memory and **never stored**. The most secure data is the data that does not exist.
-- **EXECUTION ENVIRONMENT**: The core analysis engine operates within a **secure, serverless back-end** ([Netlify Functions](https://www.netlify.com/platform/functions/)). The client-side application (React/Vite) only ever communicates with our own trusted API gateway.
-- **AI ENGINE**: Analysis is performed by a high-availability cascade of premium **Google Gemini 2.5** models. All API key interactions are isolated on the server, eliminating any possibility of client-side exposure.
-- **PERFORMANCE**: The front-end is delivered as a **pre-rendered static site (SSG)**, ensuring near-zero load times. The back-end is asynchronous, capable of handling extended processing without timeouts.
+- **Data Handling**: The service is **stateless**. User-submitted text is processed in-memory and **never stored or logged**.
+- **Execution Environment**: The core analysis engine operates within a **secure, serverless back-end** (Netlify Functions). The client-side application (React/Vite) communicates exclusively with our own trusted API gateway.
+- **AI Engine**: Analysis is performed by a high-availability cascade of premium **Google Gemini 2.5** models. All API key interactions are isolated on the server.
+- **Performance**: The front-end is delivered as a **pre-rendered static site (SSG)** for near-instantaneous load times. The back-end is asynchronous, capable of handling extended processing without timeouts.
 
-This is a zero-trust architecture. We do not trust the client. We do not store user data.
+## IV. Design Philosophy
 
-## IV. AESTHETIC: PURE MINIMALIST-BRUTALIST
+The design of Svitlogics is a functional extension of its mission, governed by **The Ethos-Driven Design System**.
 
-The design is a function. It is an extension of the mission.
+> The interface adopts the aesthetic of a high-consequence laboratory. It is sober, structured, and silent. The `Inter` typeface is used for all UI controls for maximum legibility, while the `Lora` typeface is used for analyzed text to create a clear cognitive separation between the instrument and the specimen. The color palette is intentionally desaturated and clinical.
 
-> The user interface is unapologetically clear. Every element, from the universal use of `IBM Plex Mono` to the stark black-and-white palette, is a deliberate choice to support clarity and transparency. The user experience is designed to be as direct and honest as the analysis it presents.
+This is a **zero-embellishment** environment. All decorative elements are forbidden. The aesthetic is a direct counter-argument to the noisy, manipulative digital spaces the tool is designed to analyze.
 
-This is a **zero-embellishment** environment. No rounded corners, no shadows, no gradients, no decorative animations. The aesthetic is raw, geometric, and functional. It is a reflection of the tool's purpose: to strip away the artifice and reveal the underlying structure.
-
-## V. DEPLOYMENT & DEVELOPMENT
+## V. Local Development
 
 This repository contains the full source code for the Svitlogics web application.
 
@@ -75,7 +71,7 @@ This repository contains the full source code for the Svitlogics web application
 - npm
 - Netlify CLI
 
-### Local Execution Protocol
+### Execution Protocol
 
 1.  **Clone Repository:**
 
@@ -92,7 +88,7 @@ This repository contains the full source code for the Svitlogics web application
 3.  **Configure Environment:**
 
     - Duplicate the example environment file: `cp .env.example .env.local`
-    - Populate `.env.local` with the necessary API keys (`GOOGLE_AI_KEY`, `TURNSTILE_SECRET_KEY`) and public variables (`VITE_GTM_ID`, `VITE_TURNSTILE_SITE_KEY`).
+    - Populate `.env.local` with the necessary API keys and public variables.
 
 4.  **Initiate Local Server:**
     ```sh
@@ -100,15 +96,17 @@ This repository contains the full source code for the Svitlogics web application
     ```
     The application will be served on `http://localhost:8888`.
 
-## VI. CONTRIBUTIONS
+## VI. Contributions
 
-This is an open-source project. Independent analysis and contributions are encouraged. All contributions will be reviewed for alignment with the core mission and technical standards.
+This is an open-source project. Contributions are considered but are subject to a strict review process for alignment with the core mission and technical standards.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for operational guidelines.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full protocol.
 
-## VII. LICENSE
+## VII. License
 
-**MIT License**. You are free to use, modify, and distribute this code. See `LICENSE` for full terms.
+The Software is licensed under the **Svitlogics Software License Agreement v4.0 ("Ethical Use and Mission-Aligned License")**, which is based on the MIT License but includes critical, non-negotiable restrictions on use.
+
+See the [LICENSE](LICENSE) file for the full terms.
 
 ---
 

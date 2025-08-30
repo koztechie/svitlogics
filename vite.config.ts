@@ -1,8 +1,6 @@
 // vite.config.ts
 
-import path from "path";
-import { fileURLToPath } from "url";
-import { defineConfig, UserConfig } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
 import mdx from "@mdx-js/rollup";
@@ -10,16 +8,8 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// --- ВИПРАВЛЕННЯ ТУТ: Перевіряємо змінну оточення ---
-const isSsrBuild = !!process.env.SSR;
-
-/**
- * @description Конфігурація Vite.
- * @see https://vitejs.dev/config/
- */
-const viteConfig: UserConfig = {
+// https://vitejs.dev/config/
+export default defineConfig({
   plugins: [
     react(),
     svgr(),
@@ -36,28 +26,12 @@ const viteConfig: UserConfig = {
     }),
   ],
 
-  resolve: {
-    alias: isSsrBuild
-      ? [
-          {
-            find: path.resolve(
-              __dirname,
-              "src/components/layout/CookieConsentManager"
-            ),
-            replacement: path.resolve(
-              __dirname,
-              "src/components/layout/CookieConsentManager.server"
-            ),
-          },
-        ]
-      : [],
-  },
-
   build: {
     target: "es2020",
     sourcemap: true,
   },
 
+  // Опція для Netlify Functions, щоб dev-сервер знав, куди проксіювати запити
   server: {
     proxy: {
       "/.netlify/functions": {
@@ -68,9 +42,9 @@ const viteConfig: UserConfig = {
     },
   },
 
+  // --- ВИПРАВЛЕННЯ ТУТ: Перенесено на верхній рівень ---
+  // Вказуємо Vite, що потрібно бандлити всі залежності для SSR
   ssr: {
     noExternal: true,
   },
-};
-
-export default defineConfig(viteConfig);
+});

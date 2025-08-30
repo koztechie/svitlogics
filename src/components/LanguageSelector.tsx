@@ -1,101 +1,112 @@
-import React, { useCallback } from "react";
+/**
+ * Svitlogics Language Selector Component
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Design is an Act of Resistance): This component is a
+ *   sober, functional control for selecting analysis language, stripped of all
+ *   non-essential visual elements and decorative attributes.
+ * - Section Alpha (Interface is a Laboratory): The design is calibrated for
+ *   precision and objectivity, serving as a clear, predictable control element.
+ * - Section Alpha (Truth is a Process, Not a Product): The component provides
+ *   a clear mechanism for users to select the appropriate analytical framework
+ *   for their text, emphasizing that analysis is context-dependent.
+ * - Section Bravo (Clarity is a Moral Imperative): The component's purpose and
+ *   interaction model are unambiguous. The active state is clearly indicated.
+ * - Section Charlie (Chromatic System): Employs the prescribed palette for
+ *   UI scaffolding (`neutral-500` borders) and system state (`svitlogics-blue`
+ *   for active selection).
+ * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
+ *   grid system (px-4, py-2) and maintains visual balance.
+ * - Section Delta (Typography): Uses 'Inter' (`font-sans`) for all text elements,
+ *   maintaining UI/Instrument distinction. Button labels use `text-small` with
+ *   standard 400 font-weight.
+ * - Section Foxtrot (Component Architecture): Embodies a purely functional
+ *   segmented control with sharp corners, no shadows, and imperative interaction.
+ * - Section Hotel (Copy & Tone of Voice): The component uses precise, technical
+ *   language and avoids emotional or persuasive phrasing.
+ */
+
+import React from "react";
 import clsx from "clsx";
 
-// --- Типізація та Константи ---
-
-/**
- * @description Визначає підтримувані мови для аналізу.
- */
 export type AnalysisLanguage = "en" | "uk";
 
-/**
- * @description Визначає контракт пропсів для компонента `LanguageSelector`.
- */
 interface LanguageSelectorProps {
   selectedLanguage: AnalysisLanguage;
   onLanguageChange: (lang: AnalysisLanguage) => void;
 }
 
 const UI_TEXT = {
-  sectionTitle: "ANALYSIS LANGUAGE",
-  englishLabel: "ENGLISH",
-  ukrainianLabel: "UKRAINIAN",
+  sectionTitle: "Analysis Language",
+  englishLabel: "English",
+  ukrainianLabel: "Ukrainian",
 } as const;
 
-// --- Мемоїзовані Підкомпоненти ---
-
-interface LanguageButtonProps {
-  lang: AnalysisLanguage;
-  isActive: boolean;
-  children: React.ReactNode;
-  onClick: (lang: AnalysisLanguage) => void;
-}
-
-const LanguageButton: React.FC<LanguageButtonProps> = React.memo(
-  ({ lang, isActive, children, onClick }) => {
-    const handleClick = useCallback(() => {
-      onClick(lang);
-    }, [lang, onClick]);
-
-    return (
-      <button
-        type="button"
-        onClick={handleClick}
-        className={clsx(
-          "w-full py-2 font-medium uppercase text-ui-label transition-colors duration-100",
-          {
-            "cursor-default bg-black text-white": isActive,
-            "bg-white text-black hover:bg-black hover:text-white": !isActive,
-          }
-        )}
-        aria-pressed={isActive}
-        disabled={isActive}
-      >
-        {children}
-      </button>
-    );
-  }
-);
-LanguageButton.displayName = "LanguageButton";
-
+/**
+ * A control component for selecting the analysis language.
+ * It functions as a segmented control, presenting a finite set of mutually exclusive options.
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Laboratory, Not a Stage): The component avoids theatricality. The
+ *   active state is indicated with the primary system color (`svitlogics-blue`), not a
+ *   dramatic color inversion.
+ * - Section Charlie (Chromatic System): Uses `neutral-500` for borders, consistent
+ *   with UI scaffolding. The active state uses `svitlogics-blue` to signify system state.
+ * - Section Delta (Typography): All text uses the 'Inter' typeface. Button labels use
+ *   `text-small` with the standard 400 font-weight. `uppercase` is strictly forbidden.
+ * - Section Foxtrot (Component Architecture): A purely functional, rectangular design
+ *   with no decorative elements.
+ */
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   selectedLanguage,
   onLanguageChange,
 }) => {
   return (
     <section aria-labelledby="language-selector-title">
-      <div className="border-1 border-black">
-        <header className="border-b-1 border-black bg-white px-4 py-2">
-          {/* --- ВИПРАВЛЕННЯ ТУТ: h2 замінено на div з ARIA-атрибутами --- */}
-          <div
+      <div className="border border-neutral-500">
+        <header className="border-b border-neutral-500 bg-paper-white px-4 py-2">
+          <h3
             id="language-selector-title"
-            className="font-medium uppercase text-black text-ui-label"
-            role="heading"
-            aria-level={2}
+            className="font-sans text-body font-semibold text-carbon-black"
           >
             {UI_TEXT.sectionTitle}
-          </div>
+          </h3>
         </header>
 
         <div
-          className="grid grid-cols-2 divide-x-1 divide-black"
+          className="grid grid-cols-2"
           role="group"
           aria-label={UI_TEXT.sectionTitle}
         >
-          <LanguageButton
-            lang="en"
-            isActive={selectedLanguage === "en"}
-            onClick={onLanguageChange}
+          <button
+            type="button"
+            onClick={() => onLanguageChange("en")}
+            className={clsx(
+              "w-full py-2 font-sans text-small transition-colors",
+              selectedLanguage === "en"
+                ? "cursor-default bg-svitlogics-blue text-paper-white"
+                : "bg-paper-white text-carbon-black hover:bg-neutral-300"
+            )}
+            aria-pressed={selectedLanguage === "en"}
+            disabled={selectedLanguage === "en"}
           >
             {UI_TEXT.englishLabel}
-          </LanguageButton>
-          <LanguageButton
-            lang="uk"
-            isActive={selectedLanguage === "uk"}
-            onClick={onLanguageChange}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onLanguageChange("uk")}
+            className={clsx(
+              "w-full border-l border-neutral-500 py-2 font-sans text-small transition-colors",
+              selectedLanguage === "uk"
+                ? "cursor-default bg-svitlogics-blue text-paper-white"
+                : "bg-paper-white text-carbon-black hover:bg-neutral-300"
+            )}
+            aria-pressed={selectedLanguage === "uk"}
+            disabled={selectedLanguage === "uk"}
           >
             {UI_TEXT.ukrainianLabel}
-          </LanguageButton>
+          </button>
         </div>
       </div>
     </section>

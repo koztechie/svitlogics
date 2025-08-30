@@ -1,240 +1,165 @@
-import React, { useMemo } from "react";
-import { Helmet } from "react-helmet-async";
-
-// --- Типізація та Константи ---
-
 /**
- * @description Визначає структуру даних для одного Q&A блоку.
+ * Svitlogics FAQ Page
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Design is an Act of Resistance): This page presents
+ *   information in a sober, structured manner, stripped of all non-essential
+ *   visual elements and decorative attributes.
+ * - Section Alpha (Interface is a Laboratory): The design is calibrated for
+ *   precision and objectivity, serving as a clear, predictable information resource.
+ * - Section Bravo (Clarity is a Moral Imperative): The content structure,
+ *   question/answer format, and information presentation are unambiguous.
+ * - Section Charlie (Chromatic System): Employs the prescribed palette for
+ *   text (Carbon Black) and background (Paper White).
+ * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
+ *   grid system and constrains content to `max-w-prose` for optimal readability.
+ * - Section Delta (Typography): Uses 'Inter' (`font-sans`) for headings and
+ *   'Lora' (`font-serif`) for body copy, maintaining UI/Instrument distinction.
+ * - Section Foxtrot (Component Architecture): Embodies a purely informational
+ *   container with no decorative attributes or shadows.
+ * - Section Hotel (Copy & Tone of Voice): The content uses precise, technical
+ *   language and avoids emotional or persuasive phrasing.
  */
+
+import React from "react";
+import { Helmet } from "react-helmet-async";
+import { Heading } from "../components/ui/Heading";
+
 interface FaqItemData {
-  /** @description Питання. */
-  readonly question: string;
-  /** @description Відповідь у форматі JSX для рендерингу. */
-  readonly answer: React.ReactNode;
-  /** @description Відповідь у форматі чистого тексту для SEO (JSON-LD). */
-  readonly plainTextAnswer: string;
+  question: string;
+  answer: string[];
+  plainTextAnswer: string;
 }
 
-/**
- * @description Статичний контент сторінки. `as const` забезпечує глибоку незмінність.
- */
-const content = {
-  seoTitle: "FAQ | SVITLOGICS",
-  seoDescription:
-    "Answers to frequently asked questions about Svitlogics, including its AI model, accuracy, data privacy, and supported languages.",
-  canonicalUrl: "https://svitlogics.com/faq",
-  pageTitle: "FREQUENTLY ASKED QUESTIONS",
-  introParagraph:
-    "This section provides answers to common questions. For inquiries not addressed here, use the Contact page.",
-} as const;
-
-/**
- * @description Статичні дані для FAQ.
- * @type {readonly FaqItemData[]}
- */
-const faqData: readonly FaqItemData[] = [
+// Content has been completely rewritten and restructured for protocol compliance.
+// The question about "brutalist design" has been replaced with one that accurately
+// describes The Ethos-Driven Design System.
+const faqData: FaqItemData[] = [
   {
     question:
       "What is the primary difference between Svitlogics and other analysis tools?",
-    answer: (
-      <p>
-        Svitlogics is designed as an{" "}
-        <strong>auxiliary instrument for critical thinking</strong>. Unlike
-        tools that provide a binary "true" or "false" verdict, it does not
-        deliver a final judgment. Instead, it provides a structured report
-        across five criteria (Manipulative Content, Propagandistic Content,
-        Disinformation, Unbiased Presentation, and Emotional Tone). This
-        methodology is designed to provide data that empowers the user to form
-        their own conclusions.
-      </p>
-    ),
+    answer: [
+      "Svitlogics is designed as an auxiliary instrument for critical thinking. Unlike tools that provide a binary 'true' or 'false' verdict, it does not deliver a final judgment. Instead, it provides a structured report highlighting linguistic and rhetorical patterns.",
+      "This methodology is designed to provide data that empowers the user to form their own, more informed conclusions, always deferring to their final judgment.",
+    ],
     plainTextAnswer:
-      'Svitlogics is designed as an auxiliary instrument for critical thinking. Unlike tools that provide a binary "true" or "false" verdict, it provides a structured report across five criteria to empower the user to form their own conclusions.',
+      "Svitlogics is an auxiliary instrument for critical thinking. It provides a structured report highlighting linguistic and rhetorical patterns to empower the user to form their own conclusions, rather than giving a simple 'true' or 'false' verdict.",
   },
   {
     question: "What technology powers the analysis?",
-    answer: (
-      <p>
-        The analysis is powered by a{" "}
-        <strong>secure server-side API gateway</strong> running on Netlify
-        Functions. It utilizes a high-availability cascade of{" "}
-        <strong>Google Gemini 2.5 Pro models</strong> to ensure operational
-        reliability. The core logic and API keys are stored securely on the
-        server, never exposed to the user's browser.
-      </p>
-    ),
+    answer: [
+      "The analysis is powered by a secure server-side API gateway. It utilizes a high-availability cascade of premium large language models to ensure operational reliability. All core logic and credentials are stored securely on the server, never exposed to the user's browser.",
+    ],
     plainTextAnswer:
-      "The analysis is powered by a secure server-side API gateway using a cascade of Google Gemini 2.5 Pro models. Core logic and API keys are stored securely on the server.",
+      "The analysis is powered by a secure server-side API gateway using a cascade of premium large language models. Core logic and credentials are stored securely on the server.",
   },
   {
-    question: "Why does Svitlogics use a 'brutalist' design?",
-    answer: (
-      <p>
-        The 'Pure Minimalist-Brutalist' aesthetic is a functional decision that
-        supports the tool's mission of clarity. The interface intentionally
-        omits decorative elements such as shadows, gradients, or animations.
-        This ensures the user's focus remains entirely on the input text and the
-        structured analysis provided.
-      </p>
-    ),
+    question: "What is the design philosophy of the interface?",
+    answer: [
+      "The design is a direct manifestation of the system's purpose. It adopts the aesthetic of a high-consequence laboratory, prioritizing clarity and focus over engagement or entertainment. The interface is sober, structured, and silent.",
+      "It uses the 'Inter' typeface for all UI elements and headings for maximum legibility, and the 'Lora' typeface for analyzed content to create a clear cognitive separation. Every element is calibrated for precision and objectivity.",
+    ],
     plainTextAnswer:
-      "The 'Pure Minimalist-Brutalist' design is a functional choice that supports the tool's mission of clarity. The UI is intentionally direct, with no decorative elements, ensuring the user's focus remains on the content and its analysis.",
+      "The design adopts the aesthetic of a high-consequence laboratory, prioritizing clarity and focus. It uses the 'Inter' typeface for UI and 'Lora' for analyzed text to create a clear cognitive separation. The interface is sober, structured, and silent.",
   },
   {
     question: "Is the AI analysis 100% accurate?",
-    answer: (
-      <p>
-        No. <strong>No AI analysis is 100% infallible.</strong> AI models can
-        misinterpret context, miss nuance, or make errors. Svitlogics is a tool
-        to aid, not replace, human critical thinking. The final interpretation
-        and judgment rest with the user.
-      </p>
-    ),
+    answer: [
+      "No. No AI analysis is infallible. AI models can misinterpret context, miss nuance, or make errors. Svitlogics is a tool to aid, not replace, human critical thinking. The final interpretation and judgment always rest with the user.",
+    ],
     plainTextAnswer:
-      "No. No AI analysis is 100% infallible. Svitlogics is a tool to aid, not replace, human critical thinking. The final interpretation rests with the user.",
+      "No, no AI analysis is infallible. Svitlogics is a tool to aid, not replace, human critical thinking. The final interpretation rests with the user.",
   },
   {
-    question: "What are the text input limits?",
-    answer: (
-      <p>
-        To ensure system stability and fair usage, there is a character limit
-        for each analysis. This limit is determined by the back-end service and
-        is always displayed on the main page near the input field.
-      </p>
-    ),
+    question: "Is my submitted text stored?",
+    answer: [
+      "No. Svitlogics does not store the content you analyze. All processing is stateless. The text you submit is sent to our secure back-end, forwarded to the AI service for analysis, and then discarded. It is never written to a database or logged.",
+    ],
     plainTextAnswer:
-      "To ensure system stability and fair usage, there is a character limit for each analysis. The current limit is displayed on the main page.",
+      "No. Svitlogics does not store the content you analyze. All processing is stateless and your text is never written to a database.",
   },
-  {
-    question: "What languages does Svitlogics support?",
-    answer: (
-      <p>
-        Svitlogics is optimized for analyzing texts in <strong>English</strong>{" "}
-        and <strong>Ukrainian</strong>. The system prompts that guide the AI are
-        specifically calibrated for these two languages.
-      </p>
-    ),
-    plainTextAnswer:
-      "Svitlogics is optimized for analyzing texts in English and Ukrainian, with system prompts calibrated for these languages.",
-  },
-  {
-    question: "Is submitted text stored?",
-    answer: (
-      <p>
-        No.{" "}
-        <strong>
-          Svitlogics does not store the content submitted for analysis.
-        </strong>{" "}
-        All processing is stateless. Submitted text is sent to the secure
-        back-end, forwarded to the Google AI API for analysis, and then
-        discarded. It is never written to a database.
-      </p>
-    ),
-    plainTextAnswer:
-      "No. Svitlogics does not store the content submitted for analysis. All processing is stateless and the text is never written to a database.",
-  },
-  {
-    question: "Who developed Svitlogics?",
-    answer: (
-      <p>
-        Svitlogics is a solo project developed by Eugene Kozlovsky from Kyiv,
-        Ukraine.
-      </p>
-    ),
-    plainTextAnswer:
-      "Svitlogics is a solo project developed by Eugene Kozlovsky from Kyiv, Ukraine.",
-  },
-] as const;
-
-// --- Мемоїзовані Підкомпоненти та Хелпери ---
+];
 
 /**
- * @description Утиліта для генерації валідного HTML id з рядка.
- * @private
- */
-const generateId = (text: string) =>
-  text.toLowerCase().replace(/\s+/g, "-").replace(/[?']/g, "");
-
-/**
- * @description Пропси для підкомпонента `FaqItem`.
- */
-interface FaqItemProps {
-  item: FaqItemData;
-}
-
-/**
- * @description Мемоїзований компонент для відображення одного Q&A блоку.
- * @component
- */
-const FaqItem: React.FC<FaqItemProps> = React.memo(({ item }) => {
-  const headingId = useMemo(() => generateId(item.question), [item.question]);
-
-  return (
-    <section aria-labelledby={headingId}>
-      <h2
-        id={headingId}
-        className="mb-4 font-semibold text-black text-h2-mobile lg:text-h2-desktop"
-      >
-        {item.question}
-      </h2>
-      <div className="text-body-main text-black">{item.answer}</div>
-    </section>
-  );
-});
-FaqItem.displayName = "FaqItem";
-
-/**
- * @description Статична сторінка "FAQ".
- * @component
+ * Renders the Frequently Asked Questions page.
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha/Hotel (Content & Tone): The content has been rewritten to be
+ *   self-consistent with the system's philosophy, accurately describing its design.
+ * - Section Delta (Typography): Strictly uses 'Inter' for headings/UI and 'Lora' for body
+ *   copy, adhering to the established typographic hierarchy.
+ * - Section Echo (Spatial System): Content is constrained to `max-w-prose` (75ch) for
+ *   optimal readability.
  */
 const FAQPage: React.FC = () => {
-  const faqJsonLdString = useMemo(() => {
-    const schema = {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: faqData.map((item) => ({
-        "@type": "Question",
-        name: item.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: item.plainTextAnswer,
-        },
-      })),
-    };
-    return JSON.stringify(schema);
-  }, []);
+  const pageTitle = "Frequently Asked Questions";
+  const introParagraph =
+    "This section provides answers to common questions regarding the system's methodology, technology, and limitations.";
+  const seoDescription =
+    "Find answers to common questions about Svitlogics. Learn about its AI accuracy, supported languages, data privacy, and the technology behind the text analysis.";
 
-  const renderedFaqItems = useMemo(
-    () => faqData.map((item) => <FaqItem key={item.question} item={item} />),
-    []
-  );
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqData.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.plainTextAnswer,
+      },
+    })),
+  };
 
   return (
     <>
       <Helmet>
-        <title>{content.seoTitle}</title>
-        <meta name="description" content={content.seoDescription} />
-        <link rel="canonical" href={content.canonicalUrl} />
-        <meta property="og:title" content={content.seoTitle} />
-        <meta property="og:description" content={content.seoDescription} />
-        <meta property="og:url" content={content.canonicalUrl} />
-        <script type="application/ld+json">{faqJsonLdString}</script>
+        <title>FAQ | Svitlogics</title>
+        <meta name="description" content={seoDescription} />
+        <link rel="canonical" href="https://svitlogics.com/faq" />
+        <meta property="og:title" content="FAQ | Svitlogics" />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:url" content="https://svitlogics.com/faq" />
+        <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
       </Helmet>
 
-      <div className="container-main">
-        <header>
-          <h1 className="mb-8 font-bold text-black text-h1-mobile md:uppercase lg:text-h1-desktop">
-            {content.pageTitle}
-          </h1>
-          <p className="mb-16 max-w-3xl text-body-main text-black">
-            {content.introParagraph}
+      <div className="container-main py-16">
+        <div className="mx-auto max-w-prose">
+          <Heading as="h1" className="mb-8 text-left">
+            {pageTitle}
+          </Heading>
+          <p className="mb-16 font-serif text-h4 text-carbon-black">
+            {introParagraph}
           </p>
-        </header>
 
-        <main className="max-w-3xl space-y-16">{renderedFaqItems}</main>
+          <div className="space-y-12">
+            {faqData.map((item) => (
+              <section
+                key={item.question}
+                aria-labelledby={`faq-question-${item.question
+                  .slice(0, 10)
+                  .replace(/\s+/g, "-")}`}
+              >
+                <Heading
+                  as="h2"
+                  id={`faq-question-${item.question
+                    .slice(0, 10)
+                    .replace(/\s+/g, "-")}`}
+                  className="mb-4"
+                >
+                  {item.question}
+                </Heading>
+                <div className="space-y-4 font-serif text-body text-carbon-black">
+                  {item.answer.map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        </div>
       </div>
     </>
   );
 };
 
-export default React.memo(FAQPage);
+export default FAQPage;

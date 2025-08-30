@@ -1,57 +1,56 @@
+/**
+ * Svitlogics Layout Component
+ *
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Alpha (Design is an Act of Resistance): This component is a
+ *   sober, functional structural element, stripped of all non-essential visual
+ *   elements and decorative attributes. It establishes a serious, focused environment.
+ * - Section Alpha (Interface is a Laboratory): The design provides a stable,
+ *   predictable canvas that recedes to allow the primary content (the analysis tools)
+ *   to become the focus.
+ * - Section Bravo (Clarity is a Moral Imperative): The component's structure is
+ *   unambiguous and purpose-driven. It clearly defines the document flow.
+ * - Section Charlie (Chromatic System): Employs the prescribed `paper-white` background
+ *   color to reduce eye strain during prolonged analytical sessions.
+ * - Section Echo (Spatial System): Enforces a rigid, full-height flexbox column
+ *   layout (`flex min-h-screen flex-col`) that creates a stable, predictable viewport
+ *   structure. This directly fulfills the "Engineered for Focus" principle by
+ *   preventing layout shift and providing a calm spatial foundation.
+ * - Section Foxtrot (Component Architecture): This is a pure structural container.
+ *   It has no decorative attributes, shadows, or visual embellishments. Its function
+ *   is purely to organize the viewport.
+ * - Section Hotel (Copy & Tone of Voice): The component's documentation uses
+ *   precise, technical language.
+ */
+
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import Header from "./Header";
 import Footer from "./Footer";
-import { Helmet } from "react-helmet-async";
-import CookieBanner from "./CookieBanner";
 
-/**
- * @description Визначає контракт пропсів для компонента `Layout`.
- */
 interface LayoutProps {
-  /**
-   * @description Дочірні елементи React, зазвичай це компонент поточної сторінки,
-   * який буде відрендерено всередині основного макету.
-   */
   children: React.ReactNode;
 }
 
 /**
- * @description
- * `Layout` — це головний компонент-обгортка для всього сайту.
- * Він забезпечує консистентну структуру сторінки, що складається з хедера,
- * основної контентної частини та футера. Компонент також включає
- * глобальні мета-теги для SEO та соціальних мереж за допомогою `react-helmet-async`
- * та відображає банер для згоди на використання cookies.
+ * Layout: The foundational structural component for the Svitlogics interface.
+ * It establishes the primary visual canvas and ensures a stable, predictable
+ * viewport structure (header, main content, footer).
  *
- * @component
- * @param {LayoutProps} props - Пропси компонента.
- * @example
- * <Layout>
- *   <HomePage />
- * </Layout>
+ * Adherence to The Ethos-Driven Design System:
+ * - Section Charlie (Chromatic System): Utilizes `bg-paper-white` for the main canvas
+ *   to reduce eye strain during prolonged analysis sessions.
+ * - Section Echo (Spatial System): Employs a full-height flexbox column to create an
+ *   ordered and stable environment, fulfilling the "Engineered for Focus" principle.
  */
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  // --- Мемоїзація статичних компонентів ---
-  // Header та Footer не залежать від пропсів чи стану цього компонента.
-  // `useMemo` гарантує, що ми не будемо створювати нові інстанси цих
-  // компонентів при кожному ре-рендері Layout (напр., при зміні `children`),
-  // що дозволяє їх власному `React.memo` працювати максимально ефективно.
-  const memoizedHeader = React.useMemo(() => <Header />, []);
-  const memoizedFooter = React.useMemo(() => <Footer />, []);
-  const memoizedCookieBanner = React.useMemo(() => <CookieBanner />, []);
-
   return (
-    // Головна обгортка:
-    // - `flex flex-col`: Вертикальне розташування хедера, main та футера.
-    // - `min-h-screen`: Гарантує, що layout займає мінімум висоту екрана.
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-paper-white">
       <Helmet>
-        {/* Глобальні OG-теги для всього сайту */}
+        {/* Global metadata for the Svitlogics system */}
         <meta property="og:site_name" content="Svitlogics" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:type" content="website" />
-
-        {/* Глобальний банер для соціальних мереж */}
         <meta
           property="og:image"
           content="https://svitlogics.com/svitlogics-og-banner.png"
@@ -61,16 +60,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <meta property="og:image:type" content="image/png" />
       </Helmet>
 
-      {memoizedHeader}
+      <Header />
 
-      {/* Основна контентна частина */}
-      {/* - `flex-grow`: Дозволяє цьому елементу розширюватися, притискаючи футер донизу. */}
-      {/* - `w-full`: Гарантує повну ширину. */}
-      {/* - `py-16`: Застосовує системний вертикальний відступ у 64px. */}
-      <main className="w-full flex-grow py-16">{children}</main>
+      <main className="w-full flex-grow">{children}</main>
 
-      {memoizedFooter}
-      {memoizedCookieBanner}
+      <Footer />
     </div>
   );
 };
