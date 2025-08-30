@@ -44,10 +44,10 @@ export const articleFrontmatterSchema = z.object({
   author: z.string().nonempty(),
 
   /**
-   * The URL for the article's main image, used for social sharing cards.
-   * It must be a valid URL string.
+   * An optional URL for the article's main image, used for social sharing cards.
+   * If provided, it must be a valid URL string.
    */
-  image: z.string().url(),
+  image: z.string().url().optional(),
 
   /**
    * A list of tags or keywords associated with the article.

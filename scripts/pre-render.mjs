@@ -83,7 +83,6 @@ export interface Article {
   createdAt: string; // Stored as ISO string
   updatedAt?: string;
   author: string;
-  image: string;
   tags: string[];
   language: 'en' | 'uk';
   canonicalUrl?: string;

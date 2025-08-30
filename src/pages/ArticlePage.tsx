@@ -48,7 +48,6 @@ const ArticlePage: React.FC = () => {
     findAndSerializeArticle();
   }, [slug]);
 
-  // Loading State
   if (article === undefined) {
     return (
       <div className="container-main py-16 text-center">
@@ -59,7 +58,6 @@ const ArticlePage: React.FC = () => {
     );
   }
 
-  // Not Found State
   if (article === null) {
     return (
       <>
@@ -75,7 +73,7 @@ const ArticlePage: React.FC = () => {
             The requested article could not be located.
           </p>
           <Link
-            to="/blog/" // Додано слеш
+            to="/blog/"
             className="font-sans text-small text-svitlogics-blue hover:underline"
           >
             ← Return to Blog Index
@@ -85,7 +83,16 @@ const ArticlePage: React.FC = () => {
     );
   }
 
-  // Article Found State
+  if (!article.title) {
+    return (
+      <div className="container-main py-16 text-center">
+        <p className="font-serif text-body text-signal-red">
+          Critical Error: Article data is incomplete (missing title).
+        </p>
+      </div>
+    );
+  }
+
   return (
     <>
       <Helmet>
@@ -115,7 +122,7 @@ const ArticlePage: React.FC = () => {
         <article className="mx-auto max-w-prose">
           <header className="mb-12 border-b border-carbon-black pb-8">
             <Link
-              to="/blog/" // Додано слеш
+              to="/blog/"
               className="mb-8 block font-sans text-small text-svitlogics-blue hover:underline"
             >
               ← Return to Blog Index
@@ -136,7 +143,6 @@ const ArticlePage: React.FC = () => {
             </div>
           </header>
 
-          {/* --- ВИПРАВЛЕННЯ ТУТ: Додано клас для стилізації MDX --- */}
           <div className="prose-styles">
             {mdxSource ? (
               <MDXRemote {...mdxSource} />
@@ -159,7 +165,7 @@ const ArticlePage: React.FC = () => {
                 {article.tags.map((tag) => (
                   <Link
                     key={tag}
-                    to={`/blog/tag/${slugify(tag)}/`} // Додано слеш
+                    to={`/blog/tag/${slugify(tag)}/`}
                     className="block border border-neutral-500 px-3 py-1 font-sans text-small text-carbon-black transition-colors hover:border-carbon-black hover:bg-neutral-300"
                   >
                     {tag}
