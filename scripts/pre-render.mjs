@@ -1,5 +1,3 @@
-// scripts/pre-render.mjs
-
 import fs from "fs/promises";
 import path from "path";
 import { glob } from "glob";
@@ -15,9 +13,9 @@ const slugify = (text) => {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, "-") // Замінити пробіли на -
-    .replace(/[^\w\-]+/g, "") // Видалити всі не-словесні символи
-    .replace(/\-\-+/g, "-"); // Замінити декілька - на один
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-");
 };
 
 async function generateArticlesData() {
@@ -35,39 +33,38 @@ async function generateArticlesData() {
       const fileContent = await fs.readFile(filePath, "utf-8");
       const { data: frontmatter, content } = matter(fileContent);
 
-      try {
-        articleFrontmatterSchema.parse(frontmatter);
-      } catch (error) {
+      // --- ПОКРАЩЕННЯ №1: Більш надійна валідація ---
+      const validationResult = articleFrontmatterSchema.safeParse(frontmatter);
+
+      if (!validationResult.success) {
         console.error(
-          `\n❌ Frontmatter validation failed for file: ${filePath}`
+          `\n❌ Frontmatter validation failed for file: ${path.basename(
+            filePath
+          )}`
         );
-        if (error.issues) {
-          console.error("Validation Issues:");
-          error.issues.forEach((issue) => {
-            console.error(
-              `  - Path: [${issue.path.join(", ")}], Message: ${issue.message}`
-            );
-          });
-        } else {
-          console.error(error);
-        }
+        validationResult.error.issues.forEach((issue) => {
+          console.error(
+            `  - Path: [${issue.path.join(", ")}], Message: ${issue.message}`
+          );
+        });
         console.error("\nBuild process terminated.");
         process.exit(1);
       }
 
+      const validatedFrontmatter = validationResult.data;
+
       return {
-        slug: frontmatter.slug,
-        title: frontmatter.title,
-        description: frontmatter.description,
-        createdAt: frontmatter.createdAt,
-        updatedAt: frontmatter.updatedAt,
-        author: frontmatter.author,
-        image: frontmatter.image,
-        tags: frontmatter.tags,
-        language: frontmatter.language,
-        canonicalUrl: frontmatter.canonicalUrl,
-        robots: frontmatter.robots,
-        schema: frontmatter.schema,
+        slug: validatedFrontmatter.slug,
+        title: validatedFrontmatter.title,
+        description: validatedFrontmatter.description,
+        createdAt: validatedFrontmatter.createdAt,
+        updatedAt: validatedFrontmatter.updatedAt,
+        author: validatedFrontmatter.author,
+        tags: validatedFrontmatter.tags,
+        language: validatedFrontmatter.language,
+        canonicalUrl: validatedFrontmatter.canonicalUrl,
+        robots: validatedFrontmatter.robots,
+        schema: validatedFrontmatter.schema,
         content: content.trim(),
       };
     })
@@ -130,26 +127,27 @@ async function runPreRender() {
 
   const staticRoutes = [
     "/",
-    "/about",
-    "/how-it-works",
-    "/faq",
-    "/changelog",
-    "/pricing-limits",
-    "/contact",
-    "/privacy-policy",
-    "/terms-of-use",
-    "/blog",
+    "/about/",
+    "/how-it-works/",
+    "/faq/",
+    "/changelog/",
+    "/pricing-limits/",
+    "/contact/",
+    "/privacy-policy/",
+    "/terms-of-use/",
+    "/cookie-policy/",
+    "/disclaimer/",
+    "/blog/",
   ];
-  const articleRoutes = articles.map((article) => `/blog/${article.slug}`);
-
-  // --- ВИПРАВЛЕННЯ ТУТ: Додаємо генерацію маршрутів для тегів ---
+  const articleRoutes = articles.map((article) => `/blog/${article.slug}/`);
   const uniqueTags = [...new Set(articles.flatMap((article) => article.tags))];
-  const tagRoutes = uniqueTags.map((tag) => {
-    return `/blog/tag/${slugify(tag)}`;
-  });
+  const tagRoutes = uniqueTags.map((tag) => `/blog/tag/${slugify(tag)}/`);
 
-  const allRoutes = [...staticRoutes, ...articleRoutes, ...tagRoutes];
-  console.log("Found routes to pre-render:", allRoutes);
+  // Видаляємо дублікати та сортуємо для консистентності
+  const allRoutes = [
+    ...new Set([...staticRoutes, ...articleRoutes, ...tagRoutes]),
+  ].sort();
+  console.log(`🗺️  Found ${allRoutes.length} unique routes to pre-render.`);
 
   const outDir = path.resolve(root, "dist");
   const templatePath = path.resolve(outDir, "index.html");
@@ -164,26 +162,39 @@ async function runPreRender() {
   }
 
   const template = await fs.readFile(templatePath, "utf-8");
-  console.log("\n🛠️  Starting rendering pages...");
+  console.log("\n🛠️  Starting rendering pages in parallel...");
 
-  for (const route of allRoutes) {
-    const { appHtml, helmet } = render(route);
-    const helmetContent = `${helmet?.title?.toString() || ""}${
-      helmet?.meta?.toString() || ""
-    }${helmet?.link?.toString() || ""}`;
-    const finalHtml = template
-      .replace(`<!--ssr-outlet-->`, appHtml)
-      .replace("</head>", `${helmetContent}</head>`)
-      .replace(/\/>/g, ">");
+  await Promise.all(
+    allRoutes.map(async (route) => {
+      try {
+        const { appHtml, helmet } = render(route);
 
-    const filePath = path.join(
-      outDir,
-      route === "/" ? "index.html" : `${route.substring(1)}/index.html`
-    );
-    await fs.mkdir(path.dirname(filePath), { recursive: true });
-    await fs.writeFile(filePath, finalHtml);
-    console.log(`  ✓ Rendered ${route}`);
-  }
+        // --- ПОКРАЩЕННЯ №2: Більш надійне формування helmet ---
+        const helmetStrings = [
+          helmet.title.toString(),
+          helmet.meta.toString(),
+          helmet.link.toString(),
+          helmet.script.toString(),
+        ]
+          .filter(Boolean)
+          .join("\n");
+
+        const finalHtml = template
+          .replace(`<!--ssr-outlet-->`, appHtml)
+          .replace("</head>", `${helmetStrings}\n</head>`);
+
+        const filePath = path.join(
+          outDir,
+          route.endsWith("/") ? `${route}index.html` : `${route}.html`
+        );
+        await fs.mkdir(path.dirname(filePath), { recursive: true });
+        await fs.writeFile(filePath, finalHtml);
+        console.log(`  ✓ Rendered ${route}`);
+      } catch (error) {
+        console.error(`❌ Failed to render route ${route}:`, error);
+      }
+    })
+  );
 
   await generateSitemap(allRoutes, outDir);
   console.log("  ✓ Generated sitemap.xml");
