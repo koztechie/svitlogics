@@ -1,36 +1,16 @@
-/**
- * Svitlogics Contact Page
- *
- * Adherence to The Ethos-Driven Design System:
- * - Section Alpha (Design is an Act of Resistance): This page presents
- *   information in a sober, structured manner, stripped of all non-essential
- *   visual elements and decorative attributes.
- * - Section Alpha (Interface is a Laboratory): The design is calibrated for
- *   precision and objectivity, serving as a clear, predictable information resource.
- * - Section Bravo (Clarity is a Moral Imperative): The content structure,
- *   contact information, and purpose are unambiguous and purpose-driven.
- * - Section Charlie (Chromatic System): Employs the prescribed palette for
- *   text (Carbon Black, Neutral grays, Svitlogics Blue) and background (Paper White).
- * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
- *   grid system and constrains content to `max-w-prose` for optimal readability.
- * - Section Delta (Typography): Uses 'Inter' (`font-sans`) for headings and UI elements,
- *   and 'Lora' (`font-serif`) for body copy, maintaining UI/Instrument distinction.
- * - Section Foxtrot (Component Architecture): Embodies a purely informational
- *   container with no decorative attributes or shadows. Uses Card component properly.
- * - Section Hotel (Copy & Tone of Voice): The content uses precise, technical
- *   language and avoids emotional or persuasive phrasing.
- */
-
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Heading } from "../components/ui/Heading";
 import { Card } from "../components/ui/Card";
 
+// --- ОНОВЛЕНО: Додано вступний параграф ---
 const content = {
   seoTitle: "Contact | Svitlogics",
   seoDescription:
     "Contact information for general inquiries, technical support, and research or professional use of the Svitlogics text analysis tool.",
   pageTitle: "Contact Information",
+  introParagraph:
+    "This page provides the official contact channels for the Svitlogics project. All inquiries are received and processed directly by the developer to ensure clear and direct communication.",
   sections: [
     {
       id: "general-inquiries",
@@ -39,7 +19,7 @@ const content = {
         "For all questions, technical issues, or performance feedback, please direct communications to the following address:",
       ],
       contact: {
-        email: "hello@svitlogics.com", // Standardized for system-wide consistency.
+        email: "hello@svitlogics.com",
       },
       footer: "All messages are reviewed directly by the developer.",
     },
@@ -73,7 +53,6 @@ const ContactSection: React.FC<{ section: (typeof content.sections)[0] }> = ({
             {p}
           </p>
         ))}
-
         {section.contact && (
           <div className="py-2">
             <a
@@ -84,7 +63,6 @@ const ContactSection: React.FC<{ section: (typeof content.sections)[0] }> = ({
             </a>
           </div>
         )}
-
         {section.list && (
           <ul className="list-disc space-y-2 pl-6">
             {section.list.map((item, itemIndex) => (
@@ -97,7 +75,6 @@ const ContactSection: React.FC<{ section: (typeof content.sections)[0] }> = ({
             ))}
           </ul>
         )}
-
         {section.footer && (
           <p className="mt-4 font-sans text-small text-neutral-700">
             {section.footer}
@@ -108,16 +85,6 @@ const ContactSection: React.FC<{ section: (typeof content.sections)[0] }> = ({
   </section>
 );
 
-/**
- * Renders the contact information page.
- * Adherence to The Ethos-Driven Design System:
- * - Section Bravo (Clarity is a Moral Imperative): Ensures a single, consistent
- *   contact point across the application. Avoids all decorative elements.
- * - Section Delta (Typography): Strictly uses 'Inter' for headings/UI and 'Lora'
- *   for body copy to maintain the instrument/specimen distinction.
- * - Section Echo (Spatial System): Content is constrained to `max-w-prose` (75ch)
- *   for optimal readability, with all spacing adhering to the 8px grid.
- */
 const ContactPage: React.FC = () => {
   return (
     <>
@@ -132,9 +99,15 @@ const ContactPage: React.FC = () => {
 
       <div className="container-main py-16">
         <div className="mx-auto max-w-prose">
-          <Heading as="h1" className="mb-12 text-left">
-            {content.pageTitle}
-          </Heading>
+          {/* --- ОНОВЛЕНО: Додано рендеринг вступного параграфу --- */}
+          <header className="mb-12 text-left">
+            <Heading as="h1" className="mb-4">
+              {content.pageTitle}
+            </Heading>
+            <p className="font-serif text-h4 text-carbon-black">
+              {content.introParagraph}
+            </p>
+          </header>
 
           <div className="space-y-8">
             {content.sections.map((section) => (

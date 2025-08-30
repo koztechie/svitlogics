@@ -1,26 +1,3 @@
-/**
- * Svitlogics Pricing & Limits Page
- *
- * Adherence to The Ethos-Driven Design System:
- * - Section Alpha (Design is an Act of Resistance): This page presents
- *   pricing and limitation information in a sober, structured manner, stripped of all
- *   non-essential visual elements and decorative attributes.
- * - Section Alpha (Interface is a Laboratory): The design is calibrated for
- *   precision and objectivity, serving as a clear, predictable information resource.
- * - Section Bravo (Clarity is a Moral Imperative): The content structure,
- *   section organization, and information presentation are unambiguous.
- * - Section Charlie (Chromatic System): Employs the prescribed palette for
- *   text (Carbon Black, Neutral grays, Svitlogics Blue) and background (Paper White).
- * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
- *   grid system and constrains content to `max-w-prose` for optimal readability.
- * - Section Delta (Typography): Uses 'Inter' (`font-sans`) for headings and
- *   'Lora' (`font-serif`) for body copy, maintaining UI/Instrument distinction.
- * - Section Foxtrot (Component Architecture): Embodies a purely informational
- *   container with no decorative attributes or shadows.
- * - Section Hotel (Copy & Tone of Voice): The content uses precise, technical
- *   language and avoids emotional or persuasive phrasing.
- */
-
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Heading } from "../components/ui/Heading";
@@ -30,71 +7,59 @@ interface ListItem {
   definition: string;
 }
 
-// Data structure is now unified: all lists use the same object shape.
-// This enforces the "Clarity is a Moral Imperative" principle at the data level.
+// --- ОНОВЛЕНО: Текст переписано для кращої читабельності ---
 const content = {
-  seoTitle: "Pricing and Limits | Svitlogics",
+  seoTitle: "Access and Limits | Svitlogics",
   seoDescription:
-    "Svitlogics is currently a free service. Learn about character limits and the system architecture designed to manage AI API usage.",
-  pageTitle: "Pricing and Limits",
+    "Svitlogics is a free public beta service. This page details the current text input limits and the system architecture that ensures fair use and operational stability.",
+  pageTitle: "Access and System Limits",
   sections: [
     {
-      title: "Current Status: Free (Public Beta)",
+      title: "Service Access: Free Public Beta",
       paragraphs: [
-        "Svitlogics is currently in public beta and is free to use. The service is provided without cost during this development phase to test system functionality and gather performance data.",
+        "Svitlogics is currently in a public beta phase and is available free of charge. Access is provided without cost to gather performance data and test system functionality.",
       ],
     },
     {
-      title: "Input Character Limits",
+      title: "Text Input Limits",
       paragraphs: [
-        "To ensure system stability and manage API costs, Svitlogics enforces a character limit for each analysis. This limit is determined by the token capacity of the underlying AI models.",
-        "The current maximum character limit for the selected language is always displayed on the main page below the Input Processor.",
+        "The system enforces a character limit on each analysis to ensure stability and manage API costs. The maximum number of characters is determined by the token capacity of the underlying AI models and is always displayed on the main page.",
       ],
     },
     {
-      title: "API Usage and System Limits",
+      title: "System Safeguards",
       paragraphs: [
-        "The Svitlogics back-end service includes several mechanisms to ensure stability and fair use:",
+        "The Svitlogics back-end includes several mechanisms to ensure stability and prevent abuse:",
       ],
       list: [
         {
           term: "Rate Limiting:",
           definition:
-            "To prevent automated abuse, the system limits the number of requests that can be made from a single IP address (currently 20 requests per hour).",
+            "The system restricts the number of requests from a single IP address to 20 per hour to prevent automated abuse.",
         },
         {
-          term: "High-Availability Cascade:",
+          term: "Model Cascade:",
           definition:
-            "The service relies on a cascade of premium Google Gemini 2.5 models. If a primary model is experiencing high traffic or is at its capacity, requests are automatically rerouted to an alternative model.",
+            "The service uses a cascade of large language models. If a primary model is at capacity, requests are automatically rerouted to an available alternative.",
         },
       ],
     },
     {
-      title: "Future Plans",
+      title: "Future Development",
       paragraphs: [
-        "To ensure the long-term sustainability of the project, premium subscription plans are being considered for future development.",
-        "Potential premium features may include:",
+        "To ensure the long-term sustainability of the Svitlogics project, premium subscription plans may be introduced in the future.",
+        "Potential premium features could include:",
       ],
       list: [
-        { definition: "Higher personal analysis limits" },
-        { definition: "Access to more advanced AI models" },
-        { definition: "Team accounts for organizations" },
-        { definition: "API access for research and development" },
+        { definition: "Increased analysis limits" },
+        { definition: "Access to more advanced models" },
+        { definition: "Accounts for teams and organizations" },
+        { definition: "API access for research and integration" },
       ],
     },
   ],
 };
 
-/**
- * Renders the Pricing & Limits informational page.
- * Adherence to The Ethos-Driven Design System:
- * - Section Bravo (Clarity is a Moral Imperative): Employs a consistent and
- *   unambiguous data structure for all content, simplifying rendering logic.
- * - Section Delta (Typography): Strictly uses 'Inter' for headings and 'Lora' for all
- *   body copy, adhering to the established typographic hierarchy.
- * - Section Echo (Spatial System): The content is constrained to `max-w-prose` (75ch)
- *   for optimal long-form readability.
- */
 const PricingLimitsPage: React.FC = () => {
   return (
     <>

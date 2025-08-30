@@ -1,28 +1,3 @@
-/**
- * Svitlogics Article Page
- *
- * Adherence to The Ethos-Driven Design System:
- * - Section Alpha (Design is an Act of Resistance): This page presents
- *   information in a sober, structured manner, stripped of all non-essential
- *   visual elements and decorative attributes.
- * - Section Alpha (Interface is a Laboratory): The design is calibrated for
- *   precision and objectivity, serving as a clear, predictable information resource.
- * - Section Bravo (Clarity is a Moral Imperative): The content structure,
- *   article presentation, and navigation are unambiguous and purpose-driven.
- * - Section Charlie (Chromatic System): Employs the prescribed palette for
- *   text (Carbon Black, Neutral grays, Svitlogics Blue) and background (Paper White).
- * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
- *   grid system and constrains content to `max-w-prose` for optimal readability.
- * - Section Delta (Typography): Uses 'Inter' (`font-sans`) for headings and UI elements,
- *   and 'Lora' (`font-serif`) for article content via `prose-styles`, maintaining
- *   UI/Instrument distinction.
- * - Section Foxtrot (Component Architecture): Embodies a purely informational
- *   container with no decorative attributes or shadows.
- * - Section Hotel (Copy & Tone of Voice): The content uses precise, technical
- *   language and avoids emotional or persuasive phrasing. Loading and error states
- *   are diagnostic, not apologetic.
- */
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -44,17 +19,6 @@ const slugify = (text: string): string => {
     .replace(/--+/g, "-");
 };
 
-/**
- * Renders a single article page from MDX content.
- * Adherence to The Ethos-Driven Design System:
- * - Section Delta (Typography): This component strictly enforces the typographic
- *   separation. All UI chrome (headings, metadata) uses 'Inter' (`font-sans`),
- *   while the rendered MDX article content uses 'Lora' (`font-serif`) via the
- *   `prose-styles` class.
- * - Section Echo (Spatial System): The main article content is constrained to
- *   `max-w-prose` (75ch) for optimal readability.
- * - Section Hotel (Tone): Fallback states (Loading, 404) use direct, clinical language.
- */
 const ArticlePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [article, setArticle] = useState<Article | null | undefined>(undefined);
@@ -81,7 +45,6 @@ const ArticlePage: React.FC = () => {
         }
       }
     };
-
     findAndSerializeArticle();
   }, [slug]);
 
@@ -112,7 +75,7 @@ const ArticlePage: React.FC = () => {
             The requested article could not be located.
           </p>
           <Link
-            to="/blog"
+            to="/blog/" // Додано слеш
             className="font-sans text-small text-svitlogics-blue hover:underline"
           >
             ← Return to Blog Index
@@ -150,9 +113,9 @@ const ArticlePage: React.FC = () => {
 
       <div className="container-main py-16">
         <article className="mx-auto max-w-prose">
-          <header className="mb-8 border-b border-carbon-black pb-8">
+          <header className="mb-12 border-b border-carbon-black pb-8">
             <Link
-              to="/blog"
+              to="/blog/" // Додано слеш
               className="mb-8 block font-sans text-small text-svitlogics-blue hover:underline"
             >
               ← Return to Blog Index
@@ -173,6 +136,7 @@ const ArticlePage: React.FC = () => {
             </div>
           </header>
 
+          {/* --- ВИПРАВЛЕННЯ ТУТ: Додано клас для стилізації MDX --- */}
           <div className="prose-styles">
             {mdxSource ? (
               <MDXRemote {...mdxSource} />
@@ -184,15 +148,18 @@ const ArticlePage: React.FC = () => {
           </div>
 
           {article.tags && article.tags.length > 0 && (
-            <footer className="mt-8 border-t border-carbon-black pt-8">
-              <h4 className="mb-4 font-sans text-small font-semibold text-neutral-700">
+            <footer className="mt-12 border-t border-carbon-black pt-8">
+              <Heading
+                as="h4"
+                className="mb-4 font-sans text-small font-semibold text-neutral-700"
+              >
                 Tags
-              </h4>
+              </Heading>
               <div className="flex flex-wrap gap-2">
                 {article.tags.map((tag) => (
                   <Link
                     key={tag}
-                    to={`/blog/tag/${slugify(tag)}`}
+                    to={`/blog/tag/${slugify(tag)}/`} // Додано слеш
                     className="block border border-neutral-500 px-3 py-1 font-sans text-small text-carbon-black transition-colors hover:border-carbon-black hover:bg-neutral-300"
                   >
                     {tag}
@@ -207,4 +174,4 @@ const ArticlePage: React.FC = () => {
   );
 };
 
-export default ArticlePage;
+export default React.memo(ArticlePage);

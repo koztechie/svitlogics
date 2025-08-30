@@ -1,26 +1,3 @@
-/**
- * Svitlogics Blog Index Page
- *
- * Adherence to The Ethos-Driven Design System:
- * - Section Alpha (Design is an Act of Resistance): This page presents
- *   information in a sober, structured manner, stripped of all non-essential
- *   visual elements and decorative attributes.
- * - Section Alpha (Interface is a Laboratory): The design is calibrated for
- *   precision and objectivity, serving as a clear, predictable information resource.
- * - Section Bravo (Clarity is a Moral Imperative): The content structure,
- *   article listing, and tag filtering are unambiguous and purpose-driven.
- * - Section Charlie (Chromatic System): Employs the prescribed palette for
- *   text (Carbon Black, Neutral grays, Svitlogics Blue) and background (Paper White).
- * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
- *   grid system and constrains content to `max-w-prose` for optimal readability.
- * - Section Delta (Typography): Uses 'Inter' (`font-sans`) for headings and UI elements,
- *   and 'Lora' (`font-serif`) for article descriptions, maintaining UI/Instrument distinction.
- * - Section Foxtrot (Component Architecture): Embodies a purely informational
- *   container with no decorative attributes or shadows. Article links are clean blocks.
- * - Section Hotel (Copy & Tone of Voice): The content uses precise, technical
- *   language and avoids emotional or persuasive phrasing.
- */
-
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -38,17 +15,16 @@ const slugify = (text: string): string => {
     .replace(/--+/g, "-");
 };
 
-/**
- * Renders the main index page for the blog.
- * Adherence to The Ethos-Driven Design System:
- * - Section Delta (Typography): Strictly follows the hierarchy. Page title and article
- *   headings use 'Inter' (`font-sans`), while article descriptions use 'Lora' (`font-serif`).
- * - Section Echo (Spatial System): The content area is constrained to `max-w-prose`
- *   for optimal readability.
- * - Section Foxtrot (Component Architecture): Article links are presented as clean,
- *   unadorned blocks of text, avoiding decorative containers. Interaction is focused
- *   on the heading.
- */
+// --- НОВИЙ КОНТЕНТ ДЛЯ СТОРІНКИ ---
+const pageContent = {
+  seoTitle: "Blog | Svitlogics",
+  seoDescription:
+    "The official blog of Svitlogics. In-depth articles on text analysis, system updates, and the ongoing mission to counter information warfare.",
+  pageTitle: "Svitlogics Blog",
+  introParagraph:
+    "This blog serves as the official operational log and research journal for the Svitlogics project. Here you will find in-depth articles on text analysis methodologies, updates on system architecture, and essays on the broader mission to provide instruments for critical thinking in an era of informational chaos.",
+};
+
 const BlogIndexPage: React.FC = () => {
   const articles = getArticles();
 
@@ -60,36 +36,39 @@ const BlogIndexPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Svitlogics Blog</title>
-        <meta
-          name="description"
-          content="Articles and system updates from Svitlogics."
-        />
+        <title>{pageContent.seoTitle}</title>
+        <meta name="description" content={pageContent.seoDescription} />
         <link rel="canonical" href="https://svitlogics.com/blog/" />
-        <meta property="og:title" content="Svitlogics Blog" />
-        <meta
-          property="og:description"
-          content="Articles and system updates from Svitlogics."
-        />
+        <meta property="og:title" content={pageContent.seoTitle} />
+        <meta property="og:description" content={pageContent.seoDescription} />
         <meta property="og:url" content="https://svitlogics.com/blog/" />
       </Helmet>
 
       <div className="container-main py-16">
         <div className="mx-auto max-w-prose">
-          <Heading as="h1" className="mb-12 text-left">
-            Svitlogics Blog
-          </Heading>
+          {/* --- НОВИЙ ВСТУПНИЙ БЛОК --- */}
+          <header className="mb-12 text-left">
+            <Heading as="h1" className="mb-4">
+              {pageContent.pageTitle}
+            </Heading>
+            <p className="font-serif text-h4 text-carbon-black">
+              {pageContent.introParagraph}
+            </p>
+          </header>
 
           {uniqueTags.length > 0 && (
             <section className="mb-12">
-              <h2 className="mb-4 font-sans text-small font-semibold text-neutral-700">
+              <Heading
+                as="h2"
+                className="mb-4 text-small font-semibold text-neutral-700"
+              >
                 Filter by Tag
-              </h2>
+              </Heading>
               <div className="flex flex-wrap gap-2">
                 {uniqueTags.map((tag) => (
                   <Link
                     key={tag}
-                    to={`/blog/tag/${slugify(tag)}`}
+                    to={`/blog/tag/${slugify(tag)}/`} // Додано слеш
                     className="block border border-neutral-500 px-3 py-1 font-sans text-small text-carbon-black transition-colors hover:border-carbon-black hover:bg-neutral-300"
                   >
                     {tag}
@@ -100,10 +79,12 @@ const BlogIndexPage: React.FC = () => {
           )}
 
           {articles.length > 0 ? (
-            <div className="space-y-10">
+            <div className="space-y-12">
               {articles.map((article) => (
                 <article key={article.slug}>
-                  <Link to={`/blog/${article.slug}`}>
+                  <Link to={`/blog/${article.slug}/`}>
+                    {" "}
+                    {/* Додано слеш */}
                     <Heading
                       as="h2"
                       className="mb-2 text-svitlogics-blue hover:underline"
@@ -111,7 +92,6 @@ const BlogIndexPage: React.FC = () => {
                       {article.title}
                     </Heading>
                   </Link>
-
                   <div className="mb-4 flex flex-wrap items-center gap-x-3 font-sans text-small text-neutral-700">
                     <span>
                       {new Date(article.createdAt).toLocaleDateString("en-US", {
@@ -123,7 +103,6 @@ const BlogIndexPage: React.FC = () => {
                     <span aria-hidden="true">•</span>
                     <span>{article.author}</span>
                   </div>
-
                   <p className="font-serif text-body text-carbon-black">
                     {article.description}
                   </p>
