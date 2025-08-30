@@ -52,23 +52,23 @@ const App: React.FC = () => {
       <Routes>
         {/* Core Application Pages */}
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/how-it-works" element={<HowItWorksPage />} />
-        <Route path="/faq" element={<FAQPage />} />
+        <Route path="/about/" element={<AboutPage />} />
+        <Route path="/how-it-works/" element={<HowItWorksPage />} />
+        <Route path="/faq/" element={<FAQPage />} />
 
         {/* Blog Pages */}
-        <Route path="/blog" element={<BlogIndexPage />} />
-        <Route path="/blog/tag/:tagSlug" element={<TagPage />} />
-        <Route path="/blog/:slug" element={<ArticlePage />} />
+        <Route path="/blog/" element={<BlogIndexPage />} />
+        <Route path="/blog/tag/:tagSlug/" element={<TagPage />} />
+        <Route path="/blog/:slug/" element={<ArticlePage />} />
 
         {/* Informational & Legal Pages */}
-        <Route path="/pricing-limits" element={<PricingLimitsPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/changelog" element={<ChangelogPage />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-        <Route path="/terms-of-use" element={<TermsOfUsePage />} />
-        <Route path="/cookie-policy" element={<CookiePolicyPage />} />
-        <Route path="/disclaimer" element={<DisclaimerPage />} />
+        <Route path="/pricing-limits/" element={<PricingLimitsPage />} />
+        <Route path="/contact/" element={<ContactPage />} />
+        <Route path="/changelog/" element={<ChangelogPage />} />
+        <Route path="/privacy-policy/" element={<PrivacyPolicyPage />} />
+        <Route path="/terms-of-use/" element={<TermsOfUsePage />} />
+        <Route path="/cookie-policy/" element={<CookiePolicyPage />} />
+        <Route path="/disclaimer/" element={<DisclaimerPage />} />
 
         {/* Catch-all 404 Route */}
         <Route path="*" element={<NotFoundPage />} />
