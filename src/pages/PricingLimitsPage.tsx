@@ -101,12 +101,12 @@ const PricingLimitsPage: React.FC = () => {
       <Helmet>
         <title>{content.seoTitle}</title>
         <meta name="description" content={content.seoDescription} />
-        <link rel="canonical" href="https://svitlogics.com/pricing-limits" />
+        <link rel="canonical" href="https://svitlogics.com/pricing-limits/" />
         <meta property="og:title" content={content.seoTitle} />
         <meta property="og:description" content={content.seoDescription} />
         <meta
           property="og:url"
-          content="https://svitlogics.com/pricing-limits"
+          content="https://svitlogics.com/pricing-limits/"
         />
       </Helmet>
 

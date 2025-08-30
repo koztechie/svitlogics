@@ -78,7 +78,7 @@ const TagPage: React.FC = () => {
         />
         <link
           rel="canonical"
-          href={`https://svitlogics.com/blog/tag/${tagSlug}`}
+          href={`https://svitlogics.com/blog/tag/${tagSlug}/`}
         />
         <meta
           property="og:title"
@@ -90,7 +90,7 @@ const TagPage: React.FC = () => {
         />
         <meta
           property="og:url"
-          content={`https://svitlogics.com/blog/tag/${tagSlug}`}
+          content={`https://svitlogics.com/blog/tag/${tagSlug}/`}
         />
       </Helmet>
 

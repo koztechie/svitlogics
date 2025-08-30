@@ -65,13 +65,13 @@ const BlogIndexPage: React.FC = () => {
           name="description"
           content="Articles and system updates from Svitlogics."
         />
-        <link rel="canonical" href="https://svitlogics.com/blog" />
+        <link rel="canonical" href="https://svitlogics.com/blog/" />
         <meta property="og:title" content="Svitlogics Blog" />
         <meta
           property="og:description"
           content="Articles and system updates from Svitlogics."
         />
-        <meta property="og:url" content="https://svitlogics.com/blog" />
+        <meta property="og:url" content="https://svitlogics.com/blog/" />
       </Helmet>
 
       <div className="container-main py-16">

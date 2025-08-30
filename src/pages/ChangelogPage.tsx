@@ -462,13 +462,13 @@ const ChangelogPage: React.FC = () => {
           name="description"
           content="Development history and version updates for the Svitlogics text analysis tool."
         />
-        <link rel="canonical" href="https://svitlogics.com/changelog" />
+        <link rel="canonical" href="https://svitlogics.com/changelog/" />
         <meta property="og:title" content="System Changelog | Svitlogics" />
         <meta
           property="og:description"
           content="Development history and version updates for the Svitlogics text analysis tool."
         />
-        <meta property="og:url" content="https://svitlogics.com/changelog" />
+        <meta property="og:url" content="https://svitlogics.com/changelog/" />
         <meta property="og:type" content="article" />
       </Helmet>
 

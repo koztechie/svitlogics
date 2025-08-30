@@ -115,10 +115,10 @@ const FAQPage: React.FC = () => {
       <Helmet>
         <title>FAQ | Svitlogics</title>
         <meta name="description" content={seoDescription} />
-        <link rel="canonical" href="https://svitlogics.com/faq" />
+        <link rel="canonical" href="https://svitlogics.com/faq/" />
         <meta property="og:title" content="FAQ | Svitlogics" />
         <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content="https://svitlogics.com/faq" />
+        <meta property="og:url" content="https://svitlogics.com/faq/" />
         <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
       </Helmet>
 

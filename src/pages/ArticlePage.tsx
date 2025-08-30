@@ -133,14 +133,14 @@ const ArticlePage: React.FC = () => {
           rel="canonical"
           href={
             article.canonicalUrl ||
-            `https://svitlogics.com/blog/${article.slug}`
+            `https://svitlogics.com/blog/${article.slug}/`
           }
         />
         <meta property="og:title" content={article.title} />
         <meta property="og:description" content={article.description} />
         <meta
           property="og:url"
-          content={`https://svitlogics.com/blog/${article.slug}`}
+          content={`https://svitlogics.com/blog/${article.slug}/`}
         />
         <meta property="og:type" content="article" />
         {article.schema && (

@@ -130,10 +130,13 @@ const HowItWorksPage: React.FC = () => {
       <Helmet>
         <title>How It Works | Svitlogics</title>
         <meta name="description" content={seoDescription} />
-        <link rel="canonical" href="https://svitlogics.com/how-it-works" />
+        <link rel="canonical" href="https://svitlogics.com/how-it-works/" />
         <meta property="og:title" content="How It Works | Svitlogics" />
         <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content="https://svitlogics.com/how-it-works" />
+        <meta
+          property="og:url"
+          content="https://svitlogics.com/how-it-works/"
+        />
         <meta property="og:type" content="article" />
         <script type="application/ld+json">
           {JSON.stringify(howToJsonLd)}

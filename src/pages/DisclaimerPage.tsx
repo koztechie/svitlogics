@@ -26,7 +26,6 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { Heading } from "../components/ui/Heading";
 
-// Content is now pure text, stripped of all HTML for safe rendering.
 const content = {
   seoTitle: "Disclaimer | Svitlogics",
   seoDescription:
@@ -35,26 +34,17 @@ const content = {
   lastUpdated: "August 22, 2025",
 };
 
-/**
- * Renders the Disclaimer page.
- * Adherence to The Ethos-Driven Design System:
- * - Section Delta (Typography): Strictly uses 'Inter' for headings and 'Lora' for all
- *   body copy, creating the instrument/specimen distinction.
- * - Section Echo (Spatial System): The entire content is constrained to `max-w-prose` (75ch)
- *   for optimal long-form readability. Spacing follows the 8px grid.
- * - Section Bravo (Clarity is a Moral Imperative): The content is structured with clear
- *   headings and no decorative elements. `dangerouslySetInnerHTML` is strictly avoided.
- */
 const DisclaimerPage: React.FC = () => {
   return (
     <>
       <Helmet>
         <title>{content.seoTitle}</title>
         <meta name="description" content={content.seoDescription} />
-        <link rel="canonical" href="https://svitlogics.com/disclaimer" />
+        {/* --- ВИПРАВЛЕННЯ ТУТ: Додано кінцевий слеш --- */}
+        <link rel="canonical" href="https://svitlogics.com/disclaimer/" />
         <meta property="og:title" content={content.seoTitle} />
         <meta property="og:description" content={content.seoDescription} />
-        <meta property="og:url" content="https://svitlogics.com/disclaimer" />
+        <meta property="og:url" content="https://svitlogics.com/disclaimer/" />
         <meta property="og:type" content="article" />
       </Helmet>
 

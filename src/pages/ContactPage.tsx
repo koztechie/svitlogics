@@ -124,10 +124,10 @@ const ContactPage: React.FC = () => {
       <Helmet>
         <title>{content.seoTitle}</title>
         <meta name="description" content={content.seoDescription} />
-        <link rel="canonical" href="https://svitlogics.com/contact" />
+        <link rel="canonical" href="https://svitlogics.com/contact/" />
         <meta property="og:title" content={content.seoTitle} />
         <meta property="og:description" content={content.seoDescription} />
-        <meta property="og:url" content="https://svitlogics.com/contact" />
+        <meta property="og:url" content="https://svitlogics.com/contact/" />
       </Helmet>
 
       <div className="container-main py-16">
