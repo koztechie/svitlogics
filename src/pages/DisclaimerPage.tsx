@@ -1,26 +1,3 @@
-/**
- * Svitlogics Disclaimer Page
- *
- * Adherence to The Ethos-Driven Design System:
- * - Section Alpha (Design is an Act of Resistance): This page presents
- *   legal information in a sober, structured manner, stripped of all non-essential
- *   visual elements and decorative attributes.
- * - Section Alpha (Interface is a Laboratory): The design is calibrated for
- *   precision and objectivity, serving as a clear, predictable information resource.
- * - Section Bravo (Clarity is a Moral Imperative): The content structure,
- *   section organization, and information presentation are unambiguous.
- * - Section Charlie (Chromatic System): Employs the prescribed palette for
- *   text (Carbon Black, Neutral grays, Svitlogics Blue) and background (Paper White).
- * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
- *   grid system and constrains content to `max-w-prose` for optimal readability.
- * - Section Delta (Typography): Uses 'Inter' (`font-sans`) for headings and
- *   'Lora' (`font-serif`) for body copy, maintaining UI/Instrument distinction.
- * - Section Foxtrot (Component Architecture): Embodies a purely informational
- *   container with no decorative attributes or shadows.
- * - Section Hotel (Copy & Tone of Voice): The content uses precise, technical
- *   language and avoids emotional or persuasive phrasing.
- */
-
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
@@ -156,7 +133,7 @@ const DisclaimerPage: React.FC = () => {
                 details, please refer to the "Limitation of Liability" section
                 in our{" "}
                 <Link
-                  to="/terms-of-use"
+                  to="/terms-of-use/" // Додано слеш
                   className="font-sans text-svitlogics-blue hover:underline"
                 >
                   Terms of Use
@@ -173,7 +150,7 @@ const DisclaimerPage: React.FC = () => {
                 If you have any questions about this Disclaimer, please contact
                 us via our{" "}
                 <Link
-                  to="/contact"
+                  to="/contact/" // Додано слеш
                   className="font-sans text-svitlogics-blue hover:underline"
                 >
                   Contact page
@@ -188,4 +165,4 @@ const DisclaimerPage: React.FC = () => {
   );
 };
 
-export default DisclaimerPage;
+export default React.memo(DisclaimerPage);
