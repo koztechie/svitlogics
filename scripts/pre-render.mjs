@@ -60,6 +60,7 @@ async function generateArticlesData() {
         createdAt: validatedFrontmatter.createdAt,
         updatedAt: validatedFrontmatter.updatedAt,
         author: validatedFrontmatter.author,
+        // --- ВИДАЛЕНО: поле 'image' ---
         tags: validatedFrontmatter.tags,
         language: validatedFrontmatter.language,
         canonicalUrl: validatedFrontmatter.canonicalUrl,
@@ -83,6 +84,7 @@ export interface Article {
   createdAt: string; // Stored as ISO string
   updatedAt?: string;
   author: string;
+  // --- ВИДАЛЕНО: поле 'image' ---
   tags: string[];
   language: 'en' | 'uk';
   canonicalUrl?: string;

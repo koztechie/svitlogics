@@ -10,9 +10,9 @@ import { z } from "zod";
 export const articleFrontmatterSchema = z.object({
   /**
    * The primary title of the article, used for SEO and display.
-   * It must be a non-empty string with a maximum length of 60 characters.
+   * It must be a non-empty string with a maximum length of 100 characters.
    */
-  title: z.string().nonempty().max(60),
+  title: z.string().nonempty().max(100),
 
   /**
    * A brief summary of the article, suitable for meta descriptions.
