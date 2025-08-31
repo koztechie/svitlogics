@@ -33,7 +33,6 @@ async function generateArticlesData() {
       const fileContent = await fs.readFile(filePath, "utf-8");
       const { data: frontmatter, content } = matter(fileContent);
 
-      // --- ПОКРАЩЕННЯ №1: Більш надійна валідація ---
       const validationResult = articleFrontmatterSchema.safeParse(frontmatter);
 
       if (!validationResult.success) {
@@ -53,6 +52,7 @@ async function generateArticlesData() {
 
       const validatedFrontmatter = validationResult.data;
 
+      // --- ВИПРАВЛЕННЯ ТУТ: Поле 'image' повністю видалено з об'єкта ---
       return {
         slug: validatedFrontmatter.slug,
         title: validatedFrontmatter.title,
@@ -60,7 +60,6 @@ async function generateArticlesData() {
         createdAt: validatedFrontmatter.createdAt,
         updatedAt: validatedFrontmatter.updatedAt,
         author: validatedFrontmatter.author,
-        // --- ВИДАЛЕНО: поле 'image' ---
         tags: validatedFrontmatter.tags,
         language: validatedFrontmatter.language,
         canonicalUrl: validatedFrontmatter.canonicalUrl,
@@ -75,6 +74,7 @@ async function generateArticlesData() {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
+  // --- ВИПРАВЛЕННЯ ТУТ: Поле 'image' повністю видалено з інтерфейсу ---
   const articlesFileContent = `// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.
 
 export interface Article {
@@ -84,7 +84,6 @@ export interface Article {
   createdAt: string; // Stored as ISO string
   updatedAt?: string;
   author: string;
-  // --- ВИДАЛЕНО: поле 'image' ---
   tags: string[];
   language: 'en' | 'uk';
   canonicalUrl?: string;
@@ -144,7 +143,6 @@ async function runPreRender() {
   const uniqueTags = [...new Set(articles.flatMap((article) => article.tags))];
   const tagRoutes = uniqueTags.map((tag) => `/blog/tag/${slugify(tag)}/`);
 
-  // Видаляємо дублікати та сортуємо для консистентності
   const allRoutes = [
     ...new Set([...staticRoutes, ...articleRoutes, ...tagRoutes]),
   ].sort();
@@ -170,7 +168,6 @@ async function runPreRender() {
       try {
         const { appHtml, helmet } = render(route);
 
-        // --- ПОКРАЩЕННЯ №2: Більш надійне формування helmet ---
         const helmetStrings = [
           helmet.title.toString(),
           helmet.meta.toString(),

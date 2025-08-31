@@ -1,5 +1,3 @@
-// src/config/schemas.ts
-
 import { z } from "zod";
 
 /**
@@ -12,19 +10,25 @@ export const articleFrontmatterSchema = z.object({
    * The primary title of the article, used for SEO and display.
    * It must be a non-empty string with a maximum length of 100 characters.
    */
-  title: z.string().nonempty().max(100),
+  title: z
+    .string()
+    .nonempty({ message: "Article title is required." })
+    .max(100, { message: "Title cannot exceed 100 characters." }),
 
   /**
    * A brief summary of the article, suitable for meta descriptions.
    * It must be a non-empty string with a maximum length of 160 characters.
    */
-  description: z.string().nonempty().max(160),
+  description: z
+    .string()
+    .nonempty({ message: "Article description is required." })
+    .max(160, { message: "Description cannot exceed 160 characters." }),
 
   /**
    * The URL-friendly identifier for the article.
    * It must be a non-empty string.
    */
-  slug: z.string().nonempty(),
+  slug: z.string().nonempty({ message: "Article slug is required." }),
 
   /**
    * The initial publication date of the article.
@@ -41,19 +45,15 @@ export const articleFrontmatterSchema = z.object({
   /**
    * The author's name. It must be a non-empty string.
    */
-  author: z.string().nonempty(),
-
-  /**
-   * An optional URL for the article's main image, used for social sharing cards.
-   * If provided, it must be a valid URL string.
-   */
-  image: z.string().url().optional(),
+  author: z.string().nonempty({ message: "Author is required." }),
 
   /**
    * A list of tags or keywords associated with the article.
    * It must be an array of non-empty strings.
    */
-  tags: z.array(z.string().nonempty()),
+  tags: z
+    .array(z.string().nonempty())
+    .min(1, { message: "At least one tag is required." }),
 
   /**
    * The primary language of the article content.
