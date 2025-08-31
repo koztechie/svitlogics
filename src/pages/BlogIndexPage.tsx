@@ -15,14 +15,13 @@ const slugify = (text: string): string => {
     .replace(/--+/g, "-");
 };
 
-// --- ОНОВЛЕНО: Текст переписано для кращої читабельності та об'єму ---
 const pageContent = {
   seoTitle: "Blog | AI, Text Analysis & System Updates | Svitlogics",
   seoDescription:
     "The official blog for the Svitlogics project. Read articles on AI text analysis, system updates, and the mission to counter information warfare.",
   pageTitle: "Svitlogics Blog",
   introParagraph:
-    "This blog is the official source for updates and insights about the Svitlogics project. Here we publish articles on text analysis, explain our methodology, and share news about system development. Our goal is to provide clear information for anyone interested in critical thinking tools for the modern age.",
+    "This blog provides official updates, technical insights, and methodological discussions related to the Svitlogics project. It serves as a primary resource for understanding both the capabilities of our system and the principles that guide its development. We publish detailed articles covering a range of topics, including advanced techniques in AI-driven text analysis, the specific frameworks we use to detect propaganda and bias, and transparent reports on system updates and performance metrics. Readers can expect to find comprehensive explanations of our analytical models, case studies demonstrating the tool's application, and discussions on the evolving landscape of information warfare. Our objective is to equip journalists, researchers, and other professionals with the necessary knowledge to use Svitlogics effectively. We believe that transparent, in-depth communication is essential for fostering critical thinking and building trust in the tools designed to support it. This space is dedicated to that purpose, offering a clear view into our operations, research, and mission.",
 };
 
 const BlogIndexPage: React.FC = () => {

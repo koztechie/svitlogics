@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet-async";
 import { Heading } from "../components/ui/Heading";
 import { Card } from "../components/ui/Card";
 
-// --- ОНОВЛЕНО: Текст повністю переписано для ясності та об'єму ---
 const content = {
   seoTitle: "Contact | Inquiries and Collaboration | Svitlogics",
   seoDescription:
@@ -36,7 +35,7 @@ const content = {
       ],
     },
     {
-      id: "mission", // Нова секція
+      id: "mission",
       title: "Mission & Press Inquiries",
       paragraphs: [
         "For media inquiries, interview requests, or questions regarding the mission and design philosophy of Svitlogics, please use the primary contact email. Specify 'Press Inquiry' in your subject line for a faster response.",
