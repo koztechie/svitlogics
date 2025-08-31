@@ -110,7 +110,7 @@ const HowItWorksPage: React.FC = () => {
   const introParagraph =
     "The Svitlogics analysis workflow is a direct, six-step process. This document outlines each step from text input to receiving the structured report.";
   const seoDescription =
-    "A step-by-step guide on how Svitlogics uses a cascade of large language models to analyze text for manipulation, propaganda, and bias.";
+    "Discover the methodology behind Svitlogics. Learn how our AI cascade analyzes text for manipulation, propaganda, and bias.";
 
   const howToJsonLd = {
     "@context": "https://schema.org",
@@ -128,7 +128,7 @@ const HowItWorksPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>How It Works | Svitlogics</title>
+        <title>How It Works | Analysis Methodology | Svitlogics</title>
         <meta name="description" content={seoDescription} />
         <link rel="canonical" href="https://svitlogics.com/how-it-works/" />
         <meta property="og:title" content="How It Works | Svitlogics" />

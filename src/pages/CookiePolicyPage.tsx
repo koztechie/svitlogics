@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import { Heading } from "../components/ui/Heading";
 
 const content = {
-  seoTitle: "Cookie Policy | Svitlogics",
+  seoTitle: "Cookie Policy | Analytics and Consent | Svitlogics",
   seoDescription:
-    "Review the Cookie Policy for Svitlogics. This document explains what cookies are, how we use them for analytics, and how you can manage your consent preferences.",
+    "Review the Cookie Policy for Svitlogics. Understand how we use minimal cookies for analytics and how to manage your consent.",
   pageTitle: "Cookie Policy",
   lastUpdated: "August 22, 2025",
 };

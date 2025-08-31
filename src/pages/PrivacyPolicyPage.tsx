@@ -29,9 +29,9 @@ import { Heading } from "../components/ui/Heading";
 // Content is now pure text, stripped of all HTML for safe rendering.
 // Headings are converted to Title Case to match the clinical tone.
 const content = {
-  seoTitle: "Privacy Policy | Svitlogics",
+  seoTitle: "Privacy Policy | Data Handling and Security | Svitlogics",
   seoDescription:
-    "Review the Svitlogics Privacy Policy. This document details our data handling practices, use of third-party services, and our commitment to a privacy-first, stateless architecture.",
+    "Review the privacy policy for Svitlogics. Learn how our stateless system handles data, ensures security, and respects user privacy by design.",
   pageTitle: "Privacy Policy",
   lastUpdated: "August 22, 2025",
 };

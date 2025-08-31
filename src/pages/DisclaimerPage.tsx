@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import { Heading } from "../components/ui/Heading";
 
 const content = {
-  seoTitle: "Disclaimer | Svitlogics",
+  seoTitle: "Disclaimer | Limitations of AI Analysis | Svitlogics",
   seoDescription:
-    "Review the official Disclaimer for Svitlogics. This document outlines the limitations of our AI-powered analysis, user responsibilities, and our 'as is' service policy.",
+    "Official disclaimer for the Svitlogics AI text analyzer. Understand the limitations, user responsibilities, and the 'as is' nature of the service.",
   pageTitle: "Disclaimer",
   lastUpdated: "August 22, 2025",
 };

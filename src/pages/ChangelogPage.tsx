@@ -457,10 +457,10 @@ const ChangelogPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>System Changelog | Svitlogics</title>
+        <title>System Changelog | Version History & Updates | Svitlogics</title>
         <meta
           name="description"
-          content="Development history and version updates for the Svitlogics text analysis tool."
+          content="Track the development of Svitlogics. The official system changelog details all version updates, new features, and bug fixes."
         />
         <link rel="canonical" href="https://svitlogics.com/changelog/" />
         <meta property="og:title" content="System Changelog | Svitlogics" />

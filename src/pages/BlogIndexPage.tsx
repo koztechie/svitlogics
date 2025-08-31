@@ -17,9 +17,9 @@ const slugify = (text: string): string => {
 
 // --- НОВИЙ КОНТЕНТ ДЛЯ СТОРІНКИ ---
 const pageContent = {
-  seoTitle: "Blog | Svitlogics",
+  seoTitle: "Blog | AI, Text Analysis & System Updates | Svitlogics",
   seoDescription:
-    "The official blog of Svitlogics. In-depth articles on text analysis, system updates, and the ongoing mission to counter information warfare.",
+    "The official blog of Svitlogics. In-depth articles on AI text analysis, system updates, and the mission to counter information warfare.",
   pageTitle: "Svitlogics Blog",
   introParagraph:
     "This blog serves as the official operational log and research journal for the Svitlogics project. Here you will find in-depth articles on text analysis methodologies, updates on system architecture, and essays on the broader mission to provide instruments for critical thinking in an era of informational chaos.",

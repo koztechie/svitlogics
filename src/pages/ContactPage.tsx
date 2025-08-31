@@ -5,9 +5,9 @@ import { Card } from "../components/ui/Card";
 
 // --- ОНОВЛЕНО: Додано вступний параграф ---
 const content = {
-  seoTitle: "Contact | Svitlogics",
+  seoTitle: "Contact | Inquiries and Collaboration | Svitlogics",
   seoDescription:
-    "Contact information for general inquiries, technical support, and research or professional use of the Svitlogics text analysis tool.",
+    "Contact the developer of Svitlogics for technical support, general inquiries, or research and professional collaboration opportunities.",
   pageTitle: "Contact Information",
   introParagraph:
     "This page provides the official contact channels for the Svitlogics project. All inquiries are received and processed directly by the developer to ensure clear and direct communication.",

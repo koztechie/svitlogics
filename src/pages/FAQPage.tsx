@@ -94,7 +94,7 @@ const FAQPage: React.FC = () => {
   const introParagraph =
     "This section provides answers to common questions regarding the system's methodology, technology, and limitations.";
   const seoDescription =
-    "Find answers to common questions about Svitlogics. Learn about its AI accuracy, supported languages, data privacy, and the technology behind the text analysis.";
+    "Find answers to frequently asked questions about Svitlogics, including its methodology, technology, accuracy, and data privacy.";
 
   const faqJsonLd = {
     "@context": "https://schema.org",
@@ -112,7 +112,7 @@ const FAQPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>FAQ | Svitlogics</title>
+        <title>FAQ | Frequently Asked Questions | Svitlogics</title>
         <meta name="description" content={seoDescription} />
         <link rel="canonical" href="https://svitlogics.com/faq/" />
         <meta property="og:title" content="FAQ | Svitlogics" />

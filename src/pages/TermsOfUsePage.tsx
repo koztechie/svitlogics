@@ -28,9 +28,9 @@ import { Heading } from "../components/ui/Heading";
 
 // Content is now pure text, stripped of all HTML for safe rendering.
 const content = {
-  seoTitle: "Terms of Use | Svitlogics",
+  seoTitle: "Terms of Use | Service Agreement | Svitlogics",
   seoDescription:
-    "Review the official Terms of Use for the Svitlogics web application, outlining user responsibilities, intellectual property rights, and limitations of liability.",
+    "Read the official Terms of Use for the Svitlogics service. This document governs your access to and use of the text analysis tool.",
   pageTitle: "Terms of Use",
   lastUpdated: "August 22, 2025",
 };
