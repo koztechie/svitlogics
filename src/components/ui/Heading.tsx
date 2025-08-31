@@ -37,8 +37,8 @@ interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
   as: HeadingLevel;
   /** Additional CSS classes for custom styling. */
   className?: string;
-  /** The content to be rendered inside the heading. */
-  children: React.ReactNode;
+  /** The content to be rendered inside the heading. Made optional for compatibility. */
+  children?: React.ReactNode;
 }
 
 /**

@@ -8,7 +8,8 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import { Heading } from "../components/ui/Heading";
 
-const slugify = (text: string): string => {
+const slugify = (text: string | undefined): string => {
+  // --- ВИПРАВЛЕННЯ ТУТ ---
   if (!text) return "";
   return text
     .toString()
@@ -19,20 +20,31 @@ const slugify = (text: string): string => {
     .replace(/--+/g, "-");
 };
 
-/**
- * @interface ArticlePageProps
- * @description Defines the props for the ArticlePage component.
- * @property {Article} [ssrArticle] - Optional article data provided during SSR
- * to bypass client-side fetching and ensure immediate rendering.
- */
+// --- ВИПРАВЛЕННЯ ТУТ: Повертаємо до чистого варіанту ---
+const mdxComponents: MDXRemoteProps["components"] = {
+  h2: (props) => <Heading as="h2" className="mt-12 mb-4" {...props} />,
+  h3: (props) => <Heading as="h3" className="mt-8 mb-3" {...props} />,
+  p: (props) => <p className="mb-4 font-serif text-body" {...props} />,
+  ul: (props) => (
+    <ul
+      className="mb-4 list-disc space-y-2 pl-6 font-serif text-body"
+      {...props}
+    />
+  ),
+  li: (props) => <li className="mb-2" {...props} />,
+  a: (props) => (
+    <a className="text-svitlogics-blue hover:underline" {...props} />
+  ),
+  strong: (props) => <strong className="font-semibold" {...props} />,
+  em: (props) => <em className="italic" {...props} />,
+};
+
 interface ArticlePageProps {
   ssrArticle?: Article;
 }
 
 const ArticlePage: React.FC<ArticlePageProps> = ({ ssrArticle }) => {
   const { slug } = useParams<{ slug: string }>();
-
-  // --- ВИПРАВЛЕННЯ ТУТ: Ініціалізуємо стан з SSR-даних, якщо вони є ---
   const [article, setArticle] = useState<Article | null | undefined>(
     ssrArticle || undefined
   );
@@ -40,7 +52,6 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ ssrArticle }) => {
 
   useEffect(() => {
     const processArticleContent = async (articleToProcess: Article) => {
-      // Серіалізуємо MDX контент лише один раз.
       if (mdxSource) return;
       try {
         const source = await serialize(articleToProcess.content, {
@@ -57,17 +68,14 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ ssrArticle }) => {
     };
 
     if (article) {
-      // Якщо дані про статтю вже є (з SSR або попереднього фетчу), обробляємо контент.
       processArticleContent(article);
     } else {
-      // Цей блок виконується ТІЛЬКИ на клієнті при прямому переході або оновленні сторінки.
       const allArticles = getArticles();
       const foundArticle = allArticles.find((a) => a.slug === slug);
       setArticle(foundArticle || null);
     }
-  }, [slug, article, mdxSource]); // Додано залежності для стабільності
+  }, [slug, article, mdxSource]);
 
-  // Loading State
   if (article === undefined) {
     return (
       <div className="container-main py-16 text-center">
@@ -166,9 +174,10 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ ssrArticle }) => {
             </div>
           </header>
 
-          <div className="prose-styles">
+          {/* --- ВИПРАВЛЕННЯ ТУТ: Видалено .prose-styles та передано компоненти --- */}
+          <div>
             {mdxSource ? (
-              <MDXRemote {...mdxSource} />
+              <MDXRemote {...mdxSource} components={mdxComponents} />
             ) : (
               <p className="font-serif text-body text-neutral-700">
                 Rendering content...
