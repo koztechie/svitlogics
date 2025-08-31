@@ -1,29 +1,3 @@
-/**
- * Svitlogics Header Component
- *
- * Adherence to The Ethos-Driven Design System:
- * - Section Alpha (Design is an Act of Resistance): This component is a
- *   sober, functional identity and navigation element, stripped of all non-essential
- *   visual elements and decorative attributes.
- * - Section Alpha (Interface is a Laboratory): The design is calibrated for
- *   precision and objectivity, serving as a clear, predictable system chrome.
- * - Section Bravo (Clarity is a Moral Imperative): The component's structure,
- *   navigation, and interactive elements are unambiguous and purpose-driven.
- * - Section Charlie (Chromatic System): Employs the prescribed palette for
- *   UI chrome (Svitlogics Blue), background (Paper White), and text (Carbon Black).
- * - Section Echo (Spatial System): Enforces disciplined spacing using the 8px
- *   grid system (py-4, px-4, gap-x-8, py-2, py-4) for all elements.
- * - Section Delta (Typography): Uses 'Inter' (`font-sans`) at the 'small'
- *   scale (`text-small`) for all navigation links, maintaining UI/Instrument distinction.
- * - Section Foxtrot (Component Architecture): Embodies a purely functional
- *   navigation container with sharp corners, no shadows, and imperative labeling.
- *   Mobile menu follows a predictable collapse/expand pattern.
- * - Section Golf (Motion Philosophy): Uses CSS transitions for state changes
- *   (hover, active) that are subtle and enhance understanding.
- * - Section Hotel (Copy & Tone of Voice): The component's API and internal
- *   labels use precise, technical language.
- */
-
 import React, { useState, useEffect } from "react";
 import {
   Link,
@@ -37,36 +11,31 @@ import { clsx } from "clsx";
 
 const navItems = [
   { to: "/", label: "Analysis" },
-  { to: "/how-it-works", label: "Methodology" },
-  { to: "/about", label: "About" },
-  { to: "/faq", label: "FAQ" },
+  { to: "/how-it-works/", label: "Methodology" }, // Додано слеш
+  { to: "/about/", label: "About" }, // Додано слеш
+  { to: "/faq/", label: "FAQ" }, // Додано слеш
 ];
 
-/**
- * The primary navigation and identity component of the Svitlogics system.
- * Designed according to The Ethos-Driven Design System:
- * - Section Echo (Spatial System): All padding and gaps strictly adhere to the 8px base unit.
- * - Section Foxtrot (Component Architecture): A minimal, predictable layout with a clear
- *   distinction between desktop and mobile navigation. The component structure avoids
- *   superfluous elements.
- * - Section Delta (Typography): Uses 'Inter' at the 'small' scale for all navigation
- *   links, ensuring clarity and consistency.
- */
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    // Close the mobile menu upon navigation to a new route.
     setIsMenuOpen(false);
   }, [location.pathname]);
 
   return (
     <header className="relative border-b border-carbon-black bg-paper-white">
-      <div className="mx-auto flex max-w-container items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link to="/" aria-label="Svitlogics Analysis Processor">
-          <SvitlogicsLogo className="h-10 w-auto text-svitlogics-blue" />
+      <div className="mx-auto flex max-w-container items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        {/* --- ВИПРАВЛЕННЯ ТУТ: Додано прихований анкорний текст --- */}
+        <Link to="/" aria-label="Svitlogics Analysis Home">
+          <SvitlogicsLogo
+            className="h-10 w-auto text-svitlogics-blue"
+            aria-hidden="true"
+          />
+          <span className="sr-only">Svitlogics Home</span>
         </Link>
+
         <nav className="hidden md:block" aria-label="Main navigation">
           <ul className="flex items-center gap-x-8">
             {navItems.map((item) => (

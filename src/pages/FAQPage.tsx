@@ -36,8 +36,7 @@ interface FaqItemData {
 // describes The Ethos-Driven Design System.
 const faqData: FaqItemData[] = [
   {
-    question:
-      "What is the primary difference between Svitlogics and other analysis tools?",
+    question: "How does Svitlogics differ from other analysis tools?",
     answer: [
       "Svitlogics is designed as an auxiliary instrument for critical thinking. Unlike tools that provide a binary 'true' or 'false' verdict, it does not deliver a final judgment. Instead, it provides a structured report highlighting linguistic and rhetorical patterns.",
       "This methodology is designed to provide data that empowers the user to form their own, more informed conclusions, always deferring to their final judgment.",
