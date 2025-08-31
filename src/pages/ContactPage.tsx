@@ -3,37 +3,43 @@ import { Helmet } from "react-helmet-async";
 import { Heading } from "../components/ui/Heading";
 import { Card } from "../components/ui/Card";
 
-// --- ОНОВЛЕНО: Додано вступний параграф ---
+// --- ОНОВЛЕНО: Текст повністю переписано для ясності та об'єму ---
 const content = {
   seoTitle: "Contact | Inquiries and Collaboration | Svitlogics",
   seoDescription:
     "Contact the developer of Svitlogics for technical support, general inquiries, or research and professional collaboration opportunities.",
   pageTitle: "Contact Information",
   introParagraph:
-    "This page provides the official contact channels for the Svitlogics project. All inquiries are received and processed directly by the developer to ensure clear and direct communication.",
+    "This page provides the official contact channels for the Svitlogics project. All inquiries are received and processed directly by the developer to ensure clear and direct communication. Please select the appropriate category for your inquiry below.",
   sections: [
     {
       id: "general-inquiries",
-      title: "General Inquiries",
+      title: "General Inquiries & Technical Support",
       paragraphs: [
-        "For all questions, technical issues, or performance feedback, please direct communications to the following address:",
+        "For all questions, performance feedback, or technical issues, please send a detailed message to the following address. We aim to respond to all technical support inquiries within 48 hours.",
       ],
       contact: {
         email: "hello@svitlogics.com",
       },
-      footer: "All messages are reviewed directly by the developer.",
+      footer: "This is the primary channel for all standard communication.",
     },
     {
       id: "collaboration",
-      title: "Research and Professional Use",
+      title: "Research & Professional Use",
       paragraphs: [
-        "Svitlogics is available for collaboration with journalists, academic institutions, fact-checking organizations, and researchers.",
-        "Please use the contact address for inquiries regarding:",
+        "Svitlogics is available for partnership with journalists, academic institutions, and fact-checking organizations. We welcome inquiries related to:",
       ],
       list: [
-        "Project partnerships and data analysis.",
-        "Integration possibilities or potential API access.",
-        "Custom feature requirements for professional use cases.",
+        "Project partnerships and joint data analysis.",
+        "System integration or potential API access.",
+        "Custom features for professional use cases.",
+      ],
+    },
+    {
+      id: "mission", // Нова секція
+      title: "Mission & Press Inquiries",
+      paragraphs: [
+        "For media inquiries, interview requests, or questions regarding the mission and design philosophy of Svitlogics, please use the primary contact email. Specify 'Press Inquiry' in your subject line for a faster response.",
       ],
     },
   ],
@@ -96,10 +102,8 @@ const ContactPage: React.FC = () => {
         <meta property="og:description" content={content.seoDescription} />
         <meta property="og:url" content="https://svitlogics.com/contact/" />
       </Helmet>
-
       <div className="container-main py-16">
         <div className="mx-auto max-w-prose">
-          {/* --- ОНОВЛЕНО: Додано рендеринг вступного параграфу --- */}
           <header className="mb-12 text-left">
             <Heading as="h1" className="mb-4">
               {content.pageTitle}
@@ -108,7 +112,6 @@ const ContactPage: React.FC = () => {
               {content.introParagraph}
             </p>
           </header>
-
           <div className="space-y-8">
             {content.sections.map((section) => (
               <ContactSection key={section.id} section={section} />

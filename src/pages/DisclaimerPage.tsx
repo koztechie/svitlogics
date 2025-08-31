@@ -3,12 +3,62 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { Heading } from "../components/ui/Heading";
 
+// --- ОНОВЛЕНО: Текст повністю переписано для ясності ---
 const content = {
   seoTitle: "Disclaimer | Limitations of AI Analysis | Svitlogics",
   seoDescription:
     "Official disclaimer for the Svitlogics AI text analyzer. Understand the limitations, user responsibilities, and the 'as is' nature of the service.",
   pageTitle: "Disclaimer",
   lastUpdated: "August 22, 2025",
+  sections: [
+    {
+      id: "introduction",
+      title: "1. Introduction",
+      paragraphs: [
+        "This disclaimer explains the terms of use for the Svitlogics web application ('the Service'). By using the Service, you agree to this disclaimer in full. If you do not agree with any part of this document, you must stop using the Service.",
+        "The purpose of this document is to give you a clear understanding of the capabilities and, more importantly, the <strong>limitations</strong> of the AI analysis provided by Svitlogics.",
+      ],
+    },
+    {
+      id: "no-professional-advice",
+      title: "2. Not Professional Advice",
+      paragraphs: [
+        "The analysis provided by Svitlogics is <strong>not a substitute for professional advice</strong>. The Service provides automated text analysis and should not be considered legal, financial, or journalistic counsel.",
+        "The final interpretation and any decisions you make based on the analysis are your own.",
+      ],
+    },
+    {
+      id: "accuracy-and-limitations",
+      title: "3. Accuracy and AI Limitations",
+      paragraphs: [
+        "Svitlogics is a <strong>tool for critical thinking, not a “truth machine” or a fact-checking service.</strong> We make no warranties about the completeness, accuracy, or reliability of the analysis.",
+        "You must understand the known limitations of artificial intelligence:",
+      ],
+      list: [
+        "<strong>No AI is perfect.</strong> AI models can misinterpret context, miss nuance, or generate outputs with errors.",
+        "<strong>No “Truth” Verdict.</strong> The Service cannot deliver a definitive “true” or “false” verdict on the text you submit.",
+        "<strong>Context is Key.</strong> The AI analyzes only the text you provide. It does not know the author's intent or the broader context of the information.",
+      ],
+      footer:
+        "Any reliance you place on the analysis is <strong>strictly at your own risk.</strong>",
+    },
+    {
+      id: "limitation-of-liability",
+      title: "4. Limitation of Liability",
+      paragraphs: [
+        "In no event will Svitlogics be liable for any damages that arise from your use of the Service. For full details, please see the 'Limitation of Liability' section in our",
+      ],
+      link: { to: "/terms-of-use/", text: "Terms of Use" },
+    },
+    {
+      id: "contact",
+      title: "5. Contact Us",
+      paragraphs: [
+        "If you have any questions about this disclaimer, please contact us via our",
+      ],
+      link: { to: "/contact/", text: "Contact page" },
+    },
+  ],
 };
 
 const DisclaimerPage: React.FC = () => {
@@ -17,147 +67,58 @@ const DisclaimerPage: React.FC = () => {
       <Helmet>
         <title>{content.seoTitle}</title>
         <meta name="description" content={content.seoDescription} />
-        {/* --- ВИПРАВЛЕННЯ ТУТ: Додано кінцевий слеш --- */}
         <link rel="canonical" href="https://svitlogics.com/disclaimer/" />
         <meta property="og:title" content={content.seoTitle} />
         <meta property="og:description" content={content.seoDescription} />
         <meta property="og:url" content="https://svitlogics.com/disclaimer/" />
         <meta property="og:type" content="article" />
       </Helmet>
-
       <div className="container-main py-16">
         <div className="mx-auto max-w-prose">
-          <Heading as="h1" className="mb-4 text-left">
-            {content.pageTitle}
-          </Heading>
-          <p className="mb-16 font-sans text-small text-neutral-700">
-            Last Updated: {content.lastUpdated}
-          </p>
-
+          <header className="mb-12 text-left">
+            <Heading as="h1" className="mb-4">
+              {content.pageTitle}
+            </Heading>
+            <p className="font-sans text-small text-neutral-700">
+              Last Updated: {content.lastUpdated}
+            </p>
+          </header>
           <div className="space-y-12 font-serif text-body text-carbon-black">
-            <section aria-labelledby="introduction">
-              <Heading as="h2" id="introduction" className="mb-6">
-                1. Introduction
-              </Heading>
-              <div className="space-y-4">
-                <p>
-                  This Disclaimer governs your use of the Svitlogics web
-                  application ("the Service"). By using the Service, you accept
-                  this disclaimer in full. If you disagree with any part of this
-                  disclaimer, you must not use our Service.
-                </p>
-                <p>
-                  The core purpose of this document is to ensure you, the user,
-                  have a clear and unambiguous understanding of the capabilities
-                  and, more importantly, the <strong>limitations</strong> of the
-                  AI-driven analysis provided by Svitlogics.
-                </p>
-              </div>
-            </section>
-
-            <section aria-labelledby="no-professional-advice">
-              <Heading as="h2" id="no-professional-advice" className="mb-6">
-                2. No Professional Advice
-              </Heading>
-              <div className="space-y-4">
-                <p>
-                  The analysis and content generated by Svitlogics are{" "}
-                  <strong>
-                    not intended to be a substitute for professional advice
-                  </strong>
-                  . The Service provides automated textual analysis based on
-                  pre-defined criteria and should not be considered legal,
-                  financial, journalistic, or any other form of professional
-                  counsel.
-                </p>
-                <p>
-                  The final interpretation and any decisions made based on the
-                  analysis rest solely with you.
-                </p>
-              </div>
-            </section>
-
-            <section aria-labelledby="accuracy-of-information">
-              <Heading as="h2" id="accuracy-of-information" className="mb-6">
-                3. Accuracy of Information and AI Limitations
-              </Heading>
-              <div className="space-y-4">
-                <p>
-                  Svitlogics is an{" "}
-                  <strong>
-                    auxiliary instrument for critical thinking, not a “truth
-                    machine” or a fact-checking service.
-                  </strong>{" "}
-                  We make no representations or warranties of any kind, express
-                  or implied, about the completeness, accuracy, reliability,
-                  suitability, or availability of the analysis provided.
-                </p>
-                <p>
-                  You must acknowledge the inherent limitations of artificial
-                  intelligence:
-                </p>
-                <ul className="list-disc space-y-2 pl-6">
-                  <li>
-                    <strong>Infallibility:</strong> No AI analysis is 100%
-                    infallible. AI models can misinterpret context, fail to
-                    understand nuanced language, overlook sarcasm, or generate
-                    outputs that may contain errors or inaccuracies.
-                  </li>
-                  <li>
-                    <strong>No “Truth” Verdict:</strong> The Service does not,
-                    and cannot, deliver a definitive “true” or “false” verdict
-                    on the text you submit.
-                  </li>
-                  <li>
-                    <strong>Contextual Blindness:</strong> The AI analyzes only
-                    the text you provide. It has no knowledge of the author's
-                    intent, the broader context in which the text was published,
-                    or any events that occurred before or after its creation.
-                  </li>
-                </ul>
-                <p>
-                  Any reliance you place on the analysis generated by Svitlogics
-                  is <strong>strictly at your own risk.</strong>
-                </p>
-              </div>
-            </section>
-
-            <section aria-labelledby="limitation-of-liability">
-              <Heading as="h2" id="limitation-of-liability" className="mb-6">
-                5. Limitation of Liability
-              </Heading>
-              <p>
-                In no event will Svitlogics be liable for any direct, indirect,
-                special, incidental, consequential, or punitive damages arising
-                out of your use of, or inability to use, the Service. For full
-                details, please refer to the "Limitation of Liability" section
-                in our{" "}
-                <Link
-                  to="/terms-of-use/" // Додано слеш
-                  className="font-sans text-svitlogics-blue hover:underline"
-                >
-                  Terms of Use
-                </Link>
-                .
-              </p>
-            </section>
-
-            <section aria-labelledby="contact-disclaimer">
-              <Heading as="h2" id="contact-disclaimer" className="mb-6">
-                8. Contact Us
-              </Heading>
-              <p>
-                If you have any questions about this Disclaimer, please contact
-                us via our{" "}
-                <Link
-                  to="/contact/" // Додано слеш
-                  className="font-sans text-svitlogics-blue hover:underline"
-                >
-                  Contact page
-                </Link>
-                .
-              </p>
-            </section>
+            {content.sections.map((section) => (
+              <section key={section.id} aria-labelledby={section.id}>
+                <Heading as="h2" id={section.id} className="mb-6">
+                  {section.title}
+                </Heading>
+                <div className="space-y-4">
+                  {section.paragraphs?.map((p, index) => (
+                    <p key={index}>{p}</p>
+                  ))}
+                  {section.list && (
+                    <ul className="list-disc space-y-2 pl-6">
+                      {section.list.map((item, index) => (
+                        <li key={index}>{item}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {section.footer && (
+                    <p>
+                      <strong>{section.footer}</strong>
+                    </p>
+                  )}
+                  {section.link && (
+                    <p>
+                      <Link
+                        to={section.link.to}
+                        className="font-sans text-svitlogics-blue hover:underline"
+                      >
+                        {section.link.text}
+                      </Link>
+                      .
+                    </p>
+                  )}
+                </div>
+              </section>
+            ))}
           </div>
         </div>
       </div>

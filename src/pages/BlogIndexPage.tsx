@@ -15,14 +15,14 @@ const slugify = (text: string): string => {
     .replace(/--+/g, "-");
 };
 
-// --- НОВИЙ КОНТЕНТ ДЛЯ СТОРІНКИ ---
+// --- ОНОВЛЕНО: Текст переписано для кращої читабельності та об'єму ---
 const pageContent = {
   seoTitle: "Blog | AI, Text Analysis & System Updates | Svitlogics",
   seoDescription:
-    "The official blog of Svitlogics. In-depth articles on AI text analysis, system updates, and the mission to counter information warfare.",
+    "The official blog for the Svitlogics project. Read articles on AI text analysis, system updates, and the mission to counter information warfare.",
   pageTitle: "Svitlogics Blog",
   introParagraph:
-    "This blog serves as the official operational log and research journal for the Svitlogics project. Here you will find in-depth articles on text analysis methodologies, updates on system architecture, and essays on the broader mission to provide instruments for critical thinking in an era of informational chaos.",
+    "This blog is the official source for updates and insights about the Svitlogics project. Here we publish articles on text analysis, explain our methodology, and share news about system development. Our goal is to provide clear information for anyone interested in critical thinking tools for the modern age.",
 };
 
 const BlogIndexPage: React.FC = () => {
@@ -43,10 +43,8 @@ const BlogIndexPage: React.FC = () => {
         <meta property="og:description" content={pageContent.seoDescription} />
         <meta property="og:url" content="https://svitlogics.com/blog/" />
       </Helmet>
-
       <div className="container-main py-16">
         <div className="mx-auto max-w-prose">
-          {/* --- НОВИЙ ВСТУПНИЙ БЛОК --- */}
           <header className="mb-12 text-left">
             <Heading as="h1" className="mb-4">
               {pageContent.pageTitle}
@@ -55,7 +53,6 @@ const BlogIndexPage: React.FC = () => {
               {pageContent.introParagraph}
             </p>
           </header>
-
           {uniqueTags.length > 0 && (
             <section className="mb-12">
               <Heading
@@ -68,7 +65,7 @@ const BlogIndexPage: React.FC = () => {
                 {uniqueTags.map((tag) => (
                   <Link
                     key={tag}
-                    to={`/blog/tag/${slugify(tag)}/`} // Додано слеш
+                    to={`/blog/tag/${slugify(tag)}/`}
                     className="block border border-neutral-500 px-3 py-1 font-sans text-small text-carbon-black transition-colors hover:border-carbon-black hover:bg-neutral-300"
                   >
                     {tag}
@@ -77,14 +74,11 @@ const BlogIndexPage: React.FC = () => {
               </div>
             </section>
           )}
-
           {articles.length > 0 ? (
             <div className="space-y-12">
               {articles.map((article) => (
                 <article key={article.slug}>
                   <Link to={`/blog/${article.slug}/`}>
-                    {" "}
-                    {/* Додано слеш */}
                     <Heading
                       as="h2"
                       className="mb-2 text-svitlogics-blue hover:underline"

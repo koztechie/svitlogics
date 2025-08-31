@@ -1,28 +1,3 @@
-/**
- * Svitlogics Home Page
- *
- * Adherence to The Ethos-Driven Design System:
- * - Section Alpha (The Interface is a Laboratory, Not a Stage): This page serves
- *   as the primary analytical workbench. The structure is sober, functional, and
- *   devoid of theatricality. It is a controlled environment for critical inquiry.
- * - Section Bravo (Clarity is a Moral Imperative): The component hierarchy and
- *   data flow are transparent. State management is explicit and predictable.
- * - Section Bravo (Data as Inquiry, Not Verdict): The AnalysisResults component
- *   presents findings as structured observations, not absolute judgments.
- * - Section Bravo (Respect the User's Intellect): The interface provides dense,
- *   high-value information (methodology, findings) and trusts the user to process it.
- * - Section Bravo (Engineered for Focus): A single-column layout with generous
- *   whitespace and a rigid grid creates a distraction-free analytical environment.
- * - Section Delta (Typography): A strict separation between Inter (UI) and Lora
- *   (content/specimen) is maintained throughout the page.
- * - Section Echo (Spatial & Grid System): All spacing uses the 8px grid.
- *   Generous whitespace is used as a cognitive buffer.
- * - Section Foxtrot (Component Architecture): Sub-components are functional
- *   instruments, not decorative elements.
- * - Section Hotel (Copy & Tone of Voice): All microcopy is clinical, direct,
- *   and educational. There is no persuasive or colloquial language.
- */
-
 import React, {
   useState,
   useCallback,
@@ -42,12 +17,10 @@ import { startAnalysis, checkAnalysisStatus } from "../services/aiApiService";
 import { Heading } from "../components/ui/Heading";
 
 // --- Types and Constants ---
-
 interface AnalysisData {
   findings: AnalysisFinding[];
   overallSummary: string;
 }
-
 const initialFindings: AnalysisFinding[] = [
   { findingType: "Manipulative Content", observation: null },
   { findingType: "Propagandistic Content", observation: null },
@@ -55,29 +28,26 @@ const initialFindings: AnalysisFinding[] = [
   { findingType: "Unbiased Presentation", observation: null },
   { findingType: "Emotional Tone", observation: null },
 ];
-
 const initialAnalysisData: AnalysisData = {
   findings: initialFindings,
   overallSummary: "",
 };
-
 const SAFE_CHARACTER_LIMIT = 15000;
 
-// --- Content (Pure Text, No HTML) ---
-
+// --- ОНОВЛЕНО: Текст переписано для кращої читабельності ---
 const content = {
   seoTitle: "Svitlogics | AI Text Analyzer for Bias & Disinformation",
   seoDescription:
-    "Analyze text for manipulation, propaganda, and bias with Svitlogics. An AI tool to empower critical thinking in English & Ukrainian. Engineered in Kyiv.",
+    "Analyze text for manipulation, propaganda, and bias with Svitlogics. An AI tool for critical thinking, engineered in Kyiv, Ukraine.",
   canonicalUrl: "https://svitlogics.com/",
   mainHeading: "Disinformation & Manipulation Analysis",
   introParagraph:
-    "An independent AI tool that analyzes text for propaganda, bias, and manipulation. Svitlogics provides structured insights to aid, not replace, human critical thinking.",
+    "An independent AI tool that analyzes text for propaganda and bias. Svitlogics provides structured insights to aid, not replace, human critical thinking.",
   methodology: {
     title: "Methodology and Mission",
     paragraphs: [
-      "The mission of Svitlogics is to provide an accessible, transparent tool for identifying manipulative techniques. This system was developed from Kyiv, Ukraine, driven by the need to counter pervasive information warfare. The core principle is that understanding how manipulation works is the first step toward resisting it.",
-      "The analysis is performed by a high-availability cascade of large language models guided by a detailed, custom-calibrated system prompt, which instructs the AI to assess the text against five core criteria:",
+      "The mission of Svitlogics is to provide a clear and accessible tool to identify manipulative techniques. This system was developed in Kyiv, Ukraine, in response to pervasive information warfare. Our core principle is simple: to resist manipulation, you must first understand how it works.",
+      "The analysis is performed by a cascade of large language models. A detailed system prompt guides the AI to assess text against five core criteria:",
     ],
     criteria: [
       {
@@ -93,12 +63,12 @@ const content = {
       {
         term: "Disinformation:",
         definition:
-          "Assesses for verifiably false information presented with intent to deceive.",
+          "Checks for verifiably false information presented with intent to deceive.",
       },
       {
         term: "Unbiased Presentation:",
         definition:
-          "Evaluates the text's commitment to fairness, objectivity, and balance.",
+          "Evaluates the text’s commitment to fairness and objectivity.",
       },
       {
         term: "Emotional Tone:",
@@ -106,11 +76,11 @@ const content = {
       },
     ],
     finalParagraph:
-      "It is critical to understand that no AI analysis is infallible. Svitlogics is not designed to deliver a final “truth” verdict. Its purpose is to provide structured data and justifications, empowering you to form your own, more informed conclusions.",
+      "It is critical to understand that no AI analysis is perfect. Svitlogics is not a “truth machine.” Its purpose is to provide structured data and reasons, helping you to form your own informed conclusions.",
   },
 };
 
-// --- Sub-components ---
+// --- Sub-components (без змін) ---
 
 const ApiErrorDisplay: React.FC<{ error: string | null }> = ({ error }) => {
   if (!error) return null;

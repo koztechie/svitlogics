@@ -1,116 +1,120 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
 import { Heading } from "../components/ui/Heading";
 
-interface ListItem {
-  term?: string;
-  definition: string;
-}
-
-// --- ОНОВЛЕНО: Текст переписано для кращої читабельності ---
+// --- ОНОВЛЕНО: Текст повністю переписано для ясності ---
 const content = {
-  seoTitle: "Access and Limits | Svitlogics",
+  seoTitle: "Disclaimer | Limitations of AI Analysis | Svitlogics",
   seoDescription:
-    "Svitlogics is a free public beta service. This page details the current text input limits and the system architecture that ensures fair use and operational stability.",
-  pageTitle: "Access and System Limits",
+    "Official disclaimer for the Svitlogics AI text analyzer. Understand the limitations, user responsibilities, and the 'as is' nature of the service.",
+  pageTitle: "Disclaimer",
+  lastUpdated: "August 22, 2025",
   sections: [
     {
-      title: "Service Access: Free Public Beta",
+      id: "introduction",
+      title: "1. Introduction",
       paragraphs: [
-        "Svitlogics is currently in a public beta phase and is available free of charge. Access is provided without cost to gather performance data and test system functionality.",
+        "This disclaimer explains the terms of use for the Svitlogics web application ('the Service'). By using the Service, you agree to this disclaimer in full. If you do not agree with any part of this document, you must stop using the Service.",
+        "The purpose of this document is to give you a clear understanding of the capabilities and, more importantly, the **limitations** of the AI analysis provided by Svitlogics.",
       ],
     },
     {
-      title: "Text Input Limits",
+      id: "no-professional-advice",
+      title: "2. Not Professional Advice",
       paragraphs: [
-        "The system enforces a character limit on each analysis to ensure stability and manage API costs. The maximum number of characters is determined by the token capacity of the underlying AI models and is always displayed on the main page.",
+        "The analysis provided by Svitlogics is **not a substitute for professional advice**. The Service provides automated text analysis and should not be considered legal, financial, or journalistic counsel.",
+        "The final interpretation and any decisions you make based on the analysis are your own.",
       ],
     },
     {
-      title: "System Safeguards",
+      id: "accuracy-and-limitations",
+      title: "3. Accuracy and AI Limitations",
       paragraphs: [
-        "The Svitlogics back-end includes several mechanisms to ensure stability and prevent abuse:",
+        "Svitlogics is a **tool for critical thinking, not a “truth machine” or a fact-checking service.** We make no warranties about the completeness, accuracy, or reliability of the analysis.",
+        "You must understand the known limitations of artificial intelligence:",
       ],
       list: [
-        {
-          term: "Rate Limiting:",
-          definition:
-            "The system restricts the number of requests from a single IP address to 20 per hour to prevent automated abuse.",
-        },
-        {
-          term: "Model Cascade:",
-          definition:
-            "The service uses a cascade of large language models. If a primary model is at capacity, requests are automatically rerouted to an available alternative.",
-        },
+        "**No AI is perfect.** AI models can misinterpret context, miss nuance, or generate outputs with errors.",
+        "**No “Truth” Verdict.** The Service cannot deliver a definitive “true” or “false” verdict on the text you submit.",
+        "**Context is Key.** The AI analyzes only the text you provide. It does not know the author's intent or the broader context of the information.",
       ],
+      footer:
+        "Any reliance you place on the analysis is **strictly at your own risk.**",
     },
     {
-      title: "Future Development",
+      id: "limitation-of-liability",
+      title: "4. Limitation of Liability",
       paragraphs: [
-        "To ensure the long-term sustainability of the Svitlogics project, premium subscription plans may be introduced in the future.",
-        "Potential premium features could include:",
+        "In no event will Svitlogics be liable for any damages that arise from your use of the Service. For full details, please see the 'Limitation of Liability' section in our",
       ],
-      list: [
-        { definition: "Increased analysis limits" },
-        { definition: "Access to more advanced models" },
-        { definition: "Accounts for teams and organizations" },
-        { definition: "API access for research and integration" },
+      link: { to: "/terms-of-use/", text: "Terms of Use" },
+    },
+    {
+      id: "contact",
+      title: "5. Contact Us",
+      paragraphs: [
+        "If you have any questions about this disclaimer, please contact us via our",
       ],
+      link: { to: "/contact/", text: "Contact page" },
     },
   ],
 };
 
-const PricingLimitsPage: React.FC = () => {
+const DisclaimerPage: React.FC = () => {
   return (
     <>
       <Helmet>
         <title>{content.seoTitle}</title>
         <meta name="description" content={content.seoDescription} />
-        <link rel="canonical" href="https://svitlogics.com/pricing-limits/" />
+        <link rel="canonical" href="https://svitlogics.com/disclaimer/" />
         <meta property="og:title" content={content.seoTitle} />
         <meta property="og:description" content={content.seoDescription} />
-        <meta
-          property="og:url"
-          content="https://svitlogics.com/pricing-limits/"
-        />
+        <meta property="og:url" content="https://svitlogics.com/disclaimer/" />
+        <meta property="og:type" content="article" />
       </Helmet>
-
       <div className="container-main py-16">
         <div className="mx-auto max-w-prose">
-          <Heading as="h1" className="mb-12 text-left">
-            {content.pageTitle}
-          </Heading>
-
-          <div className="space-y-12">
+          <header className="mb-12 text-left">
+            <Heading as="h1" className="mb-4">
+              {content.pageTitle}
+            </Heading>
+            <p className="font-sans text-small text-neutral-700">
+              Last Updated: {content.lastUpdated}
+            </p>
+          </header>
+          <div className="space-y-12 font-serif text-body text-carbon-black">
             {content.sections.map((section) => (
-              <section
-                key={section.title}
-                aria-labelledby={`section-title-${section.title
-                  .slice(0, 10)
-                  .replace(/\s+/g, "-")}`}
-              >
-                <Heading
-                  as="h2"
-                  id={`section-title-${section.title
-                    .slice(0, 10)
-                    .replace(/\s+/g, "-")}`}
-                  className="mb-6"
-                >
+              <section key={section.id} aria-labelledby={section.id}>
+                <Heading as="h2" id={section.id} className="mb-6">
                   {section.title}
                 </Heading>
-                <div className="space-y-4 font-serif text-body text-carbon-black">
-                  {section.paragraphs?.map((p, pIndex) => (
-                    <p key={pIndex}>{p}</p>
+                <div className="space-y-4">
+                  {section.paragraphs?.map((p, index) => (
+                    <p key={index}>{p}</p>
                   ))}
                   {section.list && (
                     <ul className="list-disc space-y-2 pl-6">
-                      {(section.list as ListItem[]).map((item, itemIndex) => (
-                        <li key={itemIndex}>
-                          {item.term && <strong>{item.term}</strong>}{" "}
-                          {item.definition}
-                        </li>
+                      {section.list.map((item, index) => (
+                        <li key={index}>{item}</li>
                       ))}
                     </ul>
+                  )}
+                  {section.footer && (
+                    <p>
+                      <strong>{section.footer}</strong>
+                    </p>
+                  )}
+                  {section.link && (
+                    <p>
+                      <Link
+                        to={section.link.to}
+                        className="font-sans text-svitlogics-blue hover:underline"
+                      >
+                        {section.link.text}
+                      </Link>
+                      .
+                    </p>
                   )}
                 </div>
               </section>
@@ -122,4 +126,4 @@ const PricingLimitsPage: React.FC = () => {
   );
 };
 
-export default React.memo(PricingLimitsPage);
+export default React.memo(DisclaimerPage);
