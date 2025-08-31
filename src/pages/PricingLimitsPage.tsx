@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { Heading } from "../components/ui/Heading";
 
-// --- ОНОВЛЕНО: Текст повністю переписано для ясності ---
 const content = {
   seoTitle: "Disclaimer | Limitations of AI Analysis | Svitlogics",
   seoDescription:
@@ -16,14 +15,14 @@ const content = {
       title: "1. Introduction",
       paragraphs: [
         "This disclaimer explains the terms of use for the Svitlogics web application ('the Service'). By using the Service, you agree to this disclaimer in full. If you do not agree with any part of this document, you must stop using the Service.",
-        "The purpose of this document is to give you a clear understanding of the capabilities and, more importantly, the **limitations** of the AI analysis provided by Svitlogics.",
+        "The purpose of this document is to give you a clear understanding of the capabilities and, more importantly, the <strong>limitations</strong> of the AI analysis provided by Svitlogics.",
       ],
     },
     {
       id: "no-professional-advice",
       title: "2. Not Professional Advice",
       paragraphs: [
-        "The analysis provided by Svitlogics is **not a substitute for professional advice**. The Service provides automated text analysis and should not be considered legal, financial, or journalistic counsel.",
+        "The analysis provided by Svitlogics is <strong>not a substitute for professional advice</strong>. The Service provides automated text analysis and should not be considered legal, financial, or journalistic counsel.",
         "The final interpretation and any decisions you make based on the analysis are your own.",
       ],
     },
@@ -31,22 +30,22 @@ const content = {
       id: "accuracy-and-limitations",
       title: "3. Accuracy and AI Limitations",
       paragraphs: [
-        "Svitlogics is a **tool for critical thinking, not a “truth machine” or a fact-checking service.** We make no warranties about the completeness, accuracy, or reliability of the analysis.",
+        "Svitlogics is a <strong>tool for critical thinking, not a “truth machine” or a fact-checking service.</strong> We make no warranties about the completeness, accuracy, or reliability of the analysis.",
         "You must understand the known limitations of artificial intelligence:",
       ],
       list: [
-        "**No AI is perfect.** AI models can misinterpret context, miss nuance, or generate outputs with errors.",
-        "**No “Truth” Verdict.** The Service cannot deliver a definitive “true” or “false” verdict on the text you submit.",
-        "**Context is Key.** The AI analyzes only the text you provide. It does not know the author's intent or the broader context of the information.",
+        "<strong>No AI is perfect.</strong> AI models can misinterpret context, miss nuance, or generate outputs with errors.",
+        "<strong>No “Truth” Verdict.</strong> The Service cannot deliver a definitive “true” or “false” verdict on the text you submit.",
+        "<strong>Context is Key.</strong> The AI analyzes only the text you provide. It does not know the author's intent or the broader context of the information.",
       ],
       footer:
-        "Any reliance you place on the analysis is **strictly at your own risk.**",
+        "Any reliance you place on the analysis is <strong>strictly at your own risk.</strong>",
     },
     {
       id: "limitation-of-liability",
       title: "4. Limitation of Liability",
       paragraphs: [
-        "In no event will Svitlogics be liable for any damages that arise from your use of the Service. For full details, please see the 'Limitation of Liability' section in our",
+        "In no event will Svitlogics be liable for any damages that arise from your use of the Service. For full details, please see the 'Limitation of Liability' section in our ", // Видалено крапку
       ],
       link: { to: "/terms-of-use/", text: "Terms of Use" },
     },
@@ -54,7 +53,7 @@ const content = {
       id: "contact",
       title: "5. Contact Us",
       paragraphs: [
-        "If you have any questions about this disclaimer, please contact us via our",
+        "If you have any questions about this disclaimer, please contact us via our ", // Видалено крапку
       ],
       link: { to: "/contact/", text: "Contact page" },
     },
@@ -91,19 +90,40 @@ const DisclaimerPage: React.FC = () => {
                 </Heading>
                 <div className="space-y-4">
                   {section.paragraphs?.map((p, index) => (
-                    <p key={index}>{p}</p>
+                    <p
+                      key={index}
+                      dangerouslySetInnerHTML={{
+                        __html: p.replace(
+                          /\*\*(.*?)\*\*/g,
+                          "<strong>$1</strong>"
+                        ),
+                      }}
+                    />
                   ))}
                   {section.list && (
                     <ul className="list-disc space-y-2 pl-6">
                       {section.list.map((item, index) => (
-                        <li key={index}>{item}</li>
+                        <li
+                          key={index}
+                          dangerouslySetInnerHTML={{
+                            __html: item.replace(
+                              /\*\*(.*?)\*\*/g,
+                              "<strong>$1</strong>"
+                            ),
+                          }}
+                        />
                       ))}
                     </ul>
                   )}
                   {section.footer && (
-                    <p>
-                      <strong>{section.footer}</strong>
-                    </p>
+                    <p
+                      dangerouslySetInnerHTML={{
+                        __html: section.footer.replace(
+                          /\*\*(.*?)\*\*/g,
+                          "<strong>$1</strong>"
+                        ),
+                      }}
+                    />
                   )}
                   {section.link && (
                     <p>
