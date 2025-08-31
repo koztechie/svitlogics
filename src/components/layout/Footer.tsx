@@ -31,30 +31,30 @@ const footerSections = [
   {
     title: "System",
     links: [
-      { to: "/how-it-works", label: "Methodology" },
-      { to: "/pricing-limits", label: "Access & Limits" },
-      { to: "/faq", label: "FAQ" },
+      { to: "/how-it-works/", label: "Methodology" },
+      { to: "/pricing-limits/", label: "Access & Limits" },
+      { to: "/faq/", label: "FAQ" },
     ],
   },
   {
     title: "Project",
     links: [
-      { to: "/about", label: "About Svitlogics" },
-      { to: "/changelog", label: "System Changelog" },
-      { to: "/contact", label: "Contact" },
+      { to: "/about/", label: "About Svitlogics" },
+      { to: "/changelog/", label: "System Changelog" },
+      { to: "/contact/", label: "Contact" },
     ],
   },
   {
     title: "Content",
-    links: [{ to: "/blog", label: "Blog" }],
+    links: [{ to: "/blog/", label: "Blog" }],
   },
   {
     title: "Legal",
     links: [
-      { to: "/privacy-policy", label: "Privacy Policy" },
-      { to: "/terms-of-use", label: "Terms of Use" },
-      { to: "/cookie-policy", label: "Cookie Policy" },
-      { to: "/disclaimer", label: "Disclaimer" },
+      { to: "/privacy-policy/", label: "Privacy Policy" },
+      { to: "/terms-of-use/", label: "Terms of Use" },
+      { to: "/cookie-policy/", label: "Cookie Policy" },
+      { to: "/disclaimer/", label: "Disclaimer" },
     ],
   },
 ];
