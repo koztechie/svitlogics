@@ -13,6 +13,7 @@
 
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import { Article } from "./articles";
 
 // Layout Components
 import Layout from "./components/layout/Layout";
@@ -36,6 +37,16 @@ import DisclaimerPage from "./pages/DisclaimerPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 /**
+ * @interface AppProps
+ * @description Defines the props for the root App component.
+ * @property {Article} [ssrArticle] - An optional article object provided during
+ * Server-Side Rendering (SSR) to pre-populate the article page, avoiding a client-side fetch.
+ */
+interface AppProps {
+  ssrArticle?: Article;
+}
+
+/**
  * The root component of the Svitlogics application.
  * It establishes the foundational structure and information architecture.
  *
@@ -46,7 +57,7 @@ import NotFoundPage from "./pages/NotFoundPage";
  *   unambiguous routing structure. There are no redundant or confusing paths.
  *   The 404 route acts as a definitive fallback for any invalid resource request.
  */
-const App: React.FC = () => {
+const App: React.FC<AppProps> = ({ ssrArticle }) => {
   return (
     <Layout>
       <Routes>
@@ -59,7 +70,10 @@ const App: React.FC = () => {
         {/* Blog Pages */}
         <Route path="/blog/" element={<BlogIndexPage />} />
         <Route path="/blog/tag/:tagSlug/" element={<TagPage />} />
-        <Route path="/blog/:slug/" element={<ArticlePage />} />
+        <Route
+          path="/blog/:slug/"
+          element={<ArticlePage ssrArticle={ssrArticle} />}
+        />
 
         {/* Informational & Legal Pages */}
         <Route path="/pricing-limits/" element={<PricingLimitsPage />} />

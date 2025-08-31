@@ -24,9 +24,10 @@ async function generateArticlesData() {
 
   if (articlePaths.length === 0) {
     console.warn("⚠️ WARNING: No .mdx files found in src/articles/.");
-  } else {
-    console.log(`✅ Found ${articlePaths.length} articles to process.`);
+    return [];
   }
+
+  console.log(`✅ Found ${articlePaths.length} articles to process.`);
 
   const articles = await Promise.all(
     articlePaths.map(async (filePath) => {
@@ -52,7 +53,6 @@ async function generateArticlesData() {
 
       const validatedFrontmatter = validationResult.data;
 
-      // --- ВИПРАВЛЕННЯ ТУТ: Поле 'image' повністю видалено з об'єкта ---
       return {
         slug: validatedFrontmatter.slug,
         title: validatedFrontmatter.title,
@@ -74,14 +74,13 @@ async function generateArticlesData() {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
-  // --- ВИПРАВЛЕННЯ ТУТ: Поле 'image' повністю видалено з інтерфейсу ---
   const articlesFileContent = `// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.
 
 export interface Article {
   slug: string;
   title: string;
   description: string;
-  createdAt: string; // Stored as ISO string
+  createdAt: string;
   updatedAt?: string;
   author: string;
   tags: string[];
@@ -140,7 +139,9 @@ async function runPreRender() {
     "/blog/",
   ];
   const articleRoutes = articles.map((article) => `/blog/${article.slug}/`);
-  const uniqueTags = [...new Set(articles.flatMap((article) => article.tags))];
+  const uniqueTags = [
+    ...new Set(articles.flatMap((article) => article.tags || [])),
+  ];
   const tagRoutes = uniqueTags.map((tag) => `/blog/tag/${slugify(tag)}/`);
 
   const allRoutes = [
@@ -166,7 +167,28 @@ async function runPreRender() {
   await Promise.all(
     allRoutes.map(async (route) => {
       try {
-        const { appHtml, helmet } = render(route);
+        let appHtml, helmet;
+
+        // --- ВИПРАВЛЕННЯ ТУТ: "Ін'єкція Даних" для сторінок статей ---
+        const isArticleRoute =
+          route.startsWith("/blog/") && !route.startsWith("/blog/tag/");
+
+        if (isArticleRoute) {
+          const slug = route.split("/")[2];
+          const article = articles.find((a) => a.slug === slug);
+          if (article) {
+            // Якщо це сторінка статті, рендеримо її з даними
+            ({ appHtml, helmet } = render(route, article));
+          } else {
+            console.warn(
+              `⚠️  Warning: No article data found for slug "${slug}". Rendering as a standard page.`
+            );
+            ({ appHtml, helmet } = render(route));
+          }
+        } else {
+          // Для всіх інших сторінок рендеримо як зазвичай
+          ({ appHtml, helmet } = render(route));
+        }
 
         const helmetStrings = [
           helmet.title.toString(),

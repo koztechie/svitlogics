@@ -4,7 +4,7 @@ export interface Article {
   slug: string;
   title: string;
   description: string;
-  createdAt: string; // Stored as ISO string
+  createdAt: string;
   updatedAt?: string;
   author: string;
   tags: string[];

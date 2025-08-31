@@ -19,35 +19,55 @@ const slugify = (text: string): string => {
     .replace(/--+/g, "-");
 };
 
-const ArticlePage: React.FC = () => {
+/**
+ * @interface ArticlePageProps
+ * @description Defines the props for the ArticlePage component.
+ * @property {Article} [ssrArticle] - Optional article data provided during SSR
+ * to bypass client-side fetching and ensure immediate rendering.
+ */
+interface ArticlePageProps {
+  ssrArticle?: Article;
+}
+
+const ArticlePage: React.FC<ArticlePageProps> = ({ ssrArticle }) => {
   const { slug } = useParams<{ slug: string }>();
-  const [article, setArticle] = useState<Article | null | undefined>(undefined);
+
+  // --- ВИПРАВЛЕННЯ ТУТ: Ініціалізуємо стан з SSR-даних, якщо вони є ---
+  const [article, setArticle] = useState<Article | null | undefined>(
+    ssrArticle || undefined
+  );
   const [mdxSource, setMdxSource] = useState<MDXRemoteProps | null>(null);
 
   useEffect(() => {
-    const findAndSerializeArticle = async () => {
+    const processArticleContent = async (articleToProcess: Article) => {
+      // Серіалізуємо MDX контент лише один раз.
+      if (mdxSource) return;
+      try {
+        const source = await serialize(articleToProcess.content, {
+          mdxOptions: {
+            remarkPlugins: [remarkGfm],
+            rehypePlugins: [rehypeSlug],
+          },
+        });
+        setMdxSource(source);
+      } catch (error) {
+        console.error("Error serializing MDX:", error);
+        setMdxSource(null);
+      }
+    };
+
+    if (article) {
+      // Якщо дані про статтю вже є (з SSR або попереднього фетчу), обробляємо контент.
+      processArticleContent(article);
+    } else {
+      // Цей блок виконується ТІЛЬКИ на клієнті при прямому переході або оновленні сторінки.
       const allArticles = getArticles();
       const foundArticle = allArticles.find((a) => a.slug === slug);
       setArticle(foundArticle || null);
+    }
+  }, [slug, article, mdxSource]); // Додано залежності для стабільності
 
-      if (foundArticle) {
-        try {
-          const source = await serialize(foundArticle.content, {
-            mdxOptions: {
-              remarkPlugins: [remarkGfm],
-              rehypePlugins: [rehypeSlug],
-            },
-          });
-          setMdxSource(source);
-        } catch (error) {
-          console.error("Error serializing MDX:", error);
-          setMdxSource(null);
-        }
-      }
-    };
-    findAndSerializeArticle();
-  }, [slug]);
-
+  // Loading State
   if (article === undefined) {
     return (
       <div className="container-main py-16 text-center">
@@ -58,6 +78,7 @@ const ArticlePage: React.FC = () => {
     );
   }
 
+  // Not Found State
   if (article === null) {
     return (
       <>
@@ -83,6 +104,7 @@ const ArticlePage: React.FC = () => {
     );
   }
 
+  // Critical Error State (e.g., malformed data)
   if (!article.title) {
     return (
       <div className="container-main py-16 text-center">
@@ -93,6 +115,7 @@ const ArticlePage: React.FC = () => {
     );
   }
 
+  // Article Found State
   return (
     <>
       <Helmet>
